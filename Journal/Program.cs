@@ -32,6 +32,7 @@ namespace Journal
             builder.Services.AddScoped<IMTAccountService, MTAccountService>();
             builder.Services.AddScoped<IMTDataService, MTDataService>();
             builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+            builder.Services.AddScoped<IMTDealRepository, MTDealRepository>();
 
             var app = builder.Build();
 

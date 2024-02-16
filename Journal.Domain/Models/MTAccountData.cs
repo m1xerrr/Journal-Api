@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Journal.Domain.ResponseModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace Journal.Domain.Models
     {
         public MTAccountData()
         {
-            Deals = new List<Deal>();
+            Deals = new List<MTDealResponseModel>();
         }
         public double currentBalance {  get; set; }
 
@@ -18,7 +19,7 @@ namespace Journal.Domain.Models
 
         public double Profit { get; set; }
 
-        public List<Deal> Deals { get; set; }
+        public List<MTDealResponseModel> Deals { get; set; }
 
         public int TotalDeals { get; set; }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Journal.Domain.Models
 {
-    public class DealJson
+    public class MTDealJson
     {
         [JsonProperty("comment")]
         public string Comment { get; set; }

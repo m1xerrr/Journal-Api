@@ -17,5 +17,7 @@ namespace Journal.Domain.Models
 
         public string Server { get; set; }
         public User User { get; set; }
+
+        public List<MTDeal>? Deals { get; set; }
     }
 }

@@ -3,11 +3,7 @@ using Journal.Domain.Models;
 using Journal.Domain.Responses;
 using Journal.Domain.ViewModels;
 using Journal.Service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Journal.Domain.ResponseModels;
 
 namespace Journal.Service.Implementations
 {
@@ -24,9 +20,9 @@ namespace Journal.Service.Implementations
             _mtDataRepository = mtDataRepository;
         }
 
-        public async Task<BaseResponse<MTAccount>> AddAccount(MTAccountViewModel accountModel)
+        public async Task<BaseResponse<MTAccountResponseModel>> AddAccount(MTAccountViewModel accountModel)
         {
-            var response = new BaseResponse<MTAccount>();
+            var response = new BaseResponse<MTAccountResponseModel>();
             try
             {
                 var accounts = await _mtAccountRepository.SelectAll();
@@ -56,7 +52,7 @@ namespace Journal.Service.Implementations
                     if (await _mtAccountRepository.Create(account))
                     {
                         response.StatusCode = Domain.Enums.StatusCode.OK;
-                        response.Data = account;
+                        response.Data = new MTAccountResponseModel(account);
                     }
                     else
                     {

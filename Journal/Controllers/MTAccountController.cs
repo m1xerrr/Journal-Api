@@ -17,10 +17,6 @@ namespace Journal.Controllers
         public async Task<IActionResult> MTAccountData([FromBody] MTAccountViewModel account)
         {
             var response = await _mtDataService.GetAccountData(account);
-            if(response.StatusCode == Domain.Enums.StatusCode.OK)
-            {
-                return Json(response.Data);
-            }
             return Json(response);
         }
     }

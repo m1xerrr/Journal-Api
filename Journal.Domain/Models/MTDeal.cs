@@ -2,9 +2,12 @@
 
 namespace Journal.Domain.Models
 {
-    public class Deal
+    public class MTDeal
     {
+        public int Id { get; set; }
         public long PositionId { get; set; }
+
+        public Guid AccountId { get; set; }
 
         public Direction Direction { get; set; }
 
@@ -26,6 +29,10 @@ namespace Journal.Domain.Models
 
         public CloseType CloseType { get; set; }
 
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
+
+        public string? Image { get; set; }
+
+        public MTAccount Account { get; set; }
     }
 }

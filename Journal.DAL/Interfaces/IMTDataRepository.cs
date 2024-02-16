@@ -10,7 +10,7 @@ namespace Journal.DAL.Interfaces
 {
     public interface IMTDataRepository
     {
-        Task<List<DealJson>> GetDeals(MTAccountViewModel account);
+        Task<List<MTDealJson>> GetDeals(MTAccountViewModel account);
 
         Task<bool> Initialize(MTAccountViewModel account);
     }

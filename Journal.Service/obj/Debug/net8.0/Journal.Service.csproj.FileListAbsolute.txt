@@ -32,3 +32,4 @@ D:\SE\C#\REST API\Journal\Journal.Service\obj\Debug\net8.0\Journal.Service.dll
 D:\SE\C#\REST API\Journal\Journal.Service\obj\Debug\net8.0\refint\Journal.Service.dll
 D:\SE\C#\REST API\Journal\Journal.Service\obj\Debug\net8.0\Journal.Service.pdb
 D:\SE\C#\REST API\Journal\Journal.Service\obj\Debug\net8.0\ref\Journal.Service.dll
+D:\SE\C#\REST API\Journal\Journal.Service\obj\Debug\net8.0\Journal.Service.sourcelink.json

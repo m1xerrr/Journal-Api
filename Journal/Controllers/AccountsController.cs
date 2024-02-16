@@ -16,14 +16,7 @@ namespace Journal.Controllers
         public async Task<IActionResult> AddMTAccount([FromBody] MTAccountViewModel mtAccountModel)
         {
             var response = await _mtAccountService.AddAccount(mtAccountModel);
-            if(response.StatusCode == Domain.Enums.StatusCode.OK)
-            {
-                return Json(mtAccountModel);
-            }
-            else
-            {
-                return Json(response);
-            }
+            return Json(response);
         }
     }
 }

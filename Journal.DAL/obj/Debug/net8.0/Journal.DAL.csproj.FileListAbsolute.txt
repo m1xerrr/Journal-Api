@@ -28,3 +28,4 @@ D:\SE\C#\REST API\Journal\Journal.DAL\obj\Debug\net8.0\Journal.DAL.dll
 D:\SE\C#\REST API\Journal\Journal.DAL\obj\Debug\net8.0\refint\Journal.DAL.dll
 D:\SE\C#\REST API\Journal\Journal.DAL\obj\Debug\net8.0\Journal.DAL.pdb
 D:\SE\C#\REST API\Journal\Journal.DAL\obj\Debug\net8.0\ref\Journal.DAL.dll
+D:\SE\C#\REST API\Journal\Journal.DAL\obj\Debug\net8.0\Journal.DAL.sourcelink.json

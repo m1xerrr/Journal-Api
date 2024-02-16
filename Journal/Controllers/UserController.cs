@@ -17,24 +17,13 @@ namespace Journal.Controllers
         public async Task<IActionResult> Login([FromBody] LoginUserViewModel user)
         {
             var response = await _userService.Verify(user);
-            if(response.StatusCode == Domain.Enums.StatusCode.ERROR)
-            {
-                return Json(response);
-            }
-            return Json(response.Data);
+            return Json(response);
         }
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp([FromBody] SignUpUserViewModel user)
         {
             var response = await _userService.CreateAccount(user);
-            if (response.StatusCode == Domain.Enums.StatusCode.OK)
-            {
-                return Json(response.Data);
-            }
-            else
-            {
-                return Json(response.Data);
-            }
+            return Json(response);
             
         }
     }

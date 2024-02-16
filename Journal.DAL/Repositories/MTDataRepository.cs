@@ -14,7 +14,7 @@ namespace Journal.DAL.Repositories
 {
     public class MTDataRepository : IMTDataRepository
     {
-        public async Task<List<DealJson>> GetDeals(MTAccountViewModel account)
+        public async Task<List<MTDealJson>> GetDeals(MTAccountViewModel account)
         {
             string baseUrl = "http://10.125.41.146:5000";
 
@@ -29,7 +29,7 @@ namespace Journal.DAL.Repositories
                     if (response.IsSuccessStatusCode)
                     {
                         string content = await response.Content.ReadAsStringAsync();
-                        List<DealJson> deals = JsonConvert.DeserializeObject<List<DealJson>>(content);
+                        List<MTDealJson> deals = JsonConvert.DeserializeObject<List<MTDealJson>>(content);
                         return deals;
                     }
                 }
@@ -38,7 +38,7 @@ namespace Journal.DAL.Repositories
             {
                 Console.WriteLine("An error occurred: " + ex.Message);
             }
-            return new List<DealJson>();
+            return new List<MTDealJson>();
         }
 
         public async Task<bool> Initialize(MTAccountViewModel account)

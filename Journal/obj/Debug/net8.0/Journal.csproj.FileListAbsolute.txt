@@ -75,3 +75,4 @@ D:\SE\C#\REST API\Journal\Journal\obj\Debug\net8.0\refint\Journal.dll
 D:\SE\C#\REST API\Journal\Journal\obj\Debug\net8.0\Journal.pdb
 D:\SE\C#\REST API\Journal\Journal\obj\Debug\net8.0\Journal.genruntimeconfig.cache
 D:\SE\C#\REST API\Journal\Journal\obj\Debug\net8.0\ref\Journal.dll
+D:\SE\C#\REST API\Journal\Journal\obj\Debug\net8.0\Journal.sourcelink.json

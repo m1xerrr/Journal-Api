@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Journal", "Journal\Journal.csproj", "{6029CB77-C24E-4F5B-9143-1EE71E4BC528}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Journal", "Journal\Journal.csproj", "{6029CB77-C24E-4F5B-9143-1EE71E4BC528}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Journal.DAL", "Journal.DAL", "{5F83FF43-40DB-4B92-88A4-81539FBB8185}"
 EndProject
@@ -11,11 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Journal.Domain", "Journal.D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Journal.Service", "Journal.Service", "{6005DC5C-6CC0-4C27-B467-E999309416E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Journal.DAL", "Journal.DAL\Journal.DAL.csproj", "{0F32ED13-5EDF-4841-9F44-CCE7D39F3E51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Journal.DAL", "Journal.DAL\Journal.DAL.csproj", "{0F32ED13-5EDF-4841-9F44-CCE7D39F3E51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Journal.Domain", "Journal.Domain\Journal.Domain.csproj", "{FDF8461E-6AA6-4B30-9A2A-435ED863D0D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Journal.Domain", "Journal.Domain\Journal.Domain.csproj", "{FDF8461E-6AA6-4B30-9A2A-435ED863D0D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Journal.Service", "Journal.Service\Journal.Service.csproj", "{05088D16-8088-4707-ACAD-CB52FB6E2454}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Journal.Service", "Journal.Service\Journal.Service.csproj", "{05088D16-8088-4707-ACAD-CB52FB6E2454}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
