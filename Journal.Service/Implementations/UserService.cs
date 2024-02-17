@@ -1,7 +1,7 @@
 ﻿using Journal.Domain.Responses;
 using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
-using Journal.DAL.Repositories;
+using Journal.Domain.ResponseModels;
 using Journal.Domain.Enums;
 using Journal.Domain.Models;
 using Journal.Domain.Helpers;
@@ -17,9 +17,9 @@ namespace Journal.Service.Implementations
         {
             _userRepository = userRepository;
         }
-        public async Task<BaseResponse<User>> CreateAccount(SignUpUserJsonModel user)
+        public async Task<BaseResponse<UserResponseModel>> CreateAccount(SignUpUserJsonModel user)
         {
-            var baseResponse = new BaseResponse<User>();
+            var baseResponse = new BaseResponse<UserResponseModel>();
             try
             {
                 var users = await _userRepository.SelectAll();
@@ -38,7 +38,7 @@ namespace Journal.Service.Implementations
                 if(await _userRepository.Create(newUser))
                 {
                     baseResponse.StatusCode = StatusCode.OK;
-                    baseResponse.Data = newUser;
+                    baseResponse.Data = new UserResponseModel(newUser);
                 }
                 else 
                 {
@@ -53,16 +53,17 @@ namespace Journal.Service.Implementations
             return baseResponse;
         }
 
-        public async Task<BaseResponse<User>> Verify(LoginUserJsonModel user)
+        public async Task<BaseResponse<UserResponseModel>> Verify(LoginUserJsonModel user)
         {
-            var response = new BaseResponse<User>();
+            var response = new BaseResponse<UserResponseModel>();
             try
             {
                 user.Password = HashPasswordHelper.HashPassword(user.Password);
                 var users = await _userRepository.SelectAll();
                 if(users.FirstOrDefault(x=>x.Email == user.Email && x.Password == user.Password) != null)
                 {
-                    response.Data = users.FirstOrDefault(x => x.Email == user.Email && x.Password == user.Password);
+                    response.StatusCode = StatusCode.OK;
+                    response.Data = new UserResponseModel(users.FirstOrDefault(x => x.Email == user.Email && x.Password == user.Password));
                 }
                 else
                 {
@@ -76,5 +77,43 @@ namespace Journal.Service.Implementations
             }
             return response;
         }
+
+        public async Task<BaseResponse<bool>> DeleteAccount(Guid userId)
+        {
+            var response = new BaseResponse<bool>();
+            try
+            {
+                var users = await _userRepository.SelectAll();
+                var user = users.FirstOrDefault(x => x.Id == userId);
+                if (user == null)
+                {
+                    response.Data = false;
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "User with such id does not exists";
+                }
+                else
+                {
+                    if(await _userRepository.Delete(user))
+                    {
+                        response.Data = true;
+                        response.StatusCode = StatusCode.OK;
+                    }
+                    else
+                    {
+                        response.Data= false;
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "DB error";
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                response.StatusCode= StatusCode.ERROR;
+                response.Data = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
     }
 }

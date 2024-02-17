@@ -13,18 +13,20 @@ namespace Journal.Controllers
         {
             _userService = userService;
         }
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginUserJsonModel user)
         {
-            var response = await _userService.Verify(user);
-            return Json(response);
+            return Json(await _userService.Verify(user));
         }
-        [HttpPost("signup")]
+        [HttpPost("Signup")]
         public async Task<IActionResult> SignUp([FromBody] SignUpUserJsonModel user)
         {
-            var response = await _userService.CreateAccount(user);
-            return Json(response);
-            
+            return Json(await _userService.CreateAccount(user));
+        }
+        [HttpPost("Delete")]
+        public async Task<IActionResult> Delete([FromBody] Guid userId)
+        {
+            return Json(await _userService.DeleteAccount(userId));
         }
     }
 }

@@ -70,5 +70,43 @@ namespace Journal.Service.Implementations
             }
             return response;
         }
+
+        public async Task<BaseResponse<bool>> DeleteMTAccount(Guid accountId)
+        {
+            var response = new BaseResponse<bool>();
+            try
+            {
+                var accounts = await _mtAccountRepository.SelectAll();
+                var account = accounts.FirstOrDefault(x => x.Id == accountId);
+                if(account == null)
+                {
+                    response.Data = false;
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Account with such Id does not exists";
+                }
+                else
+                {
+                    if(await _mtAccountRepository.Delete(account))
+                    {
+                        response.Data = true;
+                        response.StatusCode = Domain.Enums.StatusCode.OK;
+                        
+                    }
+                    else
+                    {
+                        response.Data = false;
+                        response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                        response.Message = "DB error";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Data = false;
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
     }
 }
