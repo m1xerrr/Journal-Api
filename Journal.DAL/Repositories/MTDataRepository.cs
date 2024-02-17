@@ -1,20 +1,13 @@
 ﻿using Azure;
 using Journal.DAL.Interfaces;
-using Journal.Domain.Models;
-using Journal.Domain.ViewModels;
+using Journal.Domain.JsonModels;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Journal.DAL.Repositories
 {
     public class MTDataRepository : IMTDataRepository
     {
-        public async Task<List<MTDealJson>> GetDeals(MTAccountViewModel account)
+        public async Task<List<MTDealJsonModel>> GetDeals(MTAccountJsonModel account)
         {
             string baseUrl = "http://10.125.41.146:5000";
 
@@ -29,7 +22,7 @@ namespace Journal.DAL.Repositories
                     if (response.IsSuccessStatusCode)
                     {
                         string content = await response.Content.ReadAsStringAsync();
-                        List<MTDealJson> deals = JsonConvert.DeserializeObject<List<MTDealJson>>(content);
+                        List<MTDealJsonModel> deals = JsonConvert.DeserializeObject<List<MTDealJsonModel>>(content);
                         return deals;
                     }
                 }
@@ -38,10 +31,10 @@ namespace Journal.DAL.Repositories
             {
                 Console.WriteLine("An error occurred: " + ex.Message);
             }
-            return new List<MTDealJson>();
+            return new List<MTDealJsonModel>();
         }
 
-        public async Task<bool> Initialize(MTAccountViewModel account)
+        public async Task<bool> Initialize(MTAccountJsonModel account)
         {
             string baseUrl = "http://10.125.41.146:5000";
 

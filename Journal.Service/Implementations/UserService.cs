@@ -1,5 +1,5 @@
 ﻿using Journal.Domain.Responses;
-using Journal.Domain.ViewModels;
+using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
 using Journal.DAL.Repositories;
 using Journal.Domain.Enums;
@@ -17,7 +17,7 @@ namespace Journal.Service.Implementations
         {
             _userRepository = userRepository;
         }
-        public async Task<BaseResponse<User>> CreateAccount(SignUpUserViewModel user)
+        public async Task<BaseResponse<User>> CreateAccount(SignUpUserJsonModel user)
         {
             var baseResponse = new BaseResponse<User>();
             try
@@ -53,7 +53,7 @@ namespace Journal.Service.Implementations
             return baseResponse;
         }
 
-        public async Task<BaseResponse<User>> Verify(LoginUserViewModel user)
+        public async Task<BaseResponse<User>> Verify(LoginUserJsonModel user)
         {
             var response = new BaseResponse<User>();
             try

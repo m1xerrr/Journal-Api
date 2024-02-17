@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Journal.Domain.ViewModels
+namespace Journal.Domain.JsonModels
 {
-    public class LoginUserViewModel
+    public class LoginUserJsonModel
     {
         public string Email { get; set; }
         public string Password { get; set; }

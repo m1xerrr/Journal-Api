@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Journal.Domain.ViewModels;
+using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
 
 namespace Journal.Controllers
@@ -14,13 +14,13 @@ namespace Journal.Controllers
             _userService = userService;
         }
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginUserViewModel user)
+        public async Task<IActionResult> Login([FromBody] LoginUserJsonModel user)
         {
             var response = await _userService.Verify(user);
             return Json(response);
         }
         [HttpPost("signup")]
-        public async Task<IActionResult> SignUp([FromBody] SignUpUserViewModel user)
+        public async Task<IActionResult> SignUp([FromBody] SignUpUserJsonModel user)
         {
             var response = await _userService.CreateAccount(user);
             return Json(response);

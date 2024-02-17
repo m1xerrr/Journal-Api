@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Journal.Domain.Models
+namespace Journal.Domain.JsonModels
 {
-    public class MTDealJson
+    public class MTDealJsonModel
     {
         [JsonProperty("comment")]
         public string Comment { get; set; }

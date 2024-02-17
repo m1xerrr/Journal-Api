@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Journal.Domain.ViewModels
+namespace Journal.Domain.JsonModels
 {
-    public class SignUpUserViewModel
+    public class SignUpUserJsonModel
     {
         public string Name { get; set; }
         public string Email { get; set; }

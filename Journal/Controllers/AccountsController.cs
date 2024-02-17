@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Journal.Domain.ViewModels;
+using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
 
 namespace Journal.Controllers
@@ -13,7 +13,7 @@ namespace Journal.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddMTAccount([FromBody] MTAccountViewModel mtAccountModel)
+        public async Task<IActionResult> AddMTAccount([FromBody] MTAccountJsonModel mtAccountModel)
         {
             var response = await _mtAccountService.AddAccount(mtAccountModel);
             return Json(response);

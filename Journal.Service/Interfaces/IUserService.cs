@@ -1,14 +1,14 @@
 ﻿using Journal.Domain.Models;
 using Journal.Domain.Responses;
-using Journal.Domain.ViewModels;
+using Journal.Domain.JsonModels;
 
 namespace Journal.Service.Interfaces
 {
     public interface IUserService
     {
-        Task<BaseResponse<User>> CreateAccount(SignUpUserViewModel user);
+        Task<BaseResponse<User>> CreateAccount(SignUpUserJsonModel user);
 
-        Task<BaseResponse<User>> Verify(LoginUserViewModel user);
+        Task<BaseResponse<User>> Verify(LoginUserJsonModel user);
 
     }
 }

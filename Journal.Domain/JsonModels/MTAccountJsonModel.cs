@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Journal.Domain.ViewModels
+namespace Journal.Domain.JsonModels
 {
-    public class MTAccountViewModel
+    public class MTAccountJsonModel
     {
         public Guid Id { get; set; }
 

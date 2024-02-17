@@ -4,7 +4,7 @@ using Journal.Domain.ResponseModels;
 using Journal.Domain.Enums;
 using Journal.Domain.Models;
 using Journal.DAL.Interfaces;
-using Journal.Domain.ViewModels;
+using Journal.Domain.JsonModels;
 
 namespace Journal.Service.Implementations
 {
@@ -19,7 +19,7 @@ namespace Journal.Service.Implementations
             _mtDealRepository = mtDealRepository;  
         }
 
-        public async Task<BaseResponse<MTAccountData>> GetAccountData(MTAccountViewModel account)
+        public async Task<BaseResponse<MTAccountData>> GetAccountData(MTAccountJsonModel account)
         {
             var response = new BaseResponse<MTAccountData>();
             try
@@ -46,7 +46,7 @@ namespace Journal.Service.Implementations
             return response;
         }
         
-        private async Task<MTAccountData> DealstoAccount(Guid accountID, List<MTDealJson> dealsList)
+        private async Task<MTAccountData> DealstoAccount(Guid accountID, List<MTDealJsonModel> dealsList)
         {
             var account = new MTAccountData();
             var deposits = dealsList.Where(deal => deal.Comment.Contains("Deposit")).ToList();

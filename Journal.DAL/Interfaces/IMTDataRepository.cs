@@ -1,5 +1,4 @@
-﻿using Journal.Domain.Models;
-using Journal.Domain.ViewModels;
+﻿using Journal.Domain.JsonModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +9,8 @@ namespace Journal.DAL.Interfaces
 {
     public interface IMTDataRepository
     {
-        Task<List<MTDealJson>> GetDeals(MTAccountViewModel account);
+        Task<List<MTDealJsonModel>> GetDeals(MTAccountJsonModel account);
 
-        Task<bool> Initialize(MTAccountViewModel account);
+        Task<bool> Initialize(MTAccountJsonModel account);
     }
 }

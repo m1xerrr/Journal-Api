@@ -1,7 +1,7 @@
 ﻿using Journal.DAL.Interfaces;
 using Journal.Domain.Models;
 using Journal.Domain.Responses;
-using Journal.Domain.ViewModels;
+using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
 using Journal.Domain.ResponseModels;
 
@@ -20,7 +20,7 @@ namespace Journal.Service.Implementations
             _mtDataRepository = mtDataRepository;
         }
 
-        public async Task<BaseResponse<MTAccountResponseModel>> AddAccount(MTAccountViewModel accountModel)
+        public async Task<BaseResponse<MTAccountResponseModel>> AddAccount(MTAccountJsonModel accountModel)
         {
             var response = new BaseResponse<MTAccountResponseModel>();
             try
