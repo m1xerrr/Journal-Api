@@ -20,6 +20,7 @@ namespace Journal.Domain.ResponseModels
 
         public double Profit { get; set; }
 
+        public double ProfitPercentage { get; set; }
         public double Volume { get; set; }
 
         public double Comission { get; set; }
@@ -51,6 +52,7 @@ namespace Journal.Domain.ResponseModels
             this.CloseType = deal.CloseType;
             this.Notes = deal.Notes;
             this.Image = deal.Image;
+            this.ProfitPercentage = deal.ProfitPercentage;
         }
         public MTDealResponseModel() { }
     }

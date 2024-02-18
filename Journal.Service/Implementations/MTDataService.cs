@@ -83,6 +83,7 @@ namespace Journal.Service.Implementations
                     if (deal.Comment.Contains("tp")) { accountDeal.CloseType = CloseType.TakeProfit; }
                     else if (deal.Comment.Contains("sl")) { accountDeal.CloseType = CloseType.StopLoss; }
                     else { accountDeal.CloseType = CloseType.Market; }
+                    accountDeal.ProfitPercentage = deal.Profit / account.Deposit;
                 }
             }
 
@@ -98,6 +99,7 @@ namespace Journal.Service.Implementations
             account.MarketDeals = account.Deals.Where(x => x.CloseType == CloseType.Market).Count();
             account.LongDeals = account.Deals.Where(x => x.Direction == Direction.Long).Count();
             account.ShortDeals = account.Deals.Where(x => x.Direction == Direction.Short).Count();
+            account.ProfitPercentage = account.Profit / account.Deposit;
             await AddDealsToDb(accountID, dbDeals);
             return account;
         }

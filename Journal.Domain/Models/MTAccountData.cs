@@ -19,6 +19,8 @@ namespace Journal.Domain.Models
 
         public double Profit { get; set; }
 
+        public double ProfitPercentage { get; set; }
+
         public List<MTDealResponseModel> Deals { get; set; }
 
         public int TotalDeals { get; set; }

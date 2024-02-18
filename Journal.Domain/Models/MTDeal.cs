@@ -17,6 +17,8 @@ namespace Journal.Domain.Models
 
         public double Profit { get; set; }
 
+        public double ProfitPercentage { get; set; }
+
         public double Volume { get; set; }
 
         public double Comission { get; set; }
