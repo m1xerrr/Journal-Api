@@ -1,4 +1,4 @@
-﻿using Automarket.DAL;
+﻿using Journal.DAL;
 using Journal.DAL.Interfaces;
 using Journal.Domain.Models;
 
@@ -15,14 +15,14 @@ namespace Journal.DAL.Repositories
         public async Task<bool> Create(MTAccount entity)
         {
             await _db.MTAccounts.AddAsync(entity);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges();
             return true;
         }
 
         public async Task<bool> Delete(MTAccount entity)
         {
             _db.MTAccounts.Remove(entity);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges();
             return true;
         }
 
@@ -33,9 +33,9 @@ namespace Journal.DAL.Repositories
             return true;
         }
 
-        public async Task<IQueryable<MTAccount>> SelectAll()
+        public List<MTAccount> SelectAll()
         {
-            return await Task.FromResult(_db.MTAccounts);
+            return _db.MTAccounts.ToList();
         }
     }
 }

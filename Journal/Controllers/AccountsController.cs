@@ -15,12 +15,14 @@ namespace Journal.Controllers
         [HttpPost("AddMTAccount")]
         public async Task<IActionResult> AddMTAccount([FromBody] MTAccountJsonModel mtAccountModel)
         {
-            return Json(_mtAccountService.AddAccount(mtAccountModel));
+            var response = await _mtAccountService.AddAccount(mtAccountModel);
+            return Json(response);
         }
         [HttpPost("DeleteMTAccount")]
         public async Task<IActionResult> DeleteMTAccount([FromBody] Guid accountId)
         {
-            return Json(_mtAccountService.DeleteMTAccount(accountId));
+            var response = await _mtAccountService.DeleteMTAccount(accountId);
+            return Json(response);
         }
     }
 }

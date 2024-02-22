@@ -18,26 +18,30 @@ namespace Journal.Controllers
         [HttpPost("Data")]
         public async Task<IActionResult> MTAccountData([FromBody] MTAccountJsonModel account)
         {
-            return Json(await _mtDataService.GetAccountData(account));
+            var response = await _mtDataService.GetAccountData(account);
+            return Json(response);
         }
 
         [HttpPost("AddDealImg")]
-        public async Task<IActionResult> MTDealAddImg([FromBody] MTDealAddJsonModel deal)
+        public async Task<IActionResult> MTDealAddImg([FromBody] MTDealEditJsonModel deal)
         {
-            return Json(await _mtDealService.AddImage(deal.Id, deal.Field));
+            var response = await _mtDealService.AddImage(deal.Id, deal.accountId, deal.Field);
+            return Json(response);
         }
 
         [HttpPost("AddDealNote")]
        
-        public async Task<IActionResult> MTDealAddNote([FromBody] MTDealAddJsonModel deal)
+        public async Task<IActionResult> MTDealAddNote([FromBody] MTDealEditJsonModel deal)
         {
-            return Json(await _mtDealService.AddNotes(deal.Id, deal.Field));
+            var response = await _mtDealService.AddNotes(deal.Id, deal.accountId, deal.Field);
+            return Json(response);
         }
 
         [HttpPost("Deal")]
-        public async Task<IActionResult> MTDeal([FromBody] int id)
+        public async Task<IActionResult> MTDeal([FromBody] MTDealEditJsonModel deal)
         {
-            return Json(await _mtDealService.GetDeal(id));
+            var response = await _mtDealService.GetDeal(deal.Id, deal.accountId);
+            return Json(response);
         }
     }
 }

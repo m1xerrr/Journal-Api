@@ -30,11 +30,17 @@ namespace Journal.Domain.ResponseModels
             Password = user.Password;
             Role = user.Role;
             Accounts = new List<MTAccountResponseModel>();
-            foreach(var account in user.Accounts)
+            if (user.Accounts != null)
             {
-                Accounts.Add(new MTAccountResponseModel(account));
+                foreach (var account in user.Accounts)
+                {
+                    Accounts.Add(new MTAccountResponseModel(account));
+                }
             }
-            Subscription = new SubscriptionResponseModel(user.Subscription);
+            if (user.Subscription != null)
+            {
+                Subscription = new SubscriptionResponseModel(user.Subscription);
+            }
         }
     }
 }

@@ -1,11 +1,6 @@
-﻿using Automarket.DAL;
+﻿using Journal.DAL;
 using Journal.DAL.Interfaces;
 using Journal.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Journal.DAL.Repositories
 {
@@ -39,9 +34,9 @@ namespace Journal.DAL.Repositories
             return true;
         }
 
-        public async Task<IQueryable<MTDeal>> SelectAll()
+        public List<MTDeal> SelectAll()
         {
-            return await Task.FromResult(_db.MTDeals);
+            return _db.MTDeals.ToList();
         }
     }
 }

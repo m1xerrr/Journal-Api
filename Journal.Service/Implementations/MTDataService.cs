@@ -106,7 +106,7 @@ namespace Journal.Service.Implementations
 
         private async Task AddDealsToDb(Guid accountId, List<MTDeal> allDeals)
         {
-            var dealsDB = await _mtDealRepository.SelectAll();
+            var dealsDB = _mtDealRepository.SelectAll();
             var deals = dealsDB.Where(x => x.AccountId == accountId).ToList();
             var newDeals = allDeals.Where(newDeal => !deals.Any(existingDeal => existingDeal.PositionId == newDeal.PositionId));
             foreach (var deal in newDeals)

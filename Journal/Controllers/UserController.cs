@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
+using Journal.Domain.Models;
 
 namespace Journal.Controllers
 {
@@ -16,17 +17,20 @@ namespace Journal.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginUserJsonModel user)
         {
-            return Json(await _userService.Verify(user));
+            var response = await _userService.Verify(user);
+            return Json(response);
         }
         [HttpPost("Signup")]
         public async Task<IActionResult> SignUp([FromBody] SignUpUserJsonModel user)
         {
-            return Json(await _userService.CreateAccount(user));
+            var response = await _userService.CreateAccount(user);
+            return Json(response);
         }
         [HttpPost("Delete")]
         public async Task<IActionResult> Delete([FromBody] Guid userId)
         {
-            return Json(await _userService.DeleteAccount(userId));
+            var response = await _userService.DeleteAccount(userId);
+            return Json(response);
         }
     }
 }

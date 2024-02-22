@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace Journal.Domain.JsonModels
 {
-    public class MTDealAddJsonModel
+    public class MTDealEditJsonModel
     {
         public int Id { get; set; }
 
         public string Field { get; set; }
+
+        public Guid accountId { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Automarket.DAL;
+﻿using Journal.DAL;
 using Journal.DAL.Interfaces;
 using Journal.Domain.Models;
 using System;
@@ -38,9 +38,9 @@ namespace Journal.DAL.Repositories
             return true;
         }
 
-        public async Task<IQueryable<Subscription>> SelectAll()
+        public List<Subscription> SelectAll()
         {
-            return await Task.FromResult(_db.Subscriptions);
+            return _db.Subscriptions.ToList();
         }
     }
 }

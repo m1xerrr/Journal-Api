@@ -11,10 +11,10 @@ namespace Journal.Service.Interfaces
     public interface IMTDealService
     {
 
-        Task<BaseResponse<MTDealResponseModel>> GetDeal(int id);
+        Task<BaseResponse<MTDealResponseModel>> GetDeal(int positionid, Guid accountId);
 
-        Task<BaseResponse<MTDealResponseModel>> AddImage(int dealId, string img);
+        Task<BaseResponse<MTDealResponseModel>> AddImage(int dealId, Guid accountId, string img);
 
-        Task<BaseResponse<MTDealResponseModel>> AddNotes(int dealId, string note);
+        Task<BaseResponse<MTDealResponseModel>> AddNotes(int dealId, Guid accountId, string note);
     }
 }

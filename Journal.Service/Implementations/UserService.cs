@@ -22,7 +22,7 @@ namespace Journal.Service.Implementations
             var baseResponse = new BaseResponse<UserResponseModel>();
             try
             {
-                var users = await _userRepository.SelectAll();
+                var users = _userRepository.SelectAll();
                 if (users.FirstOrDefault(x => x.Email == user.Email) != null)
                 {
                     baseResponse.StatusCode = StatusCode.EmailError;
@@ -59,7 +59,8 @@ namespace Journal.Service.Implementations
             try
             {
                 user.Password = HashPasswordHelper.HashPassword(user.Password);
-                var users = await _userRepository.SelectAll();
+                var users = _userRepository.SelectAll();
+                var u = users.ToList();
                 if(users.FirstOrDefault(x=>x.Email == user.Email && x.Password == user.Password) != null)
                 {
                     response.StatusCode = StatusCode.OK;
@@ -83,7 +84,7 @@ namespace Journal.Service.Implementations
             var response = new BaseResponse<bool>();
             try
             {
-                var users = await _userRepository.SelectAll();
+                var users = _userRepository.SelectAll();
                 var user = users.FirstOrDefault(x => x.Id == userId);
                 if (user == null)
                 {
@@ -97,6 +98,7 @@ namespace Journal.Service.Implementations
                     {
                         response.Data = true;
                         response.StatusCode = StatusCode.OK;
+                        response.Message = "User deleted";
                     }
                     else
                     {

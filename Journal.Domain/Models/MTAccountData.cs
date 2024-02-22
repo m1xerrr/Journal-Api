@@ -35,6 +35,5 @@ namespace Journal.Domain.Models
 
         public int ShortDeals { get; set; }
 
-
     }
 }

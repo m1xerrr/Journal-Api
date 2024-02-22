@@ -4,6 +4,7 @@ using Journal.Domain.Responses;
 using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
 using Journal.Domain.ResponseModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace Journal.Service.Implementations
 {
@@ -25,32 +26,35 @@ namespace Journal.Service.Implementations
             var response = new BaseResponse<MTAccountResponseModel>();
             try
             {
-                var accounts = await _mtAccountRepository.SelectAll();
-                if (accounts.FirstOrDefault(x => x.Login == accountModel.Login) != null)
+                var accs = _mtAccountRepository.SelectAll();
+                if (accs.FirstOrDefault(x => x.Login == accountModel.Login) != null)
                 {
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     response.Message = "Account exists";
                     return response;
                 }
-
-                if(!await _mtDataRepository.Initialize(accountModel))
+                if (!await _mtDataRepository.Initialize(accountModel))
                 {
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     response.Message = "Account initializing error";
+                    return response;
                 }
-                else {
-                    var account = new MTAccount();
-                    var users = await _userRepository.SelectAll();
+                
+                var account = new MTAccount();
 
-                    account.Id = Guid.NewGuid();
-                    account.Login = accountModel.Login;
-                    account.Password = accountModel.Password;
-                    account.Server = accountModel.Server;
-                    account.UserId = accountModel.UserId;
-                    account.User = users.FirstOrDefault(x => x.Id == accountModel.UserId);
+                account.Id = Guid.NewGuid();
+                account.Login = accountModel.Login;
+                account.Password = accountModel.Password;
+                account.Server = accountModel.Server;
+                account.UserId = accountModel.UserId;
+                var users = _userRepository.SelectAll();
+                account.User = users.FirstOrDefault(x => x.Id == accountModel.UserId);
+                account.User.Accounts.Add(account);
 
-                    if (await _mtAccountRepository.Create(account))
+                if (await _mtAccountRepository.Create(account))
                     {
+                         
+                        _userRepository.Edit(account.User);
                         response.StatusCode = Domain.Enums.StatusCode.OK;
                         response.Data = new MTAccountResponseModel(account);
                     }
@@ -59,8 +63,6 @@ namespace Journal.Service.Implementations
                         response.StatusCode = Domain.Enums.StatusCode.ERROR;
                         response.Message = "DB Error";
                     }
-                }
-
 
             }
             catch(Exception ex) 
@@ -76,7 +78,7 @@ namespace Journal.Service.Implementations
             var response = new BaseResponse<bool>();
             try
             {
-                var accounts = await _mtAccountRepository.SelectAll();
+                var accounts = _mtAccountRepository.SelectAll();
                 var account = accounts.FirstOrDefault(x => x.Id == accountId);
                 if(account == null)
                 {
@@ -90,6 +92,7 @@ namespace Journal.Service.Implementations
                     {
                         response.Data = true;
                         response.StatusCode = Domain.Enums.StatusCode.OK;
+                        response.Message = "Success";
                         
                     }
                     else

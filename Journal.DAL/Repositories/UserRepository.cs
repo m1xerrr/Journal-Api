@@ -1,6 +1,7 @@
-﻿using Automarket.DAL;
+﻿using Journal.DAL;
 using Journal.DAL.Interfaces;
 using Journal.Domain.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Journal.DAL.Repositories
 {
@@ -33,9 +34,9 @@ namespace Journal.DAL.Repositories
             return true;
         }
 
-        public async Task<IQueryable<User>> SelectAll()
+        public List<User> SelectAll()
         {
-            return await Task.FromResult(_db.Users);
+            return _db.Users.ToList();
         }
     }
 }

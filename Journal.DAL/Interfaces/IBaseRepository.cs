@@ -2,7 +2,7 @@
 {
     public interface IBaseRepository<T>
     {
-        Task<IQueryable<T>> SelectAll();
+        List<T> SelectAll();
 
         Task<bool> Create(T entity);
 

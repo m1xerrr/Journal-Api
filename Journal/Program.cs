@@ -1,5 +1,5 @@
-
-using Automarket.DAL;
+using Swashbuckle.AspNetCore.Swagger;
+using Journal.DAL;
 using Journal.DAL.Interfaces;
 using Journal.DAL.Repositories;
 using Journal.Service.Implementations;
@@ -29,6 +29,7 @@ namespace Journal
             builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             builder.Services.AddScoped<IMTDataRepository, MTDataRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IMTDealService, MTDealService>();
             builder.Services.AddScoped<IMTAccountService, MTAccountService>();
             builder.Services.AddScoped<IMTDataService, MTDataService>();
             builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();

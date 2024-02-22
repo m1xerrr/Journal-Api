@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\c#\\Journal API\\Journal.Service\\Journal.Service.csproj": {}
+    "D:\\SE\\C#\\REST API\\Journal\\Journal.Service\\Journal.Service.csproj": {}
   },
   "projects": {
-    "D:\\c#\\Journal API\\Journal.DAL\\Journal.DAL.csproj": {
+    "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\c#\\Journal API\\Journal.DAL\\Journal.DAL.csproj",
+        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj",
         "projectName": "Journal.DAL",
-        "projectPath": "D:\\c#\\Journal API\\Journal.DAL\\Journal.DAL.csproj",
-        "packagesPath": "C:\\Users\\Mik\\.nuget\\packages\\",
-        "outputPath": "D:\\c#\\Journal API\\Journal.DAL\\obj\\",
+        "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj",
+        "packagesPath": "C:\\Users\\mikgy\\.nuget\\packages\\",
+        "outputPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Mik\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\mikgy\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,14 +26,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\c#\\Journal API\\Journal.Domain\\Journal.Domain.csproj": {
-                "projectPath": "D:\\c#\\Journal API\\Journal.Domain\\Journal.Domain.csproj"
+              "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj": {
+                "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj"
               }
             }
           }
@@ -47,6 +48,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Swashbuckle.AspNetCore.Swagger": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -63,24 +70,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\c#\\Journal API\\Journal.Domain\\Journal.Domain.csproj": {
+    "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\c#\\Journal API\\Journal.Domain\\Journal.Domain.csproj",
+        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj",
         "projectName": "Journal.Domain",
-        "projectPath": "D:\\c#\\Journal API\\Journal.Domain\\Journal.Domain.csproj",
-        "packagesPath": "C:\\Users\\Mik\\.nuget\\packages\\",
-        "outputPath": "D:\\c#\\Journal API\\Journal.Domain\\obj\\",
+        "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj",
+        "packagesPath": "C:\\Users\\mikgy\\.nuget\\packages\\",
+        "outputPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Mik\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\mikgy\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -89,6 +96,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -126,6 +134,10 @@
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.3, )"
+            },
+            "Swashbuckle.AspNetCore.Swagger": {
+              "target": "Package",
+              "version": "[6.5.0, )"
             }
           },
           "imports": [
@@ -144,24 +156,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\c#\\Journal API\\Journal.Service\\Journal.Service.csproj": {
+    "D:\\SE\\C#\\REST API\\Journal\\Journal.Service\\Journal.Service.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\c#\\Journal API\\Journal.Service\\Journal.Service.csproj",
+        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal\\Journal.Service\\Journal.Service.csproj",
         "projectName": "Journal.Service",
-        "projectPath": "D:\\c#\\Journal API\\Journal.Service\\Journal.Service.csproj",
-        "packagesPath": "C:\\Users\\Mik\\.nuget\\packages\\",
-        "outputPath": "D:\\c#\\Journal API\\Journal.Service\\obj\\",
+        "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Service\\Journal.Service.csproj",
+        "packagesPath": "C:\\Users\\mikgy\\.nuget\\packages\\",
+        "outputPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Service\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Mik\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\mikgy\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -170,17 +182,18 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\c#\\Journal API\\Journal.DAL\\Journal.DAL.csproj": {
-                "projectPath": "D:\\c#\\Journal API\\Journal.DAL\\Journal.DAL.csproj"
+              "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj": {
+                "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj"
               },
-              "D:\\c#\\Journal API\\Journal.Domain\\Journal.Domain.csproj": {
-                "projectPath": "D:\\c#\\Journal API\\Journal.Domain\\Journal.Domain.csproj"
+              "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj": {
+                "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj"
               }
             }
           }
@@ -214,6 +227,10 @@
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.3, )"
+            },
+            "Swashbuckle.AspNetCore.Swagger": {
+              "target": "Package",
+              "version": "[6.5.0, )"
             }
           },
           "imports": [
@@ -232,7 +249,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Journal.Domain.Models;
 
-namespace Automarket.DAL
+namespace Journal.DAL
 {
     public class ApplicationDbContext : DbContext
     {

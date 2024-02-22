@@ -14,13 +14,13 @@ namespace Journal.Service.Implementations
             _mtDealRepository = mtDealRepository;
         }
 
-        public async Task<BaseResponse<MTDealResponseModel>> AddImage(int dealId, string img)
+        public async Task<BaseResponse<MTDealResponseModel>> AddImage(int dealId, Guid accountId, string img)
         {
             var response = new BaseResponse<MTDealResponseModel>();
             try
             {
-                var deals = await _mtDealRepository.SelectAll();
-                var deal = deals.FirstOrDefault(x => x.Id == dealId);
+                var deals = _mtDealRepository.SelectAll();
+                var deal = deals.FirstOrDefault(x => x.PositionId == dealId && x.AccountId == accountId);
                 if (deal == null)
                 {
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
@@ -49,13 +49,13 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<MTDealResponseModel>> AddNotes(int dealId, string note)
+        public async Task<BaseResponse<MTDealResponseModel>> AddNotes(int dealId, Guid accountId, string note)
         {
             var response = new BaseResponse<MTDealResponseModel>();
             try
             {
-                var deals = await _mtDealRepository.SelectAll();
-                var deal = deals.FirstOrDefault(x => x.Id == dealId);
+                var deals = _mtDealRepository.SelectAll();
+                var deal = deals.FirstOrDefault(x => x.PositionId == dealId && x.AccountId == accountId);
                 if (deal == null)
                 {
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
@@ -84,13 +84,13 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<MTDealResponseModel>> GetDeal(int id)
+        public async Task<BaseResponse<MTDealResponseModel>> GetDeal(int positionid, Guid accountId)
         {
             var response = new BaseResponse<MTDealResponseModel>();
             try
             {
-                var deals = await _mtDealRepository.SelectAll();
-                var deal = deals.FirstOrDefault(x => x.Id == id);
+                var deals = _mtDealRepository.SelectAll();
+                var deal = deals.FirstOrDefault(x => x.PositionId == positionid && x.AccountId == accountId);
                 if (deal == null)
                 {
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
