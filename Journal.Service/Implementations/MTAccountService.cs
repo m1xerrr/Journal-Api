@@ -49,12 +49,9 @@ namespace Journal.Service.Implementations
                 account.UserId = accountModel.UserId;
                 var users = _userRepository.SelectAll();
                 account.User = users.FirstOrDefault(x => x.Id == accountModel.UserId);
-                account.User.Accounts.Add(account);
 
                 if (await _mtAccountRepository.Create(account))
                     {
-                         
-                        _userRepository.Edit(account.User);
                         response.StatusCode = Domain.Enums.StatusCode.OK;
                         response.Data = new MTAccountResponseModel(account);
                     }
