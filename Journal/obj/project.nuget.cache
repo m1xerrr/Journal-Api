@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "I/qqNG1xXma4xRNHjxk93n9WApI8Qm30Pen7kavbCeaS4etxMvDjhII6DaSkK5R3Th/1FmC0zp7vJAtWwBU1Qw==",
+  "dgSpecHash": "1AHlGis5JB6ZnG6faU7XEErQQKPipLAU33VSRjTe3TWIB9W74RgFGTDPj3W5qFKG0Wat6uCh+TLl9tbhLPinvg==",
   "success": true,
-  "projectFilePath": "D:\\SE\\C#\\REST API\\Journal\\Journal\\Journal.csproj",
+  "projectFilePath": "D:\\SE\\C#\\REST API\\Journal\\Journal.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mikgy\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\mikgy\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

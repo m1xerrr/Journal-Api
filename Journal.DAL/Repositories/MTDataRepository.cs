@@ -8,7 +8,7 @@ namespace Journal.DAL.Repositories
     {
         public async Task<List<MTDealJsonModel>> GetDeals(MTAccountJsonModel account)
         {
-            string baseUrl = "http://10.125.40.15:5000";
+            string baseUrl = "http://109.199.114.215:5000";
 
             string endpoint = $"/get_deals?login={account.Login}&password={account.Password}&server={account.Server}";
 
@@ -35,7 +35,7 @@ namespace Journal.DAL.Repositories
 
         public async Task<bool> Initialize(MTAccountJsonModel account)
         {
-            string baseUrl = "http://10.125.40.15:5000";
+            string baseUrl = "http://109.199.114.215:5000";
 
             string endpoint = $"/initialize?login={account.Login}&password={account.Password}&server={account.Server}";
 

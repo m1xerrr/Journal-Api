@@ -36,3 +36,16 @@ D:\c#\Journal API\Journal.Domain\obj\Debug\net8.0\Journal.Domain.dll
 D:\c#\Journal API\Journal.Domain\obj\Debug\net8.0\refint\Journal.Domain.dll
 D:\c#\Journal API\Journal.Domain\obj\Debug\net8.0\Journal.Domain.pdb
 D:\c#\Journal API\Journal.Domain\obj\Debug\net8.0\ref\Journal.Domain.dll
+D:\SE\C#\REST API\Journal.Domain\bin\Debug\net8.0\Journal.Domain.deps.json
+D:\SE\C#\REST API\Journal.Domain\bin\Debug\net8.0\Journal.Domain.dll
+D:\SE\C#\REST API\Journal.Domain\bin\Debug\net8.0\Journal.Domain.pdb
+D:\SE\C#\REST API\Journal.Domain\obj\Debug\net8.0\Journal.Domain.csproj.AssemblyReference.cache
+D:\SE\C#\REST API\Journal.Domain\obj\Debug\net8.0\Journal.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\SE\C#\REST API\Journal.Domain\obj\Debug\net8.0\Journal.Domain.AssemblyInfoInputs.cache
+D:\SE\C#\REST API\Journal.Domain\obj\Debug\net8.0\Journal.Domain.AssemblyInfo.cs
+D:\SE\C#\REST API\Journal.Domain\obj\Debug\net8.0\Journal.Domain.csproj.CoreCompileInputs.cache
+D:\SE\C#\REST API\Journal.Domain\obj\Debug\net8.0\Journal.Domain.sourcelink.json
+D:\SE\C#\REST API\Journal.Domain\obj\Debug\net8.0\Journal.Domain.dll
+D:\SE\C#\REST API\Journal.Domain\obj\Debug\net8.0\refint\Journal.Domain.dll
+D:\SE\C#\REST API\Journal.Domain\obj\Debug\net8.0\Journal.Domain.pdb
+D:\SE\C#\REST API\Journal.Domain\obj\Debug\net8.0\ref\Journal.Domain.dll

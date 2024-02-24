@@ -2808,11 +2808,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj",
+      "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal.DAL\\Journal.DAL.csproj",
       "projectName": "Journal.DAL",
-      "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj",
+      "projectPath": "D:\\SE\\C#\\REST API\\Journal.DAL\\Journal.DAL.csproj",
       "packagesPath": "C:\\Users\\mikgy\\.nuget\\packages\\",
-      "outputPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\obj\\",
+      "outputPath": "D:\\SE\\C#\\REST API\\Journal.DAL\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -2834,8 +2834,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj": {
-              "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj"
+            "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj": {
+              "projectPath": "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj"
             }
           }
         }

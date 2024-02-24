@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "7YQKTddei2j1KEpQj734A2AzDKyig+aN4YG7Oc+VbCXml5gaVAQjmBzCP3cqFSFEYdSHNl2Axu2414gfIwQCfg==",
+  "dgSpecHash": "auiQzpKV3rtoBub3/52oO2JElGHgLzvXwIYZZjjyToHteISBqsXHPL5fz+zqSkOci3Ola4339itujZSr3yaSQA==",
   "success": true,
-  "projectFilePath": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj",
+  "projectFilePath": "D:\\SE\\C#\\REST API\\Journal.DAL\\Journal.DAL.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mikgy\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\mikgy\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

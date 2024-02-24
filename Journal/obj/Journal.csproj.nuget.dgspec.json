@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\SE\\C#\\REST API\\Journal\\Journal\\Journal.csproj": {}
+    "D:\\SE\\C#\\REST API\\Journal\\Journal.csproj": {}
   },
   "projects": {
-    "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj": {
+    "D:\\SE\\C#\\REST API\\Journal.DAL\\Journal.DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj",
+        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal.DAL\\Journal.DAL.csproj",
         "projectName": "Journal.DAL",
-        "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj",
+        "projectPath": "D:\\SE\\C#\\REST API\\Journal.DAL\\Journal.DAL.csproj",
         "packagesPath": "C:\\Users\\mikgy\\.nuget\\packages\\",
-        "outputPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\obj\\",
+        "outputPath": "D:\\SE\\C#\\REST API\\Journal.DAL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,8 +33,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj": {
-                "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj"
+              "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj": {
+                "projectPath": "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj"
               }
             }
           }
@@ -74,14 +74,14 @@
         }
       }
     },
-    "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj": {
+    "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj",
+        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj",
         "projectName": "Journal.Domain",
-        "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj",
+        "projectPath": "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj",
         "packagesPath": "C:\\Users\\mikgy\\.nuget\\packages\\",
-        "outputPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\obj\\",
+        "outputPath": "D:\\SE\\C#\\REST API\\Journal.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -160,14 +160,14 @@
         }
       }
     },
-    "D:\\SE\\C#\\REST API\\Journal\\Journal.Service\\Journal.Service.csproj": {
+    "D:\\SE\\C#\\REST API\\Journal.Service\\Journal.Service.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal\\Journal.Service\\Journal.Service.csproj",
+        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal.Service\\Journal.Service.csproj",
         "projectName": "Journal.Service",
-        "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Service\\Journal.Service.csproj",
+        "projectPath": "D:\\SE\\C#\\REST API\\Journal.Service\\Journal.Service.csproj",
         "packagesPath": "C:\\Users\\mikgy\\.nuget\\packages\\",
-        "outputPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Service\\obj\\",
+        "outputPath": "D:\\SE\\C#\\REST API\\Journal.Service\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -189,11 +189,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj": {
-                "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj"
+              "D:\\SE\\C#\\REST API\\Journal.DAL\\Journal.DAL.csproj": {
+                "projectPath": "D:\\SE\\C#\\REST API\\Journal.DAL\\Journal.DAL.csproj"
               },
-              "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj": {
-                "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj"
+              "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj": {
+                "projectPath": "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj"
               }
             }
           }
@@ -253,14 +253,14 @@
         }
       }
     },
-    "D:\\SE\\C#\\REST API\\Journal\\Journal\\Journal.csproj": {
+    "D:\\SE\\C#\\REST API\\Journal\\Journal.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal\\Journal\\Journal.csproj",
+        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal\\Journal.csproj",
         "projectName": "Journal",
-        "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal\\Journal.csproj",
+        "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.csproj",
         "packagesPath": "C:\\Users\\mikgy\\.nuget\\packages\\",
-        "outputPath": "D:\\SE\\C#\\REST API\\Journal\\Journal\\obj\\",
+        "outputPath": "D:\\SE\\C#\\REST API\\Journal\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -282,14 +282,14 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj": {
-                "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.DAL\\Journal.DAL.csproj"
+              "D:\\SE\\C#\\REST API\\Journal.DAL\\Journal.DAL.csproj": {
+                "projectPath": "D:\\SE\\C#\\REST API\\Journal.DAL\\Journal.DAL.csproj"
               },
-              "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj": {
-                "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj"
+              "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj": {
+                "projectPath": "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj"
               },
-              "D:\\SE\\C#\\REST API\\Journal\\Journal.Service\\Journal.Service.csproj": {
-                "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Service\\Journal.Service.csproj"
+              "D:\\SE\\C#\\REST API\\Journal.Service\\Journal.Service.csproj": {
+                "projectPath": "D:\\SE\\C#\\REST API\\Journal.Service\\Journal.Service.csproj"
               }
             }
           }

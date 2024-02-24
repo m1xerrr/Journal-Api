@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj": {}
+    "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj": {}
   },
   "projects": {
-    "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj": {
+    "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj",
+        "projectUniqueName": "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj",
         "projectName": "Journal.Domain",
-        "projectPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\Journal.Domain.csproj",
+        "projectPath": "D:\\SE\\C#\\REST API\\Journal.Domain\\Journal.Domain.csproj",
         "packagesPath": "C:\\Users\\mikgy\\.nuget\\packages\\",
-        "outputPath": "D:\\SE\\C#\\REST API\\Journal\\Journal.Domain\\obj\\",
+        "outputPath": "D:\\SE\\C#\\REST API\\Journal.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
