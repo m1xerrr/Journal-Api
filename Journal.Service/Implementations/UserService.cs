@@ -34,7 +34,7 @@ namespace Journal.Service.Implementations
                 newUser.Name = user.Name;
                 newUser.Email = user.Email;
                 newUser.Password = HashPasswordHelper.HashPassword(user.Password);
-                newUser.Role = Role.Administrator;
+                newUser.Role = Role.User;
                 if(await _userRepository.Create(newUser))
                 {
                     baseResponse.StatusCode = StatusCode.OK;
