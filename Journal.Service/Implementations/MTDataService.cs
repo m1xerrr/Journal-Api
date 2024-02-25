@@ -86,11 +86,6 @@ namespace Journal.Service.Implementations
                     accountDeal.ProfitPercentage = deal.Profit / account.Deposit;
                 }
             }
-
-            foreach (var deal in dbDeals)
-            {
-                account.Deals.Add(new MTDealResponseModel(deal));
-            }
             account.Profit = account.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
             account.currentBalance = account.Deposit + account.Profit;
             account.TotalDeals = account.Deals.Count;
@@ -100,11 +95,11 @@ namespace Journal.Service.Implementations
             account.LongDeals = account.Deals.Where(x => x.Direction == Direction.Long).Count();
             account.ShortDeals = account.Deals.Where(x => x.Direction == Direction.Short).Count();
             account.ProfitPercentage = account.Profit / account.Deposit;
-            await AddDealsToDb(accountID, dbDeals);
+            account.Deals = await AddDealsToDb(accountID, dbDeals, account);
             return account;
         }
 
-        private async Task AddDealsToDb(Guid accountId, List<MTDeal> allDeals)
+        private async Task<List<MTDealResponseModel>> AddDealsToDb(Guid accountId, List<MTDeal> allDeals, MTAccountData account)
         {
             var dealsDB = _mtDealRepository.SelectAll();
             var deals = dealsDB.Where(x => x.AccountId == accountId).ToList();
@@ -114,6 +109,12 @@ namespace Journal.Service.Implementations
                 deal.AccountId = accountId;
                 await _mtDealRepository.Create(deal);
             }
+            var response = new List<MTDealResponseModel>();
+            foreach (var deal in _mtDealRepository.SelectAll().ToList())
+            {
+                response.Add(new MTDealResponseModel(deal));
+            }
+            return response;
         }
     }
 }
