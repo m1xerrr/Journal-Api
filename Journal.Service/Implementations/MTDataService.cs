@@ -86,6 +86,7 @@ namespace Journal.Service.Implementations
                     accountDeal.ProfitPercentage = deal.Profit / account.Deposit;
                 }
             }
+            account.Deals = await AddDealsToDb(accountID, dbDeals, account);
             account.Profit = account.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
             account.currentBalance = account.Deposit + account.Profit;
             account.TotalDeals = account.Deals.Count;
@@ -95,7 +96,6 @@ namespace Journal.Service.Implementations
             account.LongDeals = account.Deals.Where(x => x.Direction == Direction.Long).Count();
             account.ShortDeals = account.Deals.Where(x => x.Direction == Direction.Short).Count();
             account.ProfitPercentage = account.Profit / account.Deposit;
-            account.Deals = await AddDealsToDb(accountID, dbDeals, account);
             return account;
         }
 

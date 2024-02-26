@@ -108,5 +108,34 @@ namespace Journal.Service.Implementations
             }
             return response;
         }
+
+        public BaseResponse<List<MTAccountResponseModel>> GetMTAccountsByUser(Guid userId)
+        {
+            var response = new BaseResponse<List<MTAccountResponseModel>>();
+            try
+            {
+                var accounts = _mtAccountRepository.SelectAll().Where(x => x.UserId == userId);
+                var accountsResponse = new List<MTAccountResponseModel>();
+                foreach (var account in accounts)
+                {
+                    accountsResponse.Add(new MTAccountResponseModel(account));
+                }
+                if(accountsResponse.Count == 0)
+                {
+                    response.StatusCode= Domain.Enums.StatusCode.ERROR;
+                    response.Message = "User has ho accounts";
+                }
+                else
+                {
+                    response.StatusCode = Domain.Enums.StatusCode.OK;
+                    response.Data = accountsResponse;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
     }
 }

@@ -12,5 +12,17 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<bool>> DeleteAccount(Guid userId);
 
+        Task<BaseResponse<List<UserResponseModel>>> GetAllUsers();
+
+        Task<BaseResponse<UserResponseModel>> ChangePassword(EditUserJsonModel userModel);
+
+        Task<BaseResponse<UserResponseModel>> ChangeName(EditUserJsonModel userModel);
+
+        Task<BaseResponse<UserResponseModel>> ChangeEmail(EditUserJsonModel userModel);
+
+        Task<BaseResponse<UserResponseModel>> ChangeRole(EditUserJsonModel userModel);
+
+        Task<BaseResponse<UserResponseModel>> EditUser(EditUserJsonModel userModel);
+
     }
 }

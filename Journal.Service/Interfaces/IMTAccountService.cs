@@ -9,5 +9,7 @@ namespace Journal.Service.Interfaces
         Task<BaseResponse<MTAccountResponseModel>> AddAccount(MTAccountJsonModel accountModel);
 
         Task<BaseResponse<bool>> DeleteMTAccount(Guid accountId);
+
+        BaseResponse<List<MTAccountResponseModel>> GetMTAccountsByUser(Guid userId);
     }
 }

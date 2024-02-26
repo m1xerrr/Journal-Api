@@ -6,6 +6,7 @@ using Journal.Domain.Enums;
 using Journal.Domain.Models;
 using Journal.Domain.Helpers;
 using Journal.DAL.Interfaces;
+using Azure;
 
 namespace Journal.Service.Implementations
 {
@@ -16,6 +17,194 @@ namespace Journal.Service.Implementations
         public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
+        }
+        public async Task<BaseResponse<UserResponseModel>> ChangeName(EditUserJsonModel userModel)
+        {
+            var response = new BaseResponse<UserResponseModel>();
+            try
+            {
+                var users = _userRepository.SelectAll();
+                if(users.FirstOrDefault(x => x.Id == userModel.Id) == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "User with such ID not found";
+                }
+                else
+                {
+                    var user = users.FirstOrDefault(x => x.Id == userModel.Id);
+                    user.Name = userModel.Name;
+                    if (await _userRepository.Edit(user))
+                    {
+                        response.StatusCode = StatusCode.OK;
+                        response.Data = new UserResponseModel(user);
+                    }
+                    else
+                    {
+                        response.StatusCode= StatusCode.ERROR;
+                        response.Message = "Can not update user";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<UserResponseModel>> ChangePassword(EditUserJsonModel userModel)
+        {
+            var response = new BaseResponse<UserResponseModel>();
+            try
+            {
+                var users = _userRepository.SelectAll();
+                if (users.FirstOrDefault(x => x.Id == userModel.Id) == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "User with such ID not found";
+                }
+                else
+                {
+                    var user = users.FirstOrDefault(x => x.Id == userModel.Id);
+                    user.Password = HashPasswordHelper.HashPassword(userModel.Password);
+                    if (await _userRepository.Edit(user))
+                    {
+                        response.StatusCode = StatusCode.OK;
+                        response.Data = new UserResponseModel(user);
+                    }
+                    else
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "Can not update user";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<UserResponseModel>> ChangeEmail(EditUserJsonModel userModel)
+        {
+            var response = new BaseResponse<UserResponseModel>();
+            try
+            {
+                var users = _userRepository.SelectAll();
+                if(users.FirstOrDefault(x => x.Email == userModel.Email) != null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "This email is already in use";
+                }
+                else
+                { 
+                if (users.FirstOrDefault(x => x.Id == userModel.Id) == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "User with such ID not found";
+                }
+                else
+                {
+                    var user = users.FirstOrDefault(x => x.Id == userModel.Id);
+                    user.Email = userModel.Email;
+                    if (await _userRepository.Edit(user))
+                    {
+                        response.StatusCode = StatusCode.OK;
+                        response.Data = new UserResponseModel(user);
+                    }
+                    else
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "Can not update user";
+                    }
+                }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<UserResponseModel>> ChangeRole(EditUserJsonModel userModel)
+        {
+            var response = new BaseResponse<UserResponseModel>();
+            try
+            {
+                var users = _userRepository.SelectAll();
+                if (users.FirstOrDefault(x => x.Id == userModel.Id) == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "User with such ID not found";
+                }
+                else
+                {
+                    var user = users.FirstOrDefault(x => x.Id == userModel.Id);
+                    user.Role = userModel.Role;
+                    if (await _userRepository.Edit(user))
+                    {
+                        response.StatusCode = StatusCode.OK;
+                        response.Data = new UserResponseModel(user);
+                    }
+                    else
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "Can not update user";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<UserResponseModel>> EditUser(EditUserJsonModel userModel)
+        {
+            var response = new BaseResponse<UserResponseModel>();
+            try
+            {
+                var users = _userRepository.SelectAll();
+                if (users.Where(x => x.Email == userModel.Email).Count() > 1)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "This email is already in use";
+                }
+                else
+                {
+                    if (users.FirstOrDefault(x => x.Id == userModel.Id) == null)
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "User with such ID not found";
+                    }
+                    else
+                    {
+                        var user = users.FirstOrDefault(x => x.Id == userModel.Id);
+                        user.Name = userModel.Name;
+                        user.Email = userModel.Email;
+                        user.Password = userModel.Password;
+                        user.Role = userModel.Role;
+                        if (await _userRepository.Edit(user))
+                        {
+                            response.StatusCode = StatusCode.OK;
+                            response.Data = new UserResponseModel(user);
+                        }
+                        else
+                        {
+                            response.StatusCode = StatusCode.ERROR;
+                            response.Message = "Can not update user";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
         }
         public async Task<BaseResponse<UserResponseModel>> CreateAccount(SignUpUserJsonModel user)
         {
@@ -61,10 +250,18 @@ namespace Journal.Service.Implementations
                 user.Password = HashPasswordHelper.HashPassword(user.Password);
                 var users = _userRepository.SelectAll();
                 var u = users.ToList();
-                if(users.FirstOrDefault(x=>x.Email == user.Email && x.Password == user.Password) != null)
+                if (users.FirstOrDefault(x => x.Email == user.Email) != null)
                 {
-                    response.StatusCode = StatusCode.OK;
-                    response.Data = new UserResponseModel(users.FirstOrDefault(x => x.Email == user.Email && x.Password == user.Password));
+                    if (users.FirstOrDefault(x => x.Email == user.Email && x.Password == user.Password) != null)
+                    {
+                        response.StatusCode = StatusCode.OK;
+                        response.Data = new UserResponseModel(users.FirstOrDefault(x => x.Email == user.Email && x.Password == user.Password));
+                    }
+                    else
+                    {
+                        response.StatusCode= StatusCode.ERROR;
+                        response.Message = "Wrong password";
+                    }
                 }
                 else
                 {
@@ -113,6 +310,28 @@ namespace Journal.Service.Implementations
                 response.StatusCode= StatusCode.ERROR;
                 response.Data = false;
                 response.Message = ex.Message;
+            }
+            return response;
+        }
+
+
+        public async Task<BaseResponse<List<UserResponseModel>>> GetAllUsers()
+        {
+            var response = new BaseResponse<List<UserResponseModel>>();
+            try
+            {
+                var users = _userRepository.SelectAll();
+                var usersResponse = new List<UserResponseModel>();
+                foreach(var user in users)
+                {
+                    usersResponse.Add(new UserResponseModel(user));
+                }
+                response.Data = usersResponse;
+                response.StatusCode = StatusCode.OK;
+            }
+            catch (Exception ex)
+            {
+                response.Message= ex.Message;
             }
             return response;
         }
