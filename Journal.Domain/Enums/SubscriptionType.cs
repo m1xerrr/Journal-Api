@@ -9,6 +9,7 @@ namespace Journal.Domain.Enums
     public enum SubscriptionType
     {
         Basic = 0,
-        Premium = 1
+        Premium = 1,
+        Exclusive = 2
     }
 }

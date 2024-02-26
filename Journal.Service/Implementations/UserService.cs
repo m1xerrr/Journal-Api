@@ -13,10 +13,12 @@ namespace Journal.Service.Implementations
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository)
         {
             _userRepository = userRepository;
+            _subscriptionRepository = subscriptionRepository;
         }
         public async Task<BaseResponse<UserResponseModel>> ChangeName(EditUserJsonModel userModel)
         {
@@ -336,5 +338,131 @@ namespace Journal.Service.Implementations
             return response;
         }
 
+        public async Task<BaseResponse<UserResponseModel>> Subscribe(Guid userId, DateTime ExpirationDate, SubscriptionType subscriptionType)
+        {
+            var response = new BaseResponse<UserResponseModel>();
+            try
+            {
+                var subscription = new Subscription();
+                subscription.UserId = userId;
+                subscription.ExpirationDate = ExpirationDate;
+                subscription.PurchaseDate = DateTime.Now;
+                subscription.Id = Guid.NewGuid();
+                subscription.Subsctiption = subscriptionType;
+                if (_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId) == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "No users with such ID";
+                }
+                if(await _subscriptionRepository.Create(subscription))
+                {
+                    response.Data = new UserResponseModel(_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId));
+                    response.StatusCode = StatusCode.OK;
+                }
+                else
+                {
+                    response.StatusCode= StatusCode.ERROR;
+                    response.Message = "Can not add subscription";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<UserResponseModel>> ExtendSubscription(Guid userId, DateTime ExpirationDate)
+        {
+            var response = new BaseResponse<UserResponseModel>();
+            try
+            {
+                var subscription = _subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId);
+                subscription.ExpirationDate = ExpirationDate;
+                if (_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId) == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "No users with such ID";
+                }
+                if (await _subscriptionRepository.Edit(subscription))
+                {
+                    response.Data = new UserResponseModel(_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId));
+                    response.StatusCode = StatusCode.OK;
+                }
+                else
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Can not extend subscription";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<UserResponseModel>> DeleteSubscription(Guid userId)
+        {
+            var response = new BaseResponse<UserResponseModel>();
+            try
+            {
+                var subscription = _subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId);
+                if (_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId) == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "No users with such ID";
+                }
+                if (await _subscriptionRepository.Delete(subscription))
+                {
+                    response.Data = new UserResponseModel(_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId));
+                    response.StatusCode = StatusCode.OK;
+                }
+                else
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Can not delete subscription";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<UserResponseModel>> ChangeSubscriptionType(Guid userId, SubscriptionType subscriptionType)
+        {
+            var response = new BaseResponse<UserResponseModel>();
+            try
+            {
+                var subscription = _subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId);
+                subscription.Subsctiption = subscriptionType;
+                if (_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId) == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "No users with such ID";
+                }
+                if (await _subscriptionRepository.Edit(subscription))
+                {
+                    response.Data = new UserResponseModel(_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId));
+                    response.StatusCode = StatusCode.OK;
+                }
+                else
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Can not change subscription type";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
     }
 }

@@ -17,10 +17,7 @@ namespace Journal.Domain.ResponseModels
         public string Email { get; set; }
         public string Password { get; set; }
         public Role Role { get; set; }
-        public List<MTAccountResponseModel> Accounts { get; set; }
         public SubscriptionResponseModel Subscription { get; set; }
-
-        public UserResponseModel() { Accounts = new List<MTAccountResponseModel>(); }
 
         public UserResponseModel(User user)
         {
@@ -29,14 +26,6 @@ namespace Journal.Domain.ResponseModels
             Email = user.Email;
             Password = user.Password;
             Role = user.Role;
-            Accounts = new List<MTAccountResponseModel>();
-            if (user.Accounts != null)
-            {
-                foreach (var account in user.Accounts)
-                {
-                    Accounts.Add(new MTAccountResponseModel(account));
-                }
-            }
             if (user.Subscription != null)
             {
                 Subscription = new SubscriptionResponseModel(user.Subscription);

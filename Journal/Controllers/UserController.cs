@@ -77,5 +77,33 @@ namespace Journal.Controllers
             return Json(response);
         }
 
+        [HttpPost("AddUserSubscription")]
+        public async Task<IActionResult> Subscribe([FromBody] SubscriptionJsonModel subscription)
+        {
+            var response = await _userService.Subscribe(subscription.UserId, subscription.ExpirationDate, subscription.SubscriptionType);
+            return Json(response);
+        }
+
+        [HttpPost("ExtendUserSubscription")]
+        public async Task<IActionResult> ExtendSubscription([FromBody] SubscriptionJsonModel subscription)
+        {
+            var response = await _userService.ExtendSubscription(subscription.UserId, subscription.ExpirationDate);
+            return Json(response);
+        }
+
+        [HttpPost("ChangeSubscriptionType")]
+        public async Task<IActionResult> ChangeSubscriptionType([FromBody] SubscriptionJsonModel subscription)
+        {
+            var response = await _userService.ChangeSubscriptionType(subscription.UserId, subscription.SubscriptionType);
+            return Json(response);
+        }
+
+        [HttpPost("DeleteUserSubscription")]
+        public async Task<IActionResult> DeleteSubscription([FromBody] Guid id)
+        {
+            var response = await _userService.DeleteSubscription(id);
+            return Json(response);
+        }
+
     }
 }
