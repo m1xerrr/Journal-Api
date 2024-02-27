@@ -187,7 +187,7 @@ namespace Journal.Service.Implementations
                         var user = users.FirstOrDefault(x => x.Id == userModel.Id);
                         user.Name = userModel.Name;
                         user.Email = userModel.Email;
-                        user.Password = userModel.Password;
+                        user.Password = HashPasswordHelper.HashPassword(userModel.Password);
                         user.Role = userModel.Role;
                         if (await _userRepository.Edit(user))
                         {
