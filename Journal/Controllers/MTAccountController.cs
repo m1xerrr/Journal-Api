@@ -16,9 +16,9 @@ namespace Journal.Controllers
         }
 
         [HttpPost("MTAccountData")]
-        public async Task<IActionResult> MTAccountData([FromBody] MTAccountJsonModel account)
+        public async Task<IActionResult> MTAccountData([FromBody] Guid accountId)
         {
-            var response = await _mtDataService.GetAccountData(account);
+            var response = await _mtDataService.GetAccountData(accountId);
             return Json(response);
         }
 

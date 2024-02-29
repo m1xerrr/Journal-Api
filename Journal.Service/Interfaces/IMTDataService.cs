@@ -7,7 +7,7 @@ namespace Journal.Service.Interfaces
 {
     public interface IMTDataService
     {
-        Task<BaseResponse<MTAccountData>> GetAccountData(MTAccountJsonModel account);
+        Task<BaseResponse<MTAccountData>> GetAccountData(Guid accountId);
 
     }
 }

@@ -12,19 +12,34 @@ namespace Journal.Service.Implementations
     {
         private readonly IMTDataRepository _mtDataRepository;
         private readonly IMTDealRepository _mtDealRepository;
+        private readonly IMTAccountRepository _mtAccountRepository;
 
-        public MTDataService(IMTDataRepository mtDataRepository, IMTDealRepository mtDealRepository)
+        public MTDataService(IMTDataRepository mtDataRepository, IMTDealRepository mtDealRepository, IMTAccountRepository mtAccountRepository)
         {
             _mtDataRepository = mtDataRepository;
-            _mtDealRepository = mtDealRepository;  
+            _mtDealRepository = mtDealRepository; 
+            _mtAccountRepository = mtAccountRepository;
         }
 
-        public async Task<BaseResponse<MTAccountData>> GetAccountData(MTAccountJsonModel account)
+        public async Task<BaseResponse<MTAccountData>> GetAccountData(Guid accountId)
         {
             var response = new BaseResponse<MTAccountData>();
             try
             {
-                var deals = await _mtDataRepository.GetDeals(account);
+                var account = _mtAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                    return response;
+                }
+                var accountJson = new MTAccountJsonModel();
+                accountJson.Password = account.Password;
+                accountJson.UserId = account.UserId;
+                accountJson.Id = account.Id;
+                accountJson.Login = account.Login;
+                accountJson.Server = account.Server;
+                var deals = await _mtDataRepository.GetDeals(accountJson);
                 if(deals.Count == 0)
                 {
                     response.StatusCode = StatusCode.ERROR;
