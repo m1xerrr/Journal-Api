@@ -15,7 +15,7 @@ namespace Journal.Controllers
             _mtDealService = mtDealService;
         }
 
-        [HttpPost("Data")]
+        [HttpPost("MTAccountData")]
         public async Task<IActionResult> MTAccountData([FromBody] MTAccountJsonModel account)
         {
             var response = await _mtDataService.GetAccountData(account);
@@ -37,7 +37,7 @@ namespace Journal.Controllers
             return Json(response);
         }
 
-        [HttpPost("Deal")]
+        [HttpPost("GetMTDeal")]
         public async Task<IActionResult> MTDeal([FromBody] MTDealEditJsonModel deal)
         {
             var response = await _mtDealService.GetDeal(deal.Id, deal.accountId);

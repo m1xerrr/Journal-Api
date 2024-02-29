@@ -5,6 +5,7 @@ using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
 using Journal.Domain.ResponseModels;
 using Microsoft.EntityFrameworkCore;
+using Journal.Domain.Enums;
 
 namespace Journal.Service.Implementations
 {
@@ -13,12 +14,14 @@ namespace Journal.Service.Implementations
         private readonly IMTAccountRepository _mtAccountRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMTDataRepository _mtDataRepository;
+        private readonly IMTDataService _mtDataService;
 
-        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository)
+        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository, IMTDataService mtDataService)
         {
             _mtAccountRepository = mtAccountRepository;
             _userRepository = userRepository;
             _mtDataRepository = mtDataRepository;
+            _mtDataService = mtDataService;
         }
 
         public async Task<BaseResponse<MTAccountResponseModel>> AddAccount(MTAccountJsonModel accountModel)
@@ -109,7 +112,7 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public BaseResponse<List<MTAccountResponseModel>> GetMTAccountsByUser(Guid userId)
+        public async Task<BaseResponse<List<MTAccountResponseModel>>> GetMTAccountsByUser(Guid userId)
         {
             var response = new BaseResponse<List<MTAccountResponseModel>>();
             try
@@ -118,12 +121,26 @@ namespace Journal.Service.Implementations
                 var accountsResponse = new List<MTAccountResponseModel>();
                 foreach (var account in accounts)
                 {
-                    accountsResponse.Add(new MTAccountResponseModel(account));
+                    var accountJson = new MTAccountJsonModel();
+                    accountJson.UserId = account.UserId;
+                    accountJson.Server = account.Server;
+                    accountJson.Password = account.Password;
+                    accountJson.Login = account.Login;
+                    accountJson.Id = account.Id;
+                    var deals = await _mtDataRepository.GetDeals(accountJson);
+                    var data = await DealstoAccount(account.Id, deals);
+                    var accountResponse = new MTAccountResponseModel(account);
+                    accountResponse.Profit = data.Profit;
+                    accountResponse.ProfitPercentage = data.ProfitPercentage;
+                    accountResponse.Balance = data.currentBalance;
+                    accountResponse.DealsCount = data.TotalDeals;
+                    accountResponse.Deposit = data.Deposit;
+                    accountsResponse.Add(accountResponse);
                 }
                 if(accountsResponse.Count == 0)
                 {
                     response.StatusCode= Domain.Enums.StatusCode.ERROR;
-                    response.Message = "User has ho accounts";
+                    response.Message = "User has no accounts";
                 }
                 else
                 {
@@ -136,6 +153,52 @@ namespace Journal.Service.Implementations
                 response.Message = ex.Message;
             }
             return response;
+        }
+        private async Task<MTAccountData> DealstoAccount(Guid accountID, List<MTDealJsonModel> dealsList)
+        {
+            var account = new MTAccountData();
+            var deposits = dealsList.Where(deal => deal.Comment.Contains("Deposit")).ToList();
+            foreach (var deposit in deposits)
+            {
+                account.Deposit += deposit.Profit;
+                dealsList.Remove(deposit);
+            }
+            var dbDeals = new List<MTDeal>();
+            foreach (var deal in dealsList)
+            {
+                if (dbDeals.FirstOrDefault(x => x.PositionId == deal.PositionId) == null)
+                {
+                    dbDeals.Add(new MTDeal
+                    {
+                        PositionId = deal.PositionId,
+                        Direction = (deal.Type == 0) ? Direction.Long : Direction.Short,
+                        EntryPrice = deal.Price,
+                        Profit = deal.Profit,
+                        Volume = deal.Volume,
+                        Comission = deal.Commission,
+                        EntryTime = DateTimeOffset.FromUnixTimeSeconds(deal.Time).UtcDateTime,
+                        Symbol = deal.Symbol,
+                    });
+                }
+                else
+                {
+                    var accountDeal = dbDeals.FirstOrDefault(x => x.PositionId == deal.PositionId);
+                    accountDeal.ExitPrice = deal.Price;
+                    accountDeal.Profit += deal.Profit;
+                    accountDeal.Volume += deal.Volume;
+                    accountDeal.Comission += deal.Commission;
+                    accountDeal.ExitTime = DateTimeOffset.FromUnixTimeSeconds(deal.Time).UtcDateTime;
+                    if (deal.Comment.Contains("tp")) { accountDeal.CloseType = CloseType.TakeProfit; }
+                    else if (deal.Comment.Contains("sl")) { accountDeal.CloseType = CloseType.StopLoss; }
+                    else { accountDeal.CloseType = CloseType.Market; }
+                    accountDeal.ProfitPercentage = Math.Round(deal.Profit / account.Deposit * 100, 2);
+                }
+            }
+            account.Profit = dbDeals.Sum(x => x.Profit) + dbDeals.Sum(x => x.Comission);
+            account.currentBalance = account.Deposit + account.Profit;
+            account.TotalDeals = dbDeals.Count;
+            account.ProfitPercentage = Math.Round(account.Profit / account.Deposit * 100, 2);
+            return account;
         }
     }
 }

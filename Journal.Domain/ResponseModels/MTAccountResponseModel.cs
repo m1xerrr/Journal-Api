@@ -18,6 +18,16 @@ namespace Journal.Domain.ResponseModels
 
         public string Server { get; set; }
 
+        public double Deposit { get; set; }
+
+        public double Profit { get; set; }
+
+        public double ProfitPercentage { get; set; }
+
+        public double Balance { get; set; }
+
+        public int DealsCount { get; set; }
+
         public MTAccountResponseModel(MTAccount account) 
         {
             Id = account.Id;

@@ -1,4 +1,5 @@
 ﻿using Journal.Domain.JsonModels;
+using Journal.Domain.ResponseModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace Journal.DAL.Interfaces
         Task<List<MTDealJsonModel>> GetDeals(MTAccountJsonModel account);
 
         Task<bool> Initialize(MTAccountJsonModel account);
+
     }
 }

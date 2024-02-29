@@ -1,5 +1,6 @@
 ﻿using Journal.DAL.Interfaces;
 using Journal.Domain.JsonModels;
+using Journal.Domain.ResponseModels;
 using Newtonsoft.Json;
 
 namespace Journal.DAL.Repositories

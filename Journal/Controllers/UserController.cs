@@ -28,16 +28,16 @@ namespace Journal.Controllers
             var response = await _userService.CreateAccount(user);
             return Json(response);
         }
-        [HttpPost("Delete")]
+        [HttpPost("DeleteUser")]
         public async Task<IActionResult> Delete([FromBody] Guid userId)
         {
             var response = await _userService.DeleteAccount(userId);
             return Json(response);
         }
         [HttpPost("UserMTAccounts")]
-        public IActionResult UserMTAccounts([FromBody] Guid userId)
+        public async Task<IActionResult> UserMTAccounts([FromBody] Guid userId)
         {
-            var resposne = _mtAccountService.GetMTAccountsByUser(userId);
+            var resposne = await _mtAccountService.GetMTAccountsByUser(userId);
             return Json(resposne);
         }
         [HttpPost("ChangeUsername")]
