@@ -9,8 +9,6 @@ namespace Journal.Domain.Models
 {
     public class MTAccountData
     {
-        public Guid Id { get; set; }
-
         public Guid UserId { get; set; }
         public MTAccountData()
         {
