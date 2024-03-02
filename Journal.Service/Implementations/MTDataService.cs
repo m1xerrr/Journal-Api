@@ -47,7 +47,8 @@ namespace Journal.Service.Implementations
                 }
                 else
                 {
-                    response.Data = await DealstoAccount(account.Id, deals);    
+                    response.Data = await DealstoAccount(account.Id, deals);
+                    response.Data.UserId = account.UserId;
                     response.StatusCode = StatusCode.OK;
                     response.Message = "Success";
 

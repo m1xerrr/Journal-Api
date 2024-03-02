@@ -137,16 +137,8 @@ namespace Journal.Service.Implementations
                     accountResponse.Deposit = data.Deposit;
                     accountsResponse.Add(accountResponse);
                 }
-                if(accountsResponse.Count == 0)
-                {
-                    response.StatusCode= Domain.Enums.StatusCode.ERROR;
-                    response.Message = "User has no accounts";
-                }
-                else
-                {
-                    response.StatusCode = Domain.Enums.StatusCode.OK;
-                    response.Data = accountsResponse;
-                }
+                response.StatusCode = Domain.Enums.StatusCode.OK;
+                response.Data = accountsResponse;
             }
             catch (Exception ex)
             {
