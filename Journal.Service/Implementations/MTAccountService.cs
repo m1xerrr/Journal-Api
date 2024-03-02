@@ -15,13 +15,15 @@ namespace Journal.Service.Implementations
         private readonly IUserRepository _userRepository;
         private readonly IMTDataRepository _mtDataRepository;
         private readonly IMTDataService _mtDataService;
+        private readonly IMTDealRepository _mtDealRepository;
 
-        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository, IMTDataService mtDataService)
+        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository, IMTDataService mtDataService, IMTDealRepository mTDealRepository)
         {
             _mtAccountRepository = mtAccountRepository;
             _userRepository = userRepository;
             _mtDataRepository = mtDataRepository;
             _mtDataService = mtDataService;
+            _mtDealRepository = mTDealRepository;
         }
 
         public async Task<BaseResponse<MTAccountResponseModel>> AddAccount(MTAccountJsonModel accountModel)
@@ -80,6 +82,7 @@ namespace Journal.Service.Implementations
             {
                 var accounts = _mtAccountRepository.SelectAll();
                 var account = accounts.FirstOrDefault(x => x.Id == accountId);
+                
                 if(account == null)
                 {
                     response.Data = false;
@@ -100,6 +103,14 @@ namespace Journal.Service.Implementations
                         response.Data = false;
                         response.StatusCode = Domain.Enums.StatusCode.ERROR;
                         response.Message = "DB error";
+                    }
+                }
+                var deals = _mtDealRepository.SelectAll();
+                foreach(var deal in deals)
+                {
+                    if(deal.AccountId == accountId)
+                    {
+                        await _mtDealRepository.Delete(deal);
                     }
                 }
             }
