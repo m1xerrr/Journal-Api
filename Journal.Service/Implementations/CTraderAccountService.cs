@@ -71,6 +71,40 @@ namespace Journal.Service.Implementations
             return response;
         }
 
+        public async Task<BaseResponse<bool>> DeleteCTraderAccount(Guid id)
+        {
+            var response = new BaseResponse<bool>();
+
+            try
+            {
+                var accounts = _cTraderAccountRepository.SelectAll();
+                var account = accounts.FirstOrDefault(x => x.Id == id);
+                if (account == null)
+                {
+                    response.StatusCode=Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Account not found";
+                    return response;
+                }
+
+                if(!await _cTraderAccountRepository.Delete(account))
+                {
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Can not delete account";
+                    return response;
+                }
+                response.StatusCode = Domain.Enums.StatusCode.OK;
+                response.Data = true;
+                response.Message = "Account deleted";
+                
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode= Domain.Enums.StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
         public async Task<BaseResponse<string>> GetAccessToken(string authorizationLink)
         {
             var response = new BaseResponse<string>();

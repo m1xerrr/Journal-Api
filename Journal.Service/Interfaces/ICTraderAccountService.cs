@@ -9,5 +9,7 @@ namespace Journal.Service.Interfaces
         Task<BaseResponse<List<CTraderAccountResponseModel>>> AddAccounts(string accessToken, Guid UserId);
 
         Task<BaseResponse<string>> GetAccessToken(string authorizationLink);
+
+        Task<BaseResponse<bool>> DeleteCTraderAccount(Guid id);
     }
 }
