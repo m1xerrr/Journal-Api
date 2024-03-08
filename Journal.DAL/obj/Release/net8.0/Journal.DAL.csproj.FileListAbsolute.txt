@@ -1,0 +1,16 @@
+D:\SE\C#\REST API\Journal.DAL\bin\Release\net8.0\Journal.DAL.deps.json
+D:\SE\C#\REST API\Journal.DAL\bin\Release\net8.0\Journal.DAL.dll
+D:\SE\C#\REST API\Journal.DAL\bin\Release\net8.0\Journal.DAL.pdb
+D:\SE\C#\REST API\Journal.DAL\bin\Release\net8.0\Journal.Domain.dll
+D:\SE\C#\REST API\Journal.DAL\bin\Release\net8.0\Journal.Domain.pdb
+D:\SE\C#\REST API\Journal.DAL\obj\Release\net8.0\Journal.DAL.csproj.AssemblyReference.cache
+D:\SE\C#\REST API\Journal.DAL\obj\Release\net8.0\Journal.DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\SE\C#\REST API\Journal.DAL\obj\Release\net8.0\Journal.DAL.AssemblyInfoInputs.cache
+D:\SE\C#\REST API\Journal.DAL\obj\Release\net8.0\Journal.DAL.AssemblyInfo.cs
+D:\SE\C#\REST API\Journal.DAL\obj\Release\net8.0\Journal.DAL.csproj.CoreCompileInputs.cache
+D:\SE\C#\REST API\Journal.DAL\obj\Release\net8.0\Journal.DAL.sourcelink.json
+D:\SE\C#\REST API\Journal.DAL\obj\Release\net8.0\Journal.DAL.csproj.CopyComplete
+D:\SE\C#\REST API\Journal.DAL\obj\Release\net8.0\Journal.DAL.dll
+D:\SE\C#\REST API\Journal.DAL\obj\Release\net8.0\refint\Journal.DAL.dll
+D:\SE\C#\REST API\Journal.DAL\obj\Release\net8.0\Journal.DAL.pdb
+D:\SE\C#\REST API\Journal.DAL\obj\Release\net8.0\ref\Journal.DAL.dll

@@ -32,8 +32,6 @@ namespace Journal.Controllers
             var response = await _ctraderAccountService.AddAccounts(model.AccessToken, model.UserId);
             return Json(response);
         }
-        
-
 
         [HttpPost("GetCTraderAccessToken")]
         public async Task<IActionResult> GetCTraderAccessToken([FromBody] string authorizationLink)
@@ -41,7 +39,7 @@ namespace Journal.Controllers
             var response = await _ctraderAccountService.GetAccessToken(authorizationLink);
             return Json(response);
         }
-
+        [HttpPost("DeleteCTraderAccount")]
         public async Task<IActionResult> DeleteCTraderAccount([FromBody] Guid accountId)
         {
             var response = await _ctraderAccountService.DeleteCTraderAccount(accountId);
