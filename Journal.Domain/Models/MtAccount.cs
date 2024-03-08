@@ -6,18 +6,13 @@ using System.Threading.Tasks;
 
 namespace Journal.Domain.Models
 {
-    public class MTAccount
+    public class MTAccount : Account
     {
-        public Guid Id { get; set; }
-        public Guid UserId { get; set; }
-
         public int Login { get; set; }
 
         public string Password { get; set; }
 
         public string Server { get; set; }
         public User User { get; set; }
-
-        public List<MTDeal>? Deals { get; set; }
     }
 }

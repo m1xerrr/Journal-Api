@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Journal.Domain.Enums
 {
-    public enum CloseType
+    public enum Result
     {
-        TakeProfit = 1,
-        StopLoss = 2,
-        Market = 3
+        Win = 1,
+        Loss = 2,
+        Breakeven = 3
     }
 }

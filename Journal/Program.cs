@@ -30,7 +30,10 @@ namespace Journal
             builder.Services.AddScoped<IMTDealService, MTDealService>();
             builder.Services.AddScoped<IMTAccountService, MTAccountService>();
             builder.Services.AddScoped<IMTDataService, MTDataService>();
-            builder.Services.AddScoped<IMTDealRepository, MTDealRepository>();
+            builder.Services.AddScoped<IDealRepository, DealRepository>();
+            builder.Services.AddScoped<ICTraderAccountRepository, CTraderAccountRepository>();
+            builder.Services.AddScoped<ICTraderApiRepository, CTraderApiRepository>();
+            builder.Services.AddScoped<ICTraderAccountService, CTraderAccountService>();
 
             var app = builder.Build();
 

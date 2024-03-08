@@ -232,3 +232,7 @@ D:\SE\C#\REST API\Journal\obj\Debug\net8.0\refint\Journal.dll
 D:\SE\C#\REST API\Journal\obj\Debug\net8.0\Journal.pdb
 D:\SE\C#\REST API\Journal\obj\Debug\net8.0\Journal.genruntimeconfig.cache
 D:\SE\C#\REST API\Journal\obj\Debug\net8.0\ref\Journal.dll
+D:\SE\C#\REST API\Journal\bin\Debug\net8.0\OpenAPI.Net.dll
+D:\SE\C#\REST API\Journal\bin\Debug\net8.0\Google.Protobuf.dll
+D:\SE\C#\REST API\Journal\bin\Debug\net8.0\System.Reactive.dll
+D:\SE\C#\REST API\Journal\bin\Debug\net8.0\Websocket.Client.dll

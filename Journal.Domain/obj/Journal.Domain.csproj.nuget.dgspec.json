@@ -68,6 +68,10 @@
             "Swashbuckle.AspNetCore.Swagger": {
               "target": "Package",
               "version": "[6.5.0, )"
+            },
+            "cTrader.OpenAPI.Net": {
+              "target": "Package",
+              "version": "[1.4.4, )"
             }
           },
           "imports": [

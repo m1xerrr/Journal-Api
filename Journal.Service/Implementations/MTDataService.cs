@@ -11,19 +11,19 @@ namespace Journal.Service.Implementations
     public class MTDataService : IMTDataService
     {
         private readonly IMTDataRepository _mtDataRepository;
-        private readonly IMTDealRepository _mtDealRepository;
+        private readonly IDealRepository _mtDealRepository;
         private readonly IMTAccountRepository _mtAccountRepository;
 
-        public MTDataService(IMTDataRepository mtDataRepository, IMTDealRepository mtDealRepository, IMTAccountRepository mtAccountRepository)
+        public MTDataService(IMTDataRepository mtDataRepository, IDealRepository mtDealRepository, IMTAccountRepository mtAccountRepository)
         {
             _mtDataRepository = mtDataRepository;
             _mtDealRepository = mtDealRepository; 
             _mtAccountRepository = mtAccountRepository;
         }
 
-        public async Task<BaseResponse<MTAccountData>> GetAccountData(Guid accountId)
+        public async Task<BaseResponse<AccountData>> GetAccountData(Guid accountId)
         {
-            var response = new BaseResponse<MTAccountData>();
+            var response = new BaseResponse<AccountData>();
             try
             {
                 var account = _mtAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
@@ -35,7 +35,7 @@ namespace Journal.Service.Implementations
                 }
                 var accountJson = new MTAccountJsonModel();
                 accountJson.Password = account.Password;
-                accountJson.UserId = account.UserId;
+                accountJson.UserId = account.UserID;
                 accountJson.Id = account.Id;
                 accountJson.Login = account.Login;
                 accountJson.Server = account.Server;
@@ -48,7 +48,7 @@ namespace Journal.Service.Implementations
                 else
                 {
                     response.Data = await DealstoAccount(account.Id, deals);
-                    response.Data.UserId = account.UserId;
+                    response.Data.UserId = account.UserID;
                     response.StatusCode = StatusCode.OK;
                     response.Message = "Success";
 
@@ -62,21 +62,21 @@ namespace Journal.Service.Implementations
             return response;
         }
         
-        private async Task<MTAccountData> DealstoAccount(Guid accountID, List<MTDealJsonModel> dealsList)
+        private async Task<AccountData> DealstoAccount(Guid accountID, List<MTDealJsonModel> dealsList)
         {
-            var account = new MTAccountData();
+            var account = new AccountData();
             var deposits = dealsList.Where(deal => deal.Comment.Contains("Deposit")).ToList();
             foreach(var deposit in deposits)
             {
                 account.Deposit += deposit.Profit;
                 dealsList.Remove(deposit);
             }
-            var dbDeals = new List<MTDeal>();
+            var dbDeals = new List<Deal>();
             foreach(var deal in dealsList)
             {
                 if (dbDeals.FirstOrDefault(x => x.PositionId == deal.PositionId) == null)
                 {
-                    dbDeals.Add(new MTDeal
+                    dbDeals.Add(new Deal
                     {
                         PositionId = deal.PositionId,
                         Direction = (deal.Type == 0) ? Direction.Long : Direction.Short,
@@ -96,26 +96,26 @@ namespace Journal.Service.Implementations
                     accountDeal.Volume += deal.Volume;
                     accountDeal.Comission += deal.Commission;
                     accountDeal.ExitTime = DateTimeOffset.FromUnixTimeSeconds(deal.Time).UtcDateTime;
-                    if (deal.Comment.Contains("tp")) { accountDeal.CloseType = CloseType.TakeProfit; }
-                    else if (deal.Comment.Contains("sl")) { accountDeal.CloseType = CloseType.StopLoss; }
-                    else { accountDeal.CloseType = CloseType.Market; }
-                    accountDeal.ProfitPercentage = Math.Round(deal.Profit / account.Deposit*100, 2);
+                    accountDeal.ProfitPercentage = Math.Round(deal.Profit / account.Deposit * 100, 2);
+                    if (accountDeal.ProfitPercentage > 0.1) { accountDeal.Result = Result.Win; }
+                    else if (accountDeal.ProfitPercentage < -0.1) { accountDeal.Result = Result.Loss; }
+                    else { accountDeal.Result = Result.Breakeven; }
                 }
             }
             account.Deals = await AddDealsToDb(accountID, dbDeals, account);
             account.Profit = account.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
             account.currentBalance = account.Deposit + account.Profit;
             account.TotalDeals = account.Deals.Count;
-            account.TPDeals = account.Deals.Where(x => x.CloseType == CloseType.TakeProfit).Count();
-            account.SLDeals = account.Deals.Where(x => x.CloseType == CloseType.StopLoss).Count();
-            account.MarketDeals = account.Deals.Where(x => x.CloseType == CloseType.Market).Count();
+            account.WonDeals = account.Deals.Where(x => x.CloseType == Result.Win).Count();
+            account.LostDeals = account.Deals.Where(x => x.CloseType == Result.Loss).Count();
+            account.BreakevenDeals = account.Deals.Where(x => x.CloseType == Result.Breakeven).Count();
             account.LongDeals = account.Deals.Where(x => x.Direction == Direction.Long).Count();
             account.ShortDeals = account.Deals.Where(x => x.Direction == Direction.Short).Count();
             account.ProfitPercentage = Math.Round(account.Profit / account.Deposit * 100, 2);
             return account;
         }
 
-        private async Task<List<MTDealResponseModel>> AddDealsToDb(Guid accountId, List<MTDeal> allDeals, MTAccountData account)
+        private async Task<List<DealResponseModel>> AddDealsToDb(Guid accountId, List<Deal> allDeals, AccountData account)
         {
             var dealsDB = _mtDealRepository.SelectAll();
             var deals = dealsDB.Where(x => x.AccountId == accountId).ToList();
@@ -125,10 +125,10 @@ namespace Journal.Service.Implementations
                 deal.AccountId = accountId;
                 await _mtDealRepository.Create(deal);
             }
-            var response = new List<MTDealResponseModel>();
+            var response = new List<DealResponseModel>();
             foreach (var deal in _mtDealRepository.SelectAll().ToList())
             {
-                response.Add(new MTDealResponseModel(deal));
+                response.Add(new DealResponseModel(deal));
             }
             return response;
         }

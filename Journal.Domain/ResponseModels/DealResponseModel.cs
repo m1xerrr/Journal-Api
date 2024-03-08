@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Journal.Domain.ResponseModels
 {
-    public class MTDealResponseModel
+    public class DealResponseModel
     {
         public long PositionId { get; set; }
 
@@ -31,13 +31,13 @@ namespace Journal.Domain.ResponseModels
 
         public string Symbol { get; set; }
 
-        public CloseType CloseType { get; set; }
+        public Result CloseType { get; set; }
 
         public string Notes { get; set; }
 
         public string Image { get; set; }
 
-        public MTDealResponseModel(MTDeal deal)
+        public DealResponseModel(Deal deal)
         {
             this.PositionId = deal.PositionId;
             this.Direction = deal.Direction;
@@ -49,12 +49,12 @@ namespace Journal.Domain.ResponseModels
             this.EntryTime = deal.EntryTime;
             this.ExitTime = deal.ExitTime;
             this.Symbol = deal.Symbol;
-            this.CloseType = deal.CloseType;
+            this.CloseType = deal.Result;
             this.Notes = deal.Notes;
             this.Image = deal.Image;
             this.ProfitPercentage = deal.ProfitPercentage;
         }
-        public MTDealResponseModel() { }
+        public DealResponseModel() { }
     }
     
 }

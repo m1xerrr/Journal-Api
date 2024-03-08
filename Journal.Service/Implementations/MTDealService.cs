@@ -7,16 +7,16 @@ namespace Journal.Service.Implementations
 {
     public class MTDealService : IMTDealService
     {
-        private readonly IMTDealRepository _mtDealRepository;
+        private readonly IDealRepository _mtDealRepository;
 
-        public MTDealService(IMTDealRepository mtDealRepository)
+        public MTDealService(IDealRepository mtDealRepository)
         {
             _mtDealRepository = mtDealRepository;
         }
 
-        public async Task<BaseResponse<MTDealResponseModel>> AddImage(int dealId, Guid accountId, string img)
+        public async Task<BaseResponse<DealResponseModel>> AddImage(int dealId, Guid accountId, string img)
         {
-            var response = new BaseResponse<MTDealResponseModel>();
+            var response = new BaseResponse<DealResponseModel>();
             try
             {
                 var deals = _mtDealRepository.SelectAll();
@@ -32,7 +32,7 @@ namespace Journal.Service.Implementations
                     if(await _mtDealRepository.Edit(deal))
                     {
                         response.StatusCode = Domain.Enums.StatusCode.OK;
-                        response.Data = new MTDealResponseModel(deal);
+                        response.Data = new DealResponseModel(deal);
                     }
                     else
                     {
@@ -49,9 +49,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<MTDealResponseModel>> AddNotes(int dealId, Guid accountId, string note)
+        public async Task<BaseResponse<DealResponseModel>> AddNotes(int dealId, Guid accountId, string note)
         {
-            var response = new BaseResponse<MTDealResponseModel>();
+            var response = new BaseResponse<DealResponseModel>();
             try
             {
                 var deals = _mtDealRepository.SelectAll();
@@ -67,7 +67,7 @@ namespace Journal.Service.Implementations
                     if (await _mtDealRepository.Edit(deal))
                     {
                         response.StatusCode = Domain.Enums.StatusCode.OK;
-                        response.Data = new MTDealResponseModel(deal);
+                        response.Data = new DealResponseModel(deal);
                     }
                     else
                     {
@@ -84,9 +84,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<MTDealResponseModel>> GetDeal(int positionid, Guid accountId)
+        public async Task<BaseResponse<DealResponseModel>> GetDeal(int positionid, Guid accountId)
         {
-            var response = new BaseResponse<MTDealResponseModel>();
+            var response = new BaseResponse<DealResponseModel>();
             try
             {
                 var deals = _mtDealRepository.SelectAll();
@@ -99,7 +99,7 @@ namespace Journal.Service.Implementations
                 else
                 {
                     response.StatusCode = Domain.Enums.StatusCode.OK;
-                    response.Data = new MTDealResponseModel(deal);
+                    response.Data = new DealResponseModel(deal);
                 }
             }
             catch (Exception ex)

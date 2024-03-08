@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Journal.DAL.Interfaces
 {
-    public interface IMTDealRepository : IBaseRepository<MTDeal>
+    public interface IDealRepository : IBaseRepository<Deal>
     {
     }
 }

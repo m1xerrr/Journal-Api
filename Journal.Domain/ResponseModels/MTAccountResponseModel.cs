@@ -31,7 +31,7 @@ namespace Journal.Domain.ResponseModels
         public MTAccountResponseModel(MTAccount account) 
         {
             Id = account.Id;
-            UserId = account.UserId;
+            UserId = account.UserID;
             Login = account.Login;
             Password = account.Password;
             Server = account.Server;

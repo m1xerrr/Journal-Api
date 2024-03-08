@@ -15,9 +15,9 @@ namespace Journal.Service.Implementations
         private readonly IUserRepository _userRepository;
         private readonly IMTDataRepository _mtDataRepository;
         private readonly IMTDataService _mtDataService;
-        private readonly IMTDealRepository _mtDealRepository;
+        private readonly IDealRepository _mtDealRepository;
 
-        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository, IMTDataService mtDataService, IMTDealRepository mTDealRepository)
+        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository, IMTDataService mtDataService, IDealRepository mTDealRepository)
         {
             _mtAccountRepository = mtAccountRepository;
             _userRepository = userRepository;
@@ -51,7 +51,7 @@ namespace Journal.Service.Implementations
                 account.Login = accountModel.Login;
                 account.Password = accountModel.Password;
                 account.Server = accountModel.Server;
-                account.UserId = accountModel.UserId;
+                account.UserID = accountModel.UserId;
                 var users = _userRepository.SelectAll();
                 account.User = users.FirstOrDefault(x => x.Id == accountModel.UserId);
 
@@ -128,12 +128,12 @@ namespace Journal.Service.Implementations
             var response = new BaseResponse<List<MTAccountResponseModel>>();
             try
             {
-                var accounts = _mtAccountRepository.SelectAll().Where(x => x.UserId == userId);
+                var accounts = _mtAccountRepository.SelectAll().Where(x => x.UserID == userId);
                 var accountsResponse = new List<MTAccountResponseModel>();
                 foreach (var account in accounts)
                 {
                     var accountJson = new MTAccountJsonModel();
-                    accountJson.UserId = account.UserId;
+                    accountJson.UserId = account.UserID;
                     accountJson.Server = account.Server;
                     accountJson.Password = account.Password;
                     accountJson.Login = account.Login;
@@ -157,21 +157,21 @@ namespace Journal.Service.Implementations
             }
             return response;
         }
-        private async Task<MTAccountData> DealstoAccount(Guid accountID, List<MTDealJsonModel> dealsList)
+        private async Task<AccountData> DealstoAccount(Guid accountID, List<MTDealJsonModel> dealsList)
         {
-            var account = new MTAccountData();
+            var account = new AccountData();
             var deposits = dealsList.Where(deal => deal.Comment.Contains("Deposit")).ToList();
             foreach (var deposit in deposits)
             {
                 account.Deposit += deposit.Profit;
                 dealsList.Remove(deposit);
             }
-            var dbDeals = new List<MTDeal>();
+            var dbDeals = new List<Deal>();
             foreach (var deal in dealsList)
             {
                 if (dbDeals.FirstOrDefault(x => x.PositionId == deal.PositionId) == null)
                 {
-                    dbDeals.Add(new MTDeal
+                    dbDeals.Add(new Deal
                     {
                         PositionId = deal.PositionId,
                         Direction = (deal.Type == 0) ? Direction.Long : Direction.Short,
@@ -191,9 +191,9 @@ namespace Journal.Service.Implementations
                     accountDeal.Volume += deal.Volume;
                     accountDeal.Comission += deal.Commission;
                     accountDeal.ExitTime = DateTimeOffset.FromUnixTimeSeconds(deal.Time).UtcDateTime;
-                    if (deal.Comment.Contains("tp")) { accountDeal.CloseType = CloseType.TakeProfit; }
-                    else if (deal.Comment.Contains("sl")) { accountDeal.CloseType = CloseType.StopLoss; }
-                    else { accountDeal.CloseType = CloseType.Market; }
+                    if (deal.Comment.Contains("tp")) { accountDeal.Result = Result.Win; }
+                    else if (deal.Comment.Contains("sl")) { accountDeal.Result = Result.Loss; }
+                    else { accountDeal.Result = Result.Breakeven; }
                     accountDeal.ProfitPercentage = Math.Round(deal.Profit / account.Deposit * 100, 2);
                 }
             }

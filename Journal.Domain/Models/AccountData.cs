@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Journal.Domain.Models
 {
-    public class MTAccountData
+    public class AccountData
     {
         public Guid UserId { get; set; }
-        public MTAccountData()
+        public AccountData()
         {
-            Deals = new List<MTDealResponseModel>();
+            Deals = new List<DealResponseModel>();
         }
         public double currentBalance {  get; set; }
 
@@ -22,15 +22,15 @@ namespace Journal.Domain.Models
 
         public double ProfitPercentage { get; set; }
 
-        public List<MTDealResponseModel> Deals { get; set; }
+        public List<DealResponseModel> Deals { get; set; }
 
         public int TotalDeals { get; set; }
 
-        public int SLDeals { get; set; }
+        public int LostDeals { get; set; }
 
-        public int TPDeals { get; set; }
+        public int WonDeals { get; set; }
 
-        public int MarketDeals { get; set; }
+        public int BreakevenDeals { get; set; }
 
         public int LongDeals { get; set; }
 
