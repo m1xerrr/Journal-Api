@@ -139,6 +139,7 @@ namespace Journal.Service.Implementations
                     var deals = await _mtDataRepository.GetDeals(accountJson);
                     var data = await DealstoAccount(account.Id, deals);
                     var accountResponse = new AccountResponseModel(account);
+                    accountResponse.Provider = "MetaTrader 5";
                     accountResponse.Profit = data.Profit;
                     accountResponse.ProfitPercentage = data.ProfitPercentage;
                     accountResponse.Balance = data.currentBalance;
