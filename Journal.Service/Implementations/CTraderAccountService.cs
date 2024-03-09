@@ -149,6 +149,13 @@ namespace Journal.Service.Implementations
                 }
                 
                 var dealsResponse = await _cTraderApiRepository.GetDeals(account.AccessToken, account.AccountId, account.IsLive);
+                if(dealsResponse.Count() == 0)
+                {
+                    response.Data = new AccountData();
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Account is empty. Please, open at least one deal";
+                    return response;
+                }
                 var symbols = await _cTraderApiRepository.GetSymbols(account.AccessToken, account.AccountId, account.IsLive);
                 var accountData = await GetAccountFromDeals(dealsResponse, symbols, id);
                 accountData.UserId = account.UserID;
