@@ -253,6 +253,7 @@ namespace Journal.Service.Implementations
                     var accountResponse = new AccountResponseModel(account);
                     accountResponse.Provider = "CTrader";
                     var accountData = await GetAccountData(account.Id);
+                    if (accountData.StatusCode == Domain.Enums.StatusCode.ERROR) continue;
                     accountResponse.Profit = accountData.Data.Profit;
                     accountResponse.ProfitPercentage = accountData.Data.ProfitPercentage;
                     accountResponse.Balance = accountData.Data.currentBalance;
