@@ -5,11 +5,11 @@ using Journal.Domain.ResponseModels;
 
 namespace Journal.Service.Implementations
 {
-    public class MTDealService : IMTDealService
+    public class DealService : IDealService
     {
         private readonly IDealRepository _mtDealRepository;
 
-        public MTDealService(IDealRepository mtDealRepository)
+        public DealService(IDealRepository mtDealRepository)
         {
             _mtDealRepository = mtDealRepository;
         }

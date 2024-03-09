@@ -31,7 +31,7 @@ namespace Journal.Domain.ResponseModels
 
         public string Symbol { get; set; }
 
-        public Result CloseType { get; set; }
+        public Result Result { get; set; }
 
         public string Notes { get; set; }
 
@@ -49,7 +49,7 @@ namespace Journal.Domain.ResponseModels
             this.EntryTime = deal.EntryTime;
             this.ExitTime = deal.ExitTime;
             this.Symbol = deal.Symbol;
-            this.CloseType = deal.Result;
+            this.Result = deal.Result;
             this.Notes = deal.Notes;
             this.Image = deal.Image;
             this.ProfitPercentage = deal.ProfitPercentage;

@@ -106,9 +106,9 @@ namespace Journal.Service.Implementations
             account.Profit = account.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
             account.currentBalance = account.Deposit + account.Profit;
             account.TotalDeals = account.Deals.Count;
-            account.WonDeals = account.Deals.Where(x => x.CloseType == Result.Win).Count();
-            account.LostDeals = account.Deals.Where(x => x.CloseType == Result.Loss).Count();
-            account.BreakevenDeals = account.Deals.Where(x => x.CloseType == Result.Breakeven).Count();
+            account.WonDeals = account.Deals.Where(x => x.Result == Result.Win).Count();
+            account.LostDeals = account.Deals.Where(x => x.Result == Result.Loss).Count();
+            account.BreakevenDeals = account.Deals.Where(x => x.Result == Result.Breakeven).Count();
             account.LongDeals = account.Deals.Where(x => x.Direction == Direction.Long).Count();
             account.ShortDeals = account.Deals.Where(x => x.Direction == Direction.Short).Count();
             account.ProfitPercentage = Math.Round(account.Profit / account.Deposit * 100, 2);

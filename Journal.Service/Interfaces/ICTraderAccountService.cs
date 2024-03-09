@@ -1,6 +1,7 @@
 ﻿using Journal.Domain.Responses;
 using Journal.Domain.JsonModels;
 using Journal.Domain.ResponseModels;
+using Journal.Domain.Models;
 
 namespace Journal.Service.Interfaces
 {
@@ -11,5 +12,9 @@ namespace Journal.Service.Interfaces
         Task<BaseResponse<string>> GetAccessToken(string authorizationLink);
 
         Task<BaseResponse<bool>> DeleteCTraderAccount(Guid id);
+
+        Task<BaseResponse<AccountData>> GetAccountData(Guid id);
+
+        Task<BaseResponse<List<CTraderAccountResponseModel>>> GetUserAccounts(Guid UserId);
     }
 }

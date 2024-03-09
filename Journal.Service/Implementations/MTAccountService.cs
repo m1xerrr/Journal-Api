@@ -14,15 +14,13 @@ namespace Journal.Service.Implementations
         private readonly IMTAccountRepository _mtAccountRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMTDataRepository _mtDataRepository;
-        private readonly IMTDataService _mtDataService;
         private readonly IDealRepository _mtDealRepository;
 
-        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository, IMTDataService mtDataService, IDealRepository mTDealRepository)
+        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository, IDealRepository mTDealRepository)
         {
             _mtAccountRepository = mtAccountRepository;
             _userRepository = userRepository;
             _mtDataRepository = mtDataRepository;
-            _mtDataService = mtDataService;
             _mtDealRepository = mTDealRepository;
         }
 

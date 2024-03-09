@@ -11,10 +11,12 @@ namespace Journal.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMTAccountService _mtAccountService;
-        public UserController(IUserService userService, IMTAccountService mTAccountService)
+        private readonly ICTraderAccountService _ctraderAccountService;
+        public UserController(IUserService userService, IMTAccountService mTAccountService, ICTraderAccountService ctraderAccountService)
         {
             _userService = userService;
             _mtAccountService = mTAccountService;
+            _ctraderAccountService = ctraderAccountService;
         }
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginUserJsonModel user)
@@ -37,9 +39,17 @@ namespace Journal.Controllers
         [HttpPost("UserMTAccounts")]
         public async Task<IActionResult> UserMTAccounts([FromBody] Guid userId)
         {
-            var resposne = await _mtAccountService.GetMTAccountsByUser(userId);
-            return Json(resposne);
+            var response = await _mtAccountService.GetMTAccountsByUser(userId);
+            return Json(response);
         }
+
+        [HttpPost("UserCtraderAccounts")]
+        public async Task<IActionResult> UserCTraderAccounts([FromBody] Guid userId)
+        {
+            var response = await _ctraderAccountService.GetUserAccounts(userId);
+            return Json(response);
+        }
+
         [HttpPost("ChangeUsername")]
         public async Task<IActionResult> ChangeName([FromBody] EditUserJsonModel user)
         {

@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf;
+using Google.Protobuf.Collections;
 using Journal.DAL.Interfaces;
 using Newtonsoft.Json.Linq;
 using OpenAPI.Net;
@@ -77,6 +78,121 @@ namespace Journal.DAL.Repositories
             return taskCompletionSource.Task.Result;
         }
 
+        public async Task<RepeatedField<ProtoOADeal>> GetDeals(string accessToken, long accountId, bool isLive)
+        {
+            var _token = new Token()
+            {
+                AccessToken = accessToken,
+            };
+
+            var host = ApiInfo.GetHost(mode: isLive ? Mode.Live : Mode.Demo);
+            var client = new OpenClient(host, ApiInfo.Port, TimeSpan.FromSeconds(10), useWebSocket: useWebScoket);
+
+            _disposables.Add(client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnException));
+
+            await client.Connect();
+
+            var applicationAuthReq = new ProtoOAApplicationAuthReq
+            {
+                ClientId = _app.ClientId,
+                ClientSecret = _app.Secret,
+            };
+
+
+            await client.SendMessage(applicationAuthReq);
+
+            Task.Delay(300).Wait();
+
+            var authRequst = new ProtoOAAccountAuthReq
+            {
+                CtidTraderAccountId = accountId,
+                AccessToken = _token.AccessToken
+            };
+
+            await client.SendMessage(authRequst);
+
+            Task.Delay(100).Wait();
+
+            var taskCompletionSource = new TaskCompletionSource<ProtoOADealListRes>();
+
+            IDisposable disposable = null;
+
+            disposable = client.OfType<ProtoOADealListRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
+            {
+                taskCompletionSource.SetResult(response);
+
+                disposable?.Dispose();
+            });
+
+            var request = new ProtoOADealListReq
+            {
+                CtidTraderAccountId = accountId,
+                FromTimestamp = 0,
+                ToTimestamp = 2147483645000,
+                MaxRows = 1000,
+            };
+
+            await client.SendMessage(request);
+
+            return taskCompletionSource.Task.Result.Deal;
+        }
+
+        public async Task<RepeatedField<ProtoOALightSymbol>> GetSymbols(string accessToken, long accountId, bool isLive)
+        {
+            var _token = new Token()
+            {
+                AccessToken = accessToken,
+            };
+
+            var host = ApiInfo.GetHost(mode: isLive ? Mode.Live : Mode.Demo);
+            var client = new OpenClient(host, ApiInfo.Port, TimeSpan.FromSeconds(10), useWebSocket: useWebScoket);
+
+            _disposables.Add(client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnException));
+
+            await client.Connect();
+
+            var applicationAuthReq = new ProtoOAApplicationAuthReq
+            {
+                ClientId = _app.ClientId,
+                ClientSecret = _app.Secret,
+            };
+
+
+            await client.SendMessage(applicationAuthReq);
+
+            Task.Delay(300).Wait();
+
+            var authRequst = new ProtoOAAccountAuthReq
+            {
+                CtidTraderAccountId = accountId,
+                AccessToken = _token.AccessToken
+            };
+
+            await client.SendMessage(authRequst);
+
+            Task.Delay(100).Wait();
+
+            var taskCompletionSource = new TaskCompletionSource<ProtoOASymbolsListRes>();
+
+            IDisposable disposable = null;
+
+            disposable = client.OfType<ProtoOASymbolsListRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
+            {
+                taskCompletionSource.SetResult(response);
+
+                disposable?.Dispose();
+            });
+
+            var request = new ProtoOASymbolsListReq
+            {
+                CtidTraderAccountId = accountId,
+            };
+
+            await client.SendMessage(request);
+
+            return taskCompletionSource.Task.Result.Symbol;
+        }
+
         private static void OnMessageReceived(IMessage message)
         {
             Console.WriteLine($"\nMessage Received:\n{message}");
@@ -96,5 +212,7 @@ namespace Journal.DAL.Repositories
             return _token.AccessToken;
             
         }
+
+        
     }
 }

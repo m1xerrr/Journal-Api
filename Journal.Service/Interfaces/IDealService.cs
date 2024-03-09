@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Journal.Service.Interfaces
 {
-    public interface IMTDealService
+    public interface IDealService
     {
 
         Task<BaseResponse<DealResponseModel>> GetDeal(int positionid, Guid accountId);
