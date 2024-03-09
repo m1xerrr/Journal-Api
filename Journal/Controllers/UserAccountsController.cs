@@ -1,6 +1,9 @@
 ﻿using Journal.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Journal.Domain.JsonModels;
+using Microsoft.Identity.Client;
+using Journal.Domain.Responses;
+using Journal.Domain.Models;
 
 namespace Journal.Controllers
 {
@@ -17,17 +20,24 @@ namespace Journal.Controllers
             _ctraderAccountService = ctraderAccountService;
         }
 
-        [HttpPost("MTAccountData")]
-        public async Task<IActionResult> MTAccountData([FromBody] Guid accountId)
+        [HttpPost("TradingAccountData")]
+        public async Task<IActionResult> TradingAccountData([FromBody] TradingAccountJsonModel account)
         {
-            var response = await _mtDataService.GetAccountData(accountId);
-            return Json(response);
-        }
-
-        [HttpPost("CTraderAccountData")]
-        public async Task<IActionResult> CTraderAccountData([FromBody] Guid accountId)
-        {
-            var response = await _ctraderAccountService.GetAccountData(accountId);
+            BaseResponse<AccountData> response;
+            switch (account.Provider)
+            {
+                case "MetaTrader 5":
+                    response = await _mtDataService.GetAccountData(account.AccountId);
+                    break;
+                case "CTrader":
+                    response = await _ctraderAccountService.GetAccountData(account.AccountId);
+                    break;
+                default:
+                    response = new BaseResponse<AccountData> { };
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Invalid provider name";
+                    break;
+            }
             return Json(response);
         }
 

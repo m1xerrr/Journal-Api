@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
+using Journal.Domain.Models;
+using Journal.Domain.Responses;
+using Journal.Service.Implementations;
+using Microsoft.Identity.Client;
 
 namespace Journal.Controllers
 {
@@ -20,10 +24,24 @@ namespace Journal.Controllers
             var response = await _mtAccountService.AddAccount(mtAccountModel);
             return Json(response);
         }
-        [HttpPost("DeleteMTAccount")]
-        public async Task<IActionResult> DeleteMTAccount([FromBody] Guid accountId)
+        [HttpPost("DeleteTradingAccount")]
+        public async Task<IActionResult> DeleteTradingAccount([FromBody] TradingAccountJsonModel account)
         {
-            var response = await _mtAccountService.DeleteMTAccount(accountId);
+            BaseResponse<bool> response;
+            switch (account.Provider)
+            {
+                case "MetaTrader 5":
+                    response = await _mtAccountService.DeleteMTAccount(account.AccountId);
+                    break;
+                case "CTrader":
+                    response = await _ctraderAccountService.DeleteCTraderAccount(account.AccountId);
+                    break;
+                default:
+                    response = new BaseResponse<bool> { };
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Invalid provider name";
+                    break;
+            }
             return Json(response);
         }
         [HttpPost("AddCTraderAccount")]
@@ -37,12 +55,6 @@ namespace Journal.Controllers
         public async Task<IActionResult> GetCTraderAccessToken([FromBody] string authorizationLink)
         {
             var response = await _ctraderAccountService.GetAccessToken(authorizationLink);
-            return Json(response);
-        }
-        [HttpPost("DeleteCTraderAccount")]
-        public async Task<IActionResult> DeleteCTraderAccount([FromBody] Guid accountId)
-        {
-            var response = await _ctraderAccountService.DeleteCTraderAccount(accountId);
             return Json(response);
         }
     }
