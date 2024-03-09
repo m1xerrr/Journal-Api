@@ -23,17 +23,20 @@ namespace Journal.Controllers
         [HttpPost("TradingAccountData")]
         public async Task<IActionResult> TradingAccountData([FromBody] TradingAccountJsonModel account)
         {
-            BaseResponse<AccountData> response;
+            BaseResponse<AccountData> response = new BaseResponse<AccountData> { };
             switch (account.Provider)
             {
                 case "MetaTrader 5":
                     response = await _mtDataService.GetAccountData(account.AccountId);
+                    response.Data.Provider = account.Provider;
+                    response.Data.Id = account.AccountId;
                     break;
                 case "CTrader":
                     response = await _ctraderAccountService.GetAccountData(account.AccountId);
+                    response.Data.Provider = account.Provider;
+                    response.Data.Id = account.AccountId;
                     break;
                 default:
-                    response = new BaseResponse<AccountData> { };
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     response.Message = "Invalid provider name";
                     break;

@@ -9,7 +9,10 @@ namespace Journal.Domain.Models
 {
     public class AccountData
     {
+        public Guid Id { get; set; }
         public Guid UserId { get; set; }
+
+        public string Provider {  get; set; }
         public AccountData()
         {
             Deals = new List<DealResponseModel>();
