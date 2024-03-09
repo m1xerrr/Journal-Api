@@ -6,6 +6,7 @@ using Journal.Domain.Models;
 using System.ComponentModel;
 using Google.Protobuf.Collections;
 using System.Runtime.CompilerServices;
+using Microsoft.Identity.Client;
 
 namespace Journal.Service.Implementations
 {
@@ -91,6 +92,11 @@ namespace Journal.Service.Implementations
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     response.Message = "Account not found";
                     return response;
+                }
+                var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id);
+                foreach (var deal in deals)
+                {
+                    await _dealRepository.Delete(deal);
                 }
 
                 if (!await _cTraderAccountRepository.Delete(account))

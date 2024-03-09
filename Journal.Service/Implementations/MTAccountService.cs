@@ -89,7 +89,12 @@ namespace Journal.Service.Implementations
                 }
                 else
                 {
-                    if(await _mtAccountRepository.Delete(account))
+                    var deals = _mtDealRepository.SelectAll().Where(x => x.AccountId == accountId);
+                    foreach (var deal in deals)
+                    {
+                        await _mtDealRepository.Delete(deal);
+                    }
+                    if (await _mtAccountRepository.Delete(account))
                     {
                         response.Data = true;
                         response.StatusCode = Domain.Enums.StatusCode.OK;
@@ -101,14 +106,6 @@ namespace Journal.Service.Implementations
                         response.Data = false;
                         response.StatusCode = Domain.Enums.StatusCode.ERROR;
                         response.Message = "DB error";
-                    }
-                }
-                var deals = _mtDealRepository.SelectAll();
-                foreach(var deal in deals)
-                {
-                    if(deal.AccountId == accountId)
-                    {
-                        await _mtDealRepository.Delete(deal);
                     }
                 }
             }
