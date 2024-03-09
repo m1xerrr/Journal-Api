@@ -23,10 +23,10 @@ namespace Journal.Service.Implementations
             _userRepository = userRepository;
             _dealRepository = dealRepository;
         }
-        public async Task<BaseResponse<List<CTraderAccountResponseModel>>> AddAccounts(string accessToken, Guid UserId)
+        public async Task<BaseResponse<List<AccountResponseModel>>> AddAccounts(string accessToken, Guid UserId)
         {
-            var response = new BaseResponse<List<CTraderAccountResponseModel>>();
-            response.Data = new List<CTraderAccountResponseModel>();
+            var response = new BaseResponse<List<AccountResponseModel>>();
+            response.Data = new List<AccountResponseModel>();
             try
             {
                 var accountsDB = _cTraderAccountRepository.SelectAll();
@@ -55,7 +55,9 @@ namespace Journal.Service.Implementations
                     };
                     if (await _cTraderAccountRepository.Create(newAccount))
                     {
-                        response.Data.Add(new CTraderAccountResponseModel(newAccount));
+                        var responseAccount = new AccountResponseModel(newAccount);
+                        responseAccount.Provider = "CTrader";
+                        response.Data.Add(responseAccount);
                     }
                     else
                     {
@@ -226,16 +228,17 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<List<CTraderAccountResponseModel>>> GetUserAccounts(Guid UserId)
+        public async Task<BaseResponse<List<AccountResponseModel>>> GetUserAccounts(Guid UserId)
         {
-            var response = new BaseResponse<List<CTraderAccountResponseModel>>();
+            var response = new BaseResponse<List<AccountResponseModel>>();
             try
             {
                 var accounts = _cTraderAccountRepository.SelectAll().Where(x => x.UserID == UserId);
-                response.Data = new List<CTraderAccountResponseModel>();
+                response.Data = new List<AccountResponseModel>();
                 foreach (var account in accounts)
                 {
-                    var accountResponse = new CTraderAccountResponseModel(account);
+                    var accountResponse = new AccountResponseModel(account);
+                    accountResponse.Provider = "CTrader";
                     var accountData = await GetAccountData(account.Id);
                     accountResponse.Profit = accountData.Data.Profit;
                     accountResponse.ProfitPercentage = accountData.Data.ProfitPercentage;

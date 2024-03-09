@@ -7,7 +7,7 @@ namespace Journal.Service.Interfaces
 {
     public interface ICTraderAccountService
     {
-        Task<BaseResponse<List<CTraderAccountResponseModel>>> AddAccounts(string accessToken, Guid UserId);
+        Task<BaseResponse<List<AccountResponseModel>>> AddAccounts(string accessToken, Guid UserId);
 
         Task<BaseResponse<string>> GetAccessToken(string authorizationLink);
 
@@ -15,6 +15,6 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<AccountData>> GetAccountData(Guid id);
 
-        Task<BaseResponse<List<CTraderAccountResponseModel>>> GetUserAccounts(Guid UserId);
+        Task<BaseResponse<List<AccountResponseModel>>> GetUserAccounts(Guid UserId);
     }
 }

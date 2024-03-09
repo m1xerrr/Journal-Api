@@ -24,9 +24,9 @@ namespace Journal.Service.Implementations
             _mtDealRepository = mTDealRepository;
         }
 
-        public async Task<BaseResponse<MTAccountResponseModel>> AddAccount(MTAccountJsonModel accountModel)
+        public async Task<BaseResponse<AccountResponseModel>> AddAccount(MTAccountJsonModel accountModel)
         {
-            var response = new BaseResponse<MTAccountResponseModel>();
+            var response = new BaseResponse<AccountResponseModel>();
             try
             {
                 var accs = _mtAccountRepository.SelectAll();
@@ -56,7 +56,7 @@ namespace Journal.Service.Implementations
                 if (await _mtAccountRepository.Create(account))
                     {
                         response.StatusCode = Domain.Enums.StatusCode.OK;
-                        response.Data = new MTAccountResponseModel(account);
+                        response.Data = new AccountResponseModel(account);
                     }
                     else
                     {
@@ -121,13 +121,13 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<List<MTAccountResponseModel>>> GetMTAccountsByUser(Guid userId)
+        public async Task<BaseResponse<List<AccountResponseModel>>> GetMTAccountsByUser(Guid userId)
         {
-            var response = new BaseResponse<List<MTAccountResponseModel>>();
+            var response = new BaseResponse<List<AccountResponseModel>>();
             try
             {
                 var accounts = _mtAccountRepository.SelectAll().Where(x => x.UserID == userId);
-                var accountsResponse = new List<MTAccountResponseModel>();
+                var accountsResponse = new List<AccountResponseModel>();
                 foreach (var account in accounts)
                 {
                     var accountJson = new MTAccountJsonModel();
@@ -138,7 +138,7 @@ namespace Journal.Service.Implementations
                     accountJson.Id = account.Id;
                     var deals = await _mtDataRepository.GetDeals(accountJson);
                     var data = await DealstoAccount(account.Id, deals);
-                    var accountResponse = new MTAccountResponseModel(account);
+                    var accountResponse = new AccountResponseModel(account);
                     accountResponse.Profit = data.Profit;
                     accountResponse.ProfitPercentage = data.ProfitPercentage;
                     accountResponse.Balance = data.currentBalance;

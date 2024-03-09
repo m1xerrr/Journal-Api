@@ -36,18 +36,19 @@ namespace Journal.Controllers
             var response = await _userService.DeleteAccount(userId);
             return Json(response);
         }
-        [HttpPost("UserMTAccounts")]
-        public async Task<IActionResult> UserMTAccounts([FromBody] Guid userId)
+        [HttpPost("UserTradingAccounts")]
+        public async Task<IActionResult> UserTradingAccounts([FromBody] Guid userId)
         {
-            var response = await _mtAccountService.GetMTAccountsByUser(userId);
-            return Json(response);
-        }
-
-        [HttpPost("UserCtraderAccounts")]
-        public async Task<IActionResult> UserCTraderAccounts([FromBody] Guid userId)
-        {
-            var response = await _ctraderAccountService.GetUserAccounts(userId);
-            return Json(response);
+            var responseMT = await _mtAccountService.GetMTAccountsByUser(userId);
+            var responseCT = await _ctraderAccountService.GetUserAccounts(userId);
+            if (responseMT.StatusCode == Domain.Enums.StatusCode.OK && responseCT.StatusCode == Domain.Enums.StatusCode.OK)
+            {
+                foreach(var account in responseCT.Data)
+                {
+                    responseMT.Data.Add(account);
+                }
+            }
+            return Json(responseMT);
         }
 
         [HttpPost("ChangeUsername")]

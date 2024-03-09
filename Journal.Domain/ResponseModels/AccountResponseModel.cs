@@ -1,22 +1,22 @@
-﻿using Journal.Domain.Models;
+﻿using Azure.Core;
+using Journal.Domain.Models;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Journal.Domain.ResponseModels
 {
-    public class MTAccountResponseModel
+    public class AccountResponseModel
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
+        public long Login { get; set; }
 
-        public int Login { get; set; }
-
-        public string Password { get; set; }
-
-        public string Server { get; set; }
+        public string Provider { get; set; }
 
         public double Deposit { get; set; }
 
@@ -28,14 +28,17 @@ namespace Journal.Domain.ResponseModels
 
         public int DealsCount { get; set; }
 
-        public MTAccountResponseModel(MTAccount account) 
+        public AccountResponseModel(MTAccount account) 
         {
             Id = account.Id;
             UserId = account.UserID;
             Login = account.Login;
-            Password = account.Password;
-            Server = account.Server;
         }
-
+        public AccountResponseModel(CTraderAccount account)
+        {
+            Id = account.Id;
+            UserId = account.UserID;
+            Login = account.Login;
+        }
     }
 }

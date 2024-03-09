@@ -19,8 +19,7 @@ namespace Journal.Domain.Models
         public Role Role { get; set; }
         public List<MTAccount>? MTAccounts { get; set; }
         public Subscription Subscription { get; set; }
-
-        public List<CTraderAccount> CTraderAccounts { get; set; }
+        public List<CTraderAccount>? CTraderAccounts { get; set; }
 
         public User() { 
             MTAccounts = new List<MTAccount>();
