@@ -177,7 +177,7 @@ namespace Journal.Service.Implementations
             var account = new AccountData();
             var protoDeals =  requestDeals.OrderBy(x => x.ExecutionTimestamp).ToList();
             var accountDeals = new List<Deal>();
-            var dealsFromDB = _dealRepository.SelectAll();
+            var dealsFromDB = _dealRepository.SelectAll().Where(x => x.AccountId == accountId);
             var Deposit = (protoDeals[1].ClosePositionDetail.Balance - (protoDeals[1].ClosePositionDetail.Commission + protoDeals[1].ClosePositionDetail.GrossProfit)) / Math.Pow(10, protoDeals[1].MoneyDigits);
             account.Deposit = Deposit;
             account.currentBalance = protoDeals.Last().ClosePositionDetail.Balance / Math.Pow(10, protoDeals.Last().MoneyDigits);
@@ -206,7 +206,7 @@ namespace Journal.Service.Implementations
                     newDeal.Comission += deal.ClosePositionDetail.Commission / Math.Pow(10, deal.MoneyDigits);
                     newDeal.ExitPrice = deal.ExecutionPrice;
                     newDeal.ExitTime = DateTimeOffset.FromUnixTimeMilliseconds(deal.ExecutionTimestamp).UtcDateTime;
-                    newDeal.ProfitPercentage = newDeal.Profit / Deposit;
+                    newDeal.ProfitPercentage = (newDeal.Profit / Deposit) * 100;
                     if (newDeal.ProfitPercentage < -0.1) newDeal.Result = Domain.Enums.Result.Loss;
                     else if (newDeal.ProfitPercentage > 0.1) newDeal.Result = Domain.Enums.Result.Win;
                     else newDeal.Result = Domain.Enums.Result.Breakeven;
