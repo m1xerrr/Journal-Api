@@ -12,10 +12,12 @@ namespace Journal.Controllers
     {
         private readonly IMTAccountService _mtAccountService;
         private readonly ICTraderAccountService _ctraderAccountService;
-        public AccountsController(IMTAccountService mTAccountService, ICTraderAccountService cTraderAccountService)
+        private readonly IDXTradeAccountService _dxTradeAccountService;
+        public AccountsController(IMTAccountService mTAccountService, ICTraderAccountService cTraderAccountService, IDXTradeAccountService traderAccountService)
         {
             _mtAccountService = mTAccountService;
             _ctraderAccountService = cTraderAccountService;
+            _dxTradeAccountService = traderAccountService;
         }
 
         [HttpPost("AddMTAccount")]
@@ -48,6 +50,13 @@ namespace Journal.Controllers
         public async Task<IActionResult> AddCTraderAccount([FromBody] CTraderAccountJsonModel model)
         {
             var response = await _ctraderAccountService.AddAccounts(model.AccessToken, model.UserId);
+            return Json(response);
+        }
+
+        [HttpPost("AddDXTradeAccount")]
+        public async Task<IActionResult> AddDXTradeAccount([FromBody] DXTradeAccountJsonModel model)
+        {
+            var response = await _dxTradeAccountService.AddAccounts(model.Username, model.Password, model.Domain, model.UserId);
             return Json(response);
         }
 

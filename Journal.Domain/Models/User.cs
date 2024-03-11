@@ -18,12 +18,17 @@ namespace Journal.Domain.Models
         public string Password { get; set; }
         public Role Role { get; set; }
         public List<MTAccount>? MTAccounts { get; set; }
-        public Subscription Subscription { get; set; }
+        
         public List<CTraderAccount>? CTraderAccounts { get; set; }
+
+        public List<DXTradeAccount>? DXTradeAccounts { get; set; }
+
+        public Subscription Subscription { get; set; }
 
         public User() { 
             MTAccounts = new List<MTAccount>();
             CTraderAccounts = new List<CTraderAccount>();
+            DXTradeAccounts = new List<DXTradeAccount>(); 
         }
     }
 }

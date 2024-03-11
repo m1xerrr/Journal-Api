@@ -33,12 +33,21 @@ namespace Journal.Domain.ResponseModels
             Id = account.Id;
             UserId = account.UserID;
             Login = account.Login;
+            Provider = "MetaTrader 5";
         }
         public AccountResponseModel(CTraderAccount account)
         {
             Id = account.Id;
             UserId = account.UserID;
             Login = account.Login;
+            Provider = "CTrader";
+        }
+        public AccountResponseModel(DXTradeAccount account) 
+        {
+            Id = account.Id;
+            UserId = account.UserID;
+            Login = account.Login;
+            Provider = "DXTrade";
         }
     }
 }

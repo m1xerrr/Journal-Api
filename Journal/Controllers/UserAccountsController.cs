@@ -12,12 +12,14 @@ namespace Journal.Controllers
         private readonly IMTDataService _mtDataService;
         private readonly IDealService _mtDealService;
         private readonly ICTraderAccountService _ctraderAccountService;
+        private readonly IDXTradeAccountService _dxTradeAccountService;
 
-        public UserAccountsController(IMTDataService mTDataService, IDealService mtDealService, ICTraderAccountService ctraderAccountService)
+        public UserAccountsController(IMTDataService mTDataService, IDealService mtDealService, ICTraderAccountService ctraderAccountService, IDXTradeAccountService dXTradeAccountService)
         {
             _mtDataService = mTDataService;
             _mtDealService = mtDealService;
             _ctraderAccountService = ctraderAccountService;
+            _dxTradeAccountService = dXTradeAccountService;
         }
 
         [HttpPost("TradingAccountData")]
@@ -33,6 +35,11 @@ namespace Journal.Controllers
                     break;
                 case "CTrader":
                     response = await _ctraderAccountService.GetAccountData(account.AccountId);
+                    response.Data.Provider = account.Provider;
+                    response.Data.Id = account.AccountId;
+                    break;
+                case "DXTrade":
+                    response = await _dxTradeAccountService.GetAccountData(account.AccountId);
                     response.Data.Provider = account.Provider;
                     response.Data.Id = account.AccountId;
                     break;

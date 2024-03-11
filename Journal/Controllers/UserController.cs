@@ -12,11 +12,13 @@ namespace Journal.Controllers
         private readonly IUserService _userService;
         private readonly IMTAccountService _mtAccountService;
         private readonly ICTraderAccountService _ctraderAccountService;
-        public UserController(IUserService userService, IMTAccountService mTAccountService, ICTraderAccountService ctraderAccountService)
+        private readonly IDXTradeAccountService _dxTradeAccountService;
+        public UserController(IUserService userService, IMTAccountService mTAccountService, ICTraderAccountService ctraderAccountService, IDXTradeAccountService dXTradeAccountService)
         {
             _userService = userService;
             _mtAccountService = mTAccountService;
             _ctraderAccountService = ctraderAccountService;
+            _dxTradeAccountService = dXTradeAccountService;
         }
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginUserJsonModel user)
@@ -41,11 +43,23 @@ namespace Journal.Controllers
         {
             var responseMT = await _mtAccountService.GetMTAccountsByUser(userId);
             var responseCT = await _ctraderAccountService.GetUserAccounts(userId);
+            var responseDX = await _dxTradeAccountService.GetUserAccounts(userId);
             if (responseMT.StatusCode == Domain.Enums.StatusCode.OK && responseCT.StatusCode == Domain.Enums.StatusCode.OK)
             {
                 foreach(var account in responseCT.Data)
                 {
                     responseMT.Data.Add(account);
+                }
+                if(responseDX.StatusCode == Domain.Enums.StatusCode.OK)
+                {
+                    foreach (var account in responseDX.Data)
+                    {
+                        responseMT.Data.Add(account);
+                    }
+                }
+                else
+                {
+                    return Json(responseDX);
                 }
             }
             return Json(responseMT);
@@ -85,27 +99,6 @@ namespace Journal.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             var response = await _userService.GetAllUsers();
-            return Json(response);
-        }
-
-        [HttpPost("AddUserSubscription")]
-        public async Task<IActionResult> Subscribe([FromBody] SubscriptionJsonModel subscription)
-        {
-            var response = await _userService.Subscribe(subscription.UserId, subscription.ExpirationDate, subscription.SubscriptionType);
-            return Json(response);
-        }
-
-        [HttpPost("ExtendUserSubscription")]
-        public async Task<IActionResult> ExtendSubscription([FromBody] SubscriptionJsonModel subscription)
-        {
-            var response = await _userService.ExtendSubscription(subscription.UserId, subscription.ExpirationDate);
-            return Json(response);
-        }
-
-        [HttpPost("ChangeSubscriptionType")]
-        public async Task<IActionResult> ChangeSubscriptionType([FromBody] SubscriptionJsonModel subscription)
-        {
-            var response = await _userService.ChangeSubscriptionType(subscription.UserId, subscription.SubscriptionType);
             return Json(response);
         }
 

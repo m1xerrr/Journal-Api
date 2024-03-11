@@ -15,28 +15,28 @@ namespace Journal.DAL.Repositories
 
         public async Task<bool> Create(Deal entity)
         {
-            await _db.MTDeals.AddAsync(entity);
+            await _db.Deals.AddAsync(entity);
             _db.SaveChanges();
             return true;
         }
 
         public async Task<bool> Delete(Deal entity)
         {
-            _db.MTDeals.Remove(entity);
+            _db.Deals.Remove(entity);
             await _db.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> Edit(Deal entity)
         {
-            _db.MTDeals.Update(entity);
+            _db.Deals.Update(entity);
             await _db.SaveChangesAsync();
             return true;
         }
 
         public List<Deal> SelectAll()
         {
-            return _db.MTDeals.ToList();
+            return _db.Deals.ToList();
         }
     }
 }

@@ -34,6 +34,9 @@ namespace Journal
             builder.Services.AddScoped<ICTraderAccountRepository, CTraderAccountRepository>();
             builder.Services.AddScoped<ICTraderApiRepository, CTraderApiRepository>();
             builder.Services.AddScoped<ICTraderAccountService, CTraderAccountService>();
+            builder.Services.AddScoped<IDXTradeAccountService, DXTradeAccountService>();
+            builder.Services.AddScoped<IDXTradeAccountRepository, DXTradeAccountRepository>();
+            builder.Services.AddScoped<IDXTradeDataRepository, DXTradeDataRepository>();
 
             var app = builder.Build();
 
