@@ -150,8 +150,16 @@ namespace Journal.Service.Implementations
             account.currentBalance = deposit;
             foreach (var deal in apiDeals.Where(x => x.Status == "COMPLETED"))
             {
-                if (dealsFromDB.FirstOrDefault(x => (x.AccountId == accountId && x.PositionId == long.Parse(deal.OrderCode.Split(":").First()))) != null) continue;
-                var newDeal = accountDeals.FirstOrDefault(x => x.PositionId == long.Parse(deal.OrderCode.Split(":").First()));
+                Deal newDeal = new Deal();
+                if (deal.OrderCode.Split(":").First() == "dxsca-integration-session-code")
+                {
+                    newDeal = accountDeals.Last();
+                }
+                else 
+                {
+                    if (dealsFromDB.FirstOrDefault(x => (x.AccountId == accountId && x.PositionId == long.Parse(deal.OrderCode.Split(":").First()))) != null) continue;
+                    newDeal = accountDeals.FirstOrDefault(x => x.PositionId == long.Parse(deal.OrderCode.Split(":").First()));
+                }
                 if (newDeal == null)
                 {
                     newDeal = new Deal()
@@ -160,7 +168,7 @@ namespace Journal.Service.Implementations
                         Direction = (deal.Side == "BUY") ? Domain.Enums.Direction.Long : Domain.Enums.Direction.Short,
                         Volume = (double)deal.Legs.First().Quantity / 100000,
                         EntryTime = deal.TransactionTime,
-                        EntryPrice = deal.Legs.First().Price,
+                        EntryPrice = deal.Legs.First().AveragePrice,
                         Symbol = deal.Instrument,
                     };
                     accountDeals.Add(newDeal);
@@ -176,12 +184,12 @@ namespace Journal.Service.Implementations
                     else if (newDeal.ProfitPercentage > 0.1) newDeal.Result = Domain.Enums.Result.Win;
                     else newDeal.Result = Domain.Enums.Result.Breakeven;
                     newDeal.AccountId = accountId;
-                    account.currentBalance += (newDeal.Comission + newDeal.Profit);
                 }
             }
+            var deals = await DealsDB(accountDeals, accountId);
+            account.currentBalance = account.Deposit + deals.Sum(x => x.Profit) + deals.Sum(x => x.Comission);
             account.Profit = account.currentBalance - account.Deposit;
             account.ProfitPercentage = (account.Profit / account.Deposit) * 100;
-            var deals = await DealsDB(accountDeals, accountId);
             account.Deals = deals;
             account.BreakevenDeals = account.Deals.Where(x => x.Result == Domain.Enums.Result.Breakeven).Count();
             account.WonDeals = account.Deals.Where(x => x.Result == Domain.Enums.Result.Win).Count();
