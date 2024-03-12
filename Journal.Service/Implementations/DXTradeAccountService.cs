@@ -218,7 +218,7 @@ namespace Journal.Service.Implementations
                 foreach (var account in accounts)
                 {
                     var accountResponse = new AccountResponseModel(account);
-                    accountResponse.Provider = "DXTrader";
+                    accountResponse.Provider = "DXTrade";
                     var accountData = await GetAccountData(account.Id);
                     if (accountData.StatusCode == Domain.Enums.StatusCode.ERROR) continue;
                     accountResponse.Profit = accountData.Data.Profit;
