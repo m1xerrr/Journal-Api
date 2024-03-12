@@ -153,7 +153,8 @@ namespace Journal.Service.Implementations
                 Deal newDeal = new Deal();
                 if (deal.OrderCode.Split(":").First() == "dxsca-integration-session-code")
                 {
-                    newDeal = accountDeals.Last();
+                    newDeal = accountDeals.LastOrDefault();
+                    if (newDeal == null) continue;
                 }
                 else 
                 {
