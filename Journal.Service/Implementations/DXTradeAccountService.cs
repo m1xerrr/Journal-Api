@@ -66,7 +66,7 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<bool>> DeleteCTraderAccount(Guid id)
+        public async Task<BaseResponse<bool>> DeleteDXTradeAccount(Guid id)
         {
             var response = new BaseResponse<bool>();
 
@@ -80,6 +80,11 @@ namespace Journal.Service.Implementations
                 }
                 else
                 {
+                    var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id);
+                    foreach( var deal in deals)
+                    {
+                        await _dealRepository.Delete(deal);
+                    }
                     if(await _dxTradeAccountRepository.Delete(account))
                     {
                         response.StatusCode = Domain.Enums.StatusCode.OK;

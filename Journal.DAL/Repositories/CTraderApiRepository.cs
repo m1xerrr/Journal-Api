@@ -55,7 +55,7 @@ namespace Journal.DAL.Repositories
 
             await client.SendMessage(applicationAuthReq);
 
-            Task.Delay(300).Wait();
+            await Task.Delay(300);
 
             var taskCompletionSource = new TaskCompletionSource<ProtoOAGetAccountListByAccessTokenRes>();
 
@@ -101,7 +101,7 @@ namespace Journal.DAL.Repositories
 
             await client.SendMessage(applicationAuthReq);
 
-            Task.Delay(300).Wait();
+            await Task.Delay(300);
 
             var authRequst = new ProtoOAAccountAuthReq
             {
@@ -111,7 +111,7 @@ namespace Journal.DAL.Repositories
 
             await client.SendMessage(authRequst);
 
-            Task.Delay(100).Wait();
+            await Task.Delay(100);
 
             var taskCompletionSource = new TaskCompletionSource<ProtoOADealListRes>();
 
@@ -160,7 +160,7 @@ namespace Journal.DAL.Repositories
 
             await client.SendMessage(applicationAuthReq);
 
-            Task.Delay(300).Wait();
+            await Task.Delay(300);
 
             var authRequst = new ProtoOAAccountAuthReq
             {
@@ -170,7 +170,7 @@ namespace Journal.DAL.Repositories
 
             await client.SendMessage(authRequst);
 
-            Task.Delay(100).Wait();
+            await Task.Delay(100);
 
             var taskCompletionSource = new TaskCompletionSource<ProtoOASymbolsListRes>();
 
@@ -212,7 +212,5 @@ namespace Journal.DAL.Repositories
             return _token.AccessToken;
             
         }
-
-        
     }
 }

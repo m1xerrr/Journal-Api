@@ -38,6 +38,9 @@ namespace Journal.Controllers
                 case "CTrader":
                     response = await _ctraderAccountService.DeleteCTraderAccount(account.AccountId);
                     break;
+                case "DXTrade":
+                    response = await _dxTradeAccountService.DeleteDXTradeAccount(account.AccountId);
+                    break;
                 default:
                     response = new BaseResponse<bool> { };
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
