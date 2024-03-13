@@ -1,5 +1,6 @@
 ﻿using Journal.DAL.Interfaces;
 using Journal.DAL.Repositories;
+using Journal.Domain.Enums;
 using Journal.Domain.JsonModels;
 using Journal.Domain.Models;
 using Journal.Domain.ResponseModels;
@@ -106,9 +107,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<AccountData>> GetAccountData(Guid id)
+        public async Task<BaseResponse<bool>> LoadAccountData(Guid id)
         {
-            var response = new BaseResponse<AccountData>();
+            var response = new BaseResponse<bool>();
 
             try
             {
@@ -123,15 +124,14 @@ namespace Journal.Service.Implementations
                     var dealsResponse = await _dxTradeDataRepository.GetDeals(account.Username, account.Password, account.Domain, account.Login.ToString());
                     if (dealsResponse.Orders.Count() == 0)
                     {
-                        response.Data = new AccountData();
+                        response.Data = false;
                         response.StatusCode = Domain.Enums.StatusCode.ERROR;
                         response.Message = "Account is empty. Please, open at least one deal";
                         return response;
                     }
                     var deposit = await _dxTradeDataRepository.GetDeposit(account.Username, account.Password, account.Domain, account.Login.ToString());
-                    var accountData = await GetAccountFromDeals(dealsResponse.Orders, id, deposit);
-                    accountData.UserId = account.UserID;
-                    response.Data = accountData;
+                    await GetAccountFromDeals(dealsResponse.Orders, id, deposit);
+                    response.Data = true;
                     response.StatusCode = Domain.Enums.StatusCode.OK;
                     response.Message = "Success";
                 }
@@ -145,7 +145,7 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        private async Task<AccountData> GetAccountFromDeals(List<DXTradeAPIDealOrderJsonModel> orders, Guid accountId, double deposit)
+        private async Task GetAccountFromDeals(List<DXTradeAPIDealOrderJsonModel> orders, Guid accountId, double deposit)
         {
             var account = new AccountData();
             var apiDeals = orders.Where(x => x.Status == "COMPLETED");
@@ -192,21 +192,10 @@ namespace Journal.Service.Implementations
                     newDeal.AccountId = accountId;
                 }
             }
-            var deals = await DealsDB(accountDeals, accountId);
-            account.currentBalance = account.Deposit + deals.Sum(x => x.Profit) + deals.Sum(x => x.Comission);
-            account.Profit = account.currentBalance - account.Deposit;
-            account.ProfitPercentage = (account.Profit / account.Deposit) * 100;
-            account.Deals = deals;
-            account.BreakevenDeals = account.Deals.Where(x => x.Result == Domain.Enums.Result.Breakeven).Count();
-            account.WonDeals = account.Deals.Where(x => x.Result == Domain.Enums.Result.Win).Count();
-            account.LostDeals = account.Deals.Where(x => x.Result == Domain.Enums.Result.Loss).Count();
-            account.LongDeals = account.Deals.Where(x => x.Direction == Domain.Enums.Direction.Long).Count();
-            account.ShortDeals = account.Deals.Where(x => x.Direction == Domain.Enums.Direction.Short).Count();
-            account.TotalDeals = account.Deals.Count();
-            return account;
+            await DealsDB(accountDeals, accountId);
         }
 
-        private async Task<List<DealResponseModel>> DealsDB(List<Deal> newDeals, Guid accountId)
+        private async Task DealsDB(List<Deal> newDeals, Guid accountId)
         {
 
             foreach (var newDeal in newDeals)
@@ -215,11 +204,6 @@ namespace Journal.Service.Implementations
             }
             var deals = _dealRepository.SelectAll().Where(x => x.AccountId == accountId);
             var response = new List<DealResponseModel>();
-            foreach (var deal in deals)
-            {
-                response.Add(new DealResponseModel(deal));
-            }
-            return response;
         }
 
         public async Task<BaseResponse<List<AccountResponseModel>>> GetUserAccounts(Guid UserId)
@@ -249,6 +233,54 @@ namespace Journal.Service.Implementations
             {
                 response.StatusCode = Domain.Enums.StatusCode.ERROR;
                 response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<AccountData>> GetAccountData(Guid id)
+        {
+            var response = new BaseResponse<AccountData>();
+            try
+            {
+
+                var account = _dxTradeAccountRepository.SelectAll().FirstOrDefault(x => x.Id == id);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                    return response;
+                }
+                var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id);
+                if (deals.Count() == 0)
+                {
+                    response.Message = "Deals not found";
+                    response.StatusCode = StatusCode.ERROR;
+                }
+                else
+                {
+                    var accountData = new AccountData();
+                    foreach (var deal in deals)
+                    {
+                        accountData.Deals.Add(new DealResponseModel(deal));
+                    }
+                    accountData.Deposit = await _dxTradeDataRepository.GetDeposit(account.Username, account.Password, account.Domain, account.Login.ToString());
+                    accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
+                    accountData.currentBalance = accountData.Deposit + accountData.Profit;
+                    accountData.TotalDeals = accountData.Deals.Count;
+                    accountData.WonDeals = accountData.Deals.Where(x => x.Result == Result.Win).Count();
+                    accountData.LostDeals = accountData.Deals.Where(x => x.Result == Result.Loss).Count();
+                    accountData.BreakevenDeals = accountData.Deals.Where(x => x.Result == Result.Breakeven).Count();
+                    accountData.LongDeals = accountData.Deals.Where(x => x.Direction == Direction.Long).Count();
+                    accountData.ShortDeals = accountData.Deals.Where(x => x.Direction == Direction.Short).Count();
+                    accountData.ProfitPercentage = Math.Round(accountData.Profit / accountData.Deposit * 100, 2);
+                    accountData.Provider = "DXTrade";
+                    response.Data = accountData;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
             }
             return response;
         }

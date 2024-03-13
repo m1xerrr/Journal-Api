@@ -13,6 +13,8 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<List<AccountResponseModel>>> GetMTAccountsByUser(Guid userId);
 
+        Task<BaseResponse<bool>> LoadAccountData(Guid accountId);
+
         Task<BaseResponse<AccountData>> GetAccountData(Guid accountId);
     }
 }

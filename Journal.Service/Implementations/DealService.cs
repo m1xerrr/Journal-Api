@@ -2,16 +2,17 @@
 using Journal.DAL.Interfaces;
 using Journal.Domain.Responses;
 using Journal.Domain.ResponseModels;
+using Journal.Domain.Models;
 
 namespace Journal.Service.Implementations
 {
     public class DealService : IDealService
     {
-        private readonly IDealRepository _mtDealRepository;
+        private readonly IDealRepository _dealRepository;
 
         public DealService(IDealRepository mtDealRepository)
         {
-            _mtDealRepository = mtDealRepository;
+            _dealRepository = mtDealRepository;
         }
 
         public async Task<BaseResponse<DealResponseModel>> AddImage(int dealId, Guid accountId, string img)
@@ -19,7 +20,7 @@ namespace Journal.Service.Implementations
             var response = new BaseResponse<DealResponseModel>();
             try
             {
-                var deals = _mtDealRepository.SelectAll();
+                var deals = _dealRepository.SelectAll();
                 var deal = deals.FirstOrDefault(x => x.PositionId == dealId && x.AccountId == accountId);
                 if (deal == null)
                 {
@@ -29,7 +30,7 @@ namespace Journal.Service.Implementations
                 else
                 {
                     deal.Image = img;
-                    if(await _mtDealRepository.Edit(deal))
+                    if(await _dealRepository.Edit(deal))
                     {
                         response.StatusCode = Domain.Enums.StatusCode.OK;
                         response.Data = new DealResponseModel(deal);
@@ -54,7 +55,7 @@ namespace Journal.Service.Implementations
             var response = new BaseResponse<DealResponseModel>();
             try
             {
-                var deals = _mtDealRepository.SelectAll();
+                var deals = _dealRepository.SelectAll();
                 var deal = deals.FirstOrDefault(x => x.PositionId == dealId && x.AccountId == accountId);
                 if (deal == null)
                 {
@@ -64,7 +65,7 @@ namespace Journal.Service.Implementations
                 else
                 {
                     deal.Notes = note;
-                    if (await _mtDealRepository.Edit(deal))
+                    if (await _dealRepository.Edit(deal))
                     {
                         response.StatusCode = Domain.Enums.StatusCode.OK;
                         response.Data = new DealResponseModel(deal);
@@ -89,7 +90,7 @@ namespace Journal.Service.Implementations
             var response = new BaseResponse<DealResponseModel>();
             try
             {
-                var deals = _mtDealRepository.SelectAll();
+                var deals = _dealRepository.SelectAll();
                 var deal = deals.FirstOrDefault(x => x.PositionId == positionid && x.AccountId == accountId);
                 if (deal == null)
                 {
@@ -109,5 +110,6 @@ namespace Journal.Service.Implementations
             }
             return response;
         }
+
     }
 }

@@ -13,6 +13,8 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<bool>> DeleteCTraderAccount(Guid id);
 
+        Task<BaseResponse<bool>> LoadAccountData(Guid id);
+
         Task<BaseResponse<AccountData>> GetAccountData(Guid id);
 
         Task<BaseResponse<List<AccountResponseModel>>> GetUserAccounts(Guid UserId);

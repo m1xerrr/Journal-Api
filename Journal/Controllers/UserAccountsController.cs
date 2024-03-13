@@ -51,6 +51,31 @@ namespace Journal.Controllers
             return Json(response);
         }
 
+        [HttpPost("LoadTradingAccountData")]
+        public async Task<IActionResult> LoadTradingAccountData([FromBody] TradingAccountJsonModel account)
+        {
+            BaseResponse<bool> response = new BaseResponse<bool>();
+            switch (account.Provider)
+            {
+                case "MetaTrader 5":
+                    response = await _mtAccountService.LoadAccountData(account.AccountId);
+                    break;
+                case "CTrader":
+                    await _ctraderAccountService.LoadAccountData(account.AccountId);
+                    response = await _ctraderAccountService.LoadAccountData(account.AccountId);
+                    break;
+                case "DXTrade":
+                    await _dxTradeAccountService.LoadAccountData(account.AccountId);
+                    response = await _dxTradeAccountService.LoadAccountData(account.AccountId);
+                    break;
+                default:
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Invalid provider name";
+                    break;
+            }
+            return Json(response);
+        }
+
         [HttpPost("AddDealImg")]
         public async Task<IActionResult> DealAddImg([FromBody] DealEditJsonModel deal)
         {

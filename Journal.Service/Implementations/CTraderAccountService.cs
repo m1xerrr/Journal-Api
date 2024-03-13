@@ -7,6 +7,9 @@ using System.ComponentModel;
 using Google.Protobuf.Collections;
 using System.Runtime.CompilerServices;
 using Microsoft.Identity.Client;
+using System.Security.Principal;
+using Journal.DAL.Repositories;
+using Journal.Domain.Enums;
 
 namespace Journal.Service.Implementations
 {
@@ -59,6 +62,7 @@ namespace Journal.Service.Implementations
                         var responseAccount = new AccountResponseModel(newAccount);
                         responseAccount.Provider = "CTrader";
                         response.Data.Add(responseAccount);
+                        LoadAccountData(newAccount.Id);
                     }
                     else
                     {
@@ -135,9 +139,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<AccountData>> GetAccountData(Guid id)
+        public async Task<BaseResponse<bool>> LoadAccountData(Guid id)
         {
-            var response = new BaseResponse<AccountData>();
+            var response = new BaseResponse<bool>();
             try
             {
                 var account = _cTraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == id);
@@ -151,15 +155,14 @@ namespace Journal.Service.Implementations
                 var dealsResponse = await _cTraderApiRepository.GetDeals(account.AccessToken, account.AccountId, account.IsLive);
                 if(dealsResponse.Count() == 0)
                 {
-                    response.Data = new AccountData();
+                    response.Data = false;
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     response.Message = "Account is empty. Please, open at least one deal";
                     return response;
                 }
                 var symbols = await _cTraderApiRepository.GetSymbols(account.AccessToken, account.AccountId, account.IsLive);
-                var accountData = await GetAccountFromDeals(dealsResponse, symbols, id);
-                accountData.UserId = account.UserID;
-                response.Data = accountData;
+                await GetAccountFromDeals(dealsResponse, symbols, id);
+                response.Data = true;
                 response.StatusCode = Domain.Enums.StatusCode.OK;
                 response.Message = "Success";
 
@@ -172,7 +175,15 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        private async Task<AccountData> GetAccountFromDeals(RepeatedField<ProtoOADeal> requestDeals, RepeatedField<ProtoOALightSymbol> symbols, Guid accountId)
+        private async Task<double> GetDeposit(string accessToken, long accountId, bool isLive)
+        {
+            var dealsResponse = await _cTraderApiRepository.GetDeals(accessToken, accountId, isLive);
+            var protoDeals = dealsResponse.OrderBy(x => x.ExecutionTimestamp).ToList();
+            var Deposit = (protoDeals[1].ClosePositionDetail.Balance - (protoDeals[1].ClosePositionDetail.Commission + protoDeals[1].ClosePositionDetail.GrossProfit)) / Math.Pow(10, protoDeals[1].MoneyDigits);
+            return Deposit;
+        }
+
+        private async Task GetAccountFromDeals(RepeatedField<ProtoOADeal> requestDeals, RepeatedField<ProtoOALightSymbol> symbols, Guid accountId)
         {
             var account = new AccountData();
             var protoDeals =  requestDeals.OrderBy(x => x.ExecutionTimestamp).ToList();
@@ -180,9 +191,6 @@ namespace Journal.Service.Implementations
             var dealsFromDB = _dealRepository.SelectAll().Where(x => x.AccountId == accountId);
             var Deposit = (protoDeals[1].ClosePositionDetail.Balance - (protoDeals[1].ClosePositionDetail.Commission + protoDeals[1].ClosePositionDetail.GrossProfit)) / Math.Pow(10, protoDeals[1].MoneyDigits);
             account.Deposit = Deposit;
-            account.currentBalance = protoDeals.Last().ClosePositionDetail.Balance / Math.Pow(10, protoDeals.Last().MoneyDigits);
-            account.Profit = account.currentBalance - account.Deposit;
-            account.ProfitPercentage = (account.Profit / account.Deposit) * 100;
             foreach(var deal in protoDeals)
             {
                 if (dealsFromDB.FirstOrDefault(x => (x.AccountId == accountId && x.PositionId == deal.PositionId)) != null) continue;
@@ -214,18 +222,10 @@ namespace Journal.Service.Implementations
                 }
             }
 
-            var deals = await DealsDB(accountDeals, accountId);
-            account.Deals = deals;
-            account.BreakevenDeals = account.Deals.Where(x => x.Result == Domain.Enums.Result.Breakeven).Count();
-            account.WonDeals = account.Deals.Where(x => x.Result == Domain.Enums.Result.Win).Count();
-            account.LostDeals = account.Deals.Where(x => x.Result == Domain.Enums.Result.Loss).Count();
-            account.LongDeals = account.Deals.Where(x => x.Direction == Domain.Enums.Direction.Long).Count();
-            account.ShortDeals = account.Deals.Where(x => x.Direction == Domain.Enums.Direction.Short).Count();
-            account.TotalDeals = account.Deals.Count();
-            return account;
+            await DealsDB(accountDeals, accountId);
         }
 
-        private async Task<List<DealResponseModel>> DealsDB(List<Deal> newDeals, Guid accountId)
+        private async Task DealsDB(List<Deal> newDeals, Guid accountId)
         {
 
             foreach(var newDeal in newDeals)
@@ -234,11 +234,6 @@ namespace Journal.Service.Implementations
             }
             var deals = _dealRepository.SelectAll().Where(x => x.AccountId == accountId);
             var response = new List<DealResponseModel>();
-            foreach (var deal in deals)
-            {
-                response.Add(new DealResponseModel(deal));
-            }
-            return response;
         }
 
         public async Task<BaseResponse<List<AccountResponseModel>>> GetUserAccounts(Guid UserId)
@@ -268,6 +263,54 @@ namespace Journal.Service.Implementations
             {
                 response.StatusCode = Domain.Enums.StatusCode.ERROR;
                 response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<AccountData>> GetAccountData(Guid id)
+        {
+            var response = new BaseResponse<AccountData>();
+            try
+            {
+
+                var account = _cTraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == id);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                    return response;
+                }
+                var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id);
+                if (deals.Count() == 0)
+                {
+                    response.Message = "Deals not found";
+                    response.StatusCode = StatusCode.ERROR;
+                }
+                else
+                {
+                    var accountData = new AccountData();
+                    foreach (var deal in deals)
+                    {
+                        accountData.Deals.Add(new DealResponseModel(deal));
+                    }
+                    accountData.Deposit = await GetDeposit(account.AccessToken, account.AccountId, account.IsLive);
+                    accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
+                    accountData.currentBalance = accountData.Deposit + accountData.Profit;
+                    accountData.TotalDeals = accountData.Deals.Count;
+                    accountData.WonDeals = accountData.Deals.Where(x => x.Result == Result.Win).Count();
+                    accountData.LostDeals = accountData.Deals.Where(x => x.Result == Result.Loss).Count();
+                    accountData.BreakevenDeals = accountData.Deals.Where(x => x.Result == Result.Breakeven).Count();
+                    accountData.LongDeals = accountData.Deals.Where(x => x.Direction == Direction.Long).Count();
+                    accountData.ShortDeals = accountData.Deals.Where(x => x.Direction == Direction.Short).Count();
+                    accountData.ProfitPercentage = Math.Round(accountData.Profit / accountData.Deposit * 100, 2);
+                    accountData.Provider = "CTrader";
+                    response.Data = accountData;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
             }
             return response;
         }
