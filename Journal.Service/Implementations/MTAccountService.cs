@@ -60,6 +60,7 @@ namespace Journal.Service.Implementations
                     {
                         response.StatusCode = Domain.Enums.StatusCode.OK;
                         response.Data = new AccountResponseModel(account);
+                    await LoadAccountData(account.Id);
                     }
                     else
                     {

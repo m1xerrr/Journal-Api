@@ -57,6 +57,7 @@ namespace Journal.Service.Implementations
                         return response;
                     }
                     response.Data.Add(new AccountResponseModel(accountDB));
+                    await LoadAccountData(accountDB.Id);
                 }
                 response.StatusCode = Domain.Enums.StatusCode.OK;
                 response.Message = $"Added {response.Data.Count} accounts";

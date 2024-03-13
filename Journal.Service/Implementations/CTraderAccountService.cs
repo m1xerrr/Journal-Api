@@ -63,7 +63,6 @@ namespace Journal.Service.Implementations
                         var responseAccount = new AccountResponseModel(newAccount);
                         responseAccount.Provider = "CTrader";
                         response.Data.Add(responseAccount);
-                        LoadAccountData(newAccount.Id);
                     }
                     else
                     {
@@ -73,6 +72,7 @@ namespace Journal.Service.Implementations
                     }
                     response.StatusCode = Domain.Enums.StatusCode.OK;
                     response.Message = "Success";
+                    await LoadAccountData(newAccount.Id);
                 }
             }
             catch (Exception ex)
