@@ -1,6 +1,7 @@
 ﻿using Journal.Domain.Responses;
 using Journal.Domain.JsonModels;
 using Journal.Domain.ResponseModels;
+using Journal.Domain.Models;
 
 namespace Journal.Service.Interfaces
 {
@@ -11,5 +12,7 @@ namespace Journal.Service.Interfaces
         Task<BaseResponse<bool>> DeleteMTAccount(Guid accountId);
 
         Task<BaseResponse<List<AccountResponseModel>>> GetMTAccountsByUser(Guid userId);
+
+        Task<BaseResponse<AccountData>> GetAccountData(Guid accountId);
     }
 }

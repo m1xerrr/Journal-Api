@@ -29,7 +29,6 @@ namespace Journal
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IDealService, DealService>();
             builder.Services.AddScoped<IMTAccountService, MTAccountService>();
-            builder.Services.AddScoped<IMTDataService, MTDataService>();
             builder.Services.AddScoped<IDealRepository, DealRepository>();
             builder.Services.AddScoped<ICTraderAccountRepository, CTraderAccountRepository>();
             builder.Services.AddScoped<ICTraderApiRepository, CTraderApiRepository>();

@@ -9,14 +9,14 @@ namespace Journal.Controllers
 {
     public class UserAccountsController : Controller
     {
-        private readonly IMTDataService _mtDataService;
+        private readonly IMTAccountService _mtAccountService;
         private readonly IDealService _mtDealService;
         private readonly ICTraderAccountService _ctraderAccountService;
         private readonly IDXTradeAccountService _dxTradeAccountService;
 
-        public UserAccountsController(IMTDataService mTDataService, IDealService mtDealService, ICTraderAccountService ctraderAccountService, IDXTradeAccountService dXTradeAccountService)
+        public UserAccountsController(IMTAccountService mTAccountService, IDealService mtDealService, ICTraderAccountService ctraderAccountService, IDXTradeAccountService dXTradeAccountService)
         {
-            _mtDataService = mTDataService;
+            _mtAccountService = mTAccountService;
             _mtDealService = mtDealService;
             _ctraderAccountService = ctraderAccountService;
             _dxTradeAccountService = dXTradeAccountService;
@@ -29,7 +29,7 @@ namespace Journal.Controllers
             switch (account.Provider)
             {
                 case "MetaTrader 5":
-                    response = await _mtDataService.GetAccountData(account.AccountId);
+                    response = await _mtAccountService.GetAccountData(account.AccountId);
                     response.Data.Provider = account.Provider;
                     response.Data.Id = account.AccountId;
                     break;
