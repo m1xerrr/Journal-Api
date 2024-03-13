@@ -44,7 +44,7 @@ namespace Journal.Service.Implementations
                     response.Message = "Account initializing error";
                     return response;
                 }
-                
+
                 var account = new MTAccount();
 
                 account.Id = Guid.NewGuid();
@@ -52,8 +52,9 @@ namespace Journal.Service.Implementations
                 account.Password = accountModel.Password;
                 account.Server = accountModel.Server;
                 account.UserID = accountModel.UserId;
-                var users = _userRepository.SelectAll();
-                account.User = users.FirstOrDefault(x => x.Id == accountModel.UserId);
+                account.Deposit = await GetDeposit(await _mtDataRepository.GetDeals(accountModel));
+
+                
 
                 if (await _mtAccountRepository.Create(account))
                     {
@@ -290,13 +291,6 @@ namespace Journal.Service.Implementations
                     return response;
                 }
                 var deals = _mtDealRepository.SelectAll().Where(x => x.AccountId == accountId);
-                var accountJson = new MTAccountJsonModel();
-                accountJson.Password = account.Password;
-                accountJson.UserId = account.UserID;
-                accountJson.Id = account.Id;
-                accountJson.Login = account.Login;
-                accountJson.Server = account.Server;
-                var mtdeals = await _mtDataRepository.GetDeals(accountJson);
                 if (deals.Count() == 0)
                 {
                     response.Message = "Deals not found";
@@ -312,7 +306,7 @@ namespace Journal.Service.Implementations
                     }
 
                     accountData.UserId = account.UserID;
-                    accountData.Deposit = await GetDeposit(mtdeals);
+                    accountData.Deposit = account.Deposit;
                     accountData.Deals = dealsResponse;
                     accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
                     accountData.currentBalance = accountData.Deposit + accountData.Profit;

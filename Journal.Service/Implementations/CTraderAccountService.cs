@@ -57,6 +57,7 @@ namespace Journal.Service.Implementations
                         IsLive = account.IsLive,
                         Login = account.TraderLogin
                     };
+                    newAccount.Deposit = await GetDeposit(newAccount.AccessToken, newAccount.AccountId, newAccount.IsLive);
                     if (await _cTraderAccountRepository.Create(newAccount))
                     {
                         var responseAccount = new AccountResponseModel(newAccount);
@@ -294,7 +295,7 @@ namespace Journal.Service.Implementations
                         accountData.Deals.Add(new DealResponseModel(deal));
                     }
                     accountData.UserId = account.UserID;
-                    accountData.Deposit = await GetDeposit(account.AccessToken, account.AccountId, account.IsLive);
+                    accountData.Deposit = account.Deposit;
                     accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
                     accountData.currentBalance = accountData.Deposit + accountData.Profit;
                     accountData.TotalDeals = accountData.Deals.Count;

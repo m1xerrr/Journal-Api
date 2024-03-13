@@ -46,9 +46,11 @@ namespace Journal.Service.Implementations
                         Username = username,
                         Password = password,
                         UserID = UserId,
-                        Login = long.Parse(account.Account.Split(":").Last())
+                        Login = long.Parse(account.Account.Split(":").Last()),
+                        
                     };
-                    if(!await _dxTradeAccountRepository.Create(accountDB))
+                    accountDB.Deposit =  await _dxTradeDataRepository.GetDeposit(accountDB.Username, accountDB.Password, accountDB.Domain, accountDB.Login.ToString());
+                    if (!await _dxTradeAccountRepository.Create(accountDB))
                     {
                         response.StatusCode = Domain.Enums.StatusCode.ERROR;
                         response.Message = "Can not add account to DB";
@@ -265,7 +267,7 @@ namespace Journal.Service.Implementations
                     }
 
                     accountData.UserId = account.UserID;
-                    accountData.Deposit = await _dxTradeDataRepository.GetDeposit(account.Username, account.Password, account.Domain, account.Login.ToString());
+                    accountData.Deposit = account.Deposit;
                     accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
                     accountData.currentBalance = accountData.Deposit + accountData.Profit;
                     accountData.TotalDeals = accountData.Deals.Count;

@@ -11,5 +11,7 @@ namespace Journal.Domain.Models
         public Guid Id { get; set; }
         public Guid UserID { get; set; }
         public List<Deal>? Deals { get; set; }
+
+        public double Deposit {  get; set; }
     }
 }
