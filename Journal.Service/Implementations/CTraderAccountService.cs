@@ -293,6 +293,7 @@ namespace Journal.Service.Implementations
                     {
                         accountData.Deals.Add(new DealResponseModel(deal));
                     }
+                    accountData.UserId = account.UserID;
                     accountData.Deposit = await GetDeposit(account.AccessToken, account.AccountId, account.IsLive);
                     accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
                     accountData.currentBalance = accountData.Deposit + accountData.Profit;

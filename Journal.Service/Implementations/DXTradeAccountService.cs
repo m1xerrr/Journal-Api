@@ -263,6 +263,8 @@ namespace Journal.Service.Implementations
                     {
                         accountData.Deals.Add(new DealResponseModel(deal));
                     }
+
+                    accountData.UserId = account.UserID;
                     accountData.Deposit = await _dxTradeDataRepository.GetDeposit(account.Username, account.Password, account.Domain, account.Login.ToString());
                     accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
                     accountData.currentBalance = accountData.Deposit + accountData.Profit;

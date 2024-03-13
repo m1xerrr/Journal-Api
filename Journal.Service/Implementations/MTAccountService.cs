@@ -310,6 +310,8 @@ namespace Journal.Service.Implementations
                     {
                         dealsResponse.Add(new DealResponseModel(deal));
                     }
+
+                    accountData.UserId = account.UserID;
                     accountData.Deposit = await GetDeposit(mtdeals);
                     accountData.Deals = dealsResponse;
                     accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
