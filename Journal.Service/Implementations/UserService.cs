@@ -14,11 +14,17 @@ namespace Journal.Service.Implementations
     {
         private readonly IUserRepository _userRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IMTAccountService _mtAccountService;
+        private readonly IDXTradeAccountService _dxtraderAccountService;
+        private readonly ICTraderAccountService _ctraderAccountService;
 
-        public UserService(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository)
+        public UserService(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository, IMTAccountService mtAccountService, IDXTradeAccountService dxtraderAccountService, ICTraderAccountService ctraderAccountService)
         {
             _userRepository = userRepository;
             _subscriptionRepository = subscriptionRepository;
+            _mtAccountService = mtAccountService;
+            _ctraderAccountService = ctraderAccountService;
+            _dxtraderAccountService = dxtraderAccountService;
         }
         public async Task<BaseResponse<UserResponseModel>> ChangeName(EditUserJsonModel userModel)
         {
@@ -34,6 +40,12 @@ namespace Journal.Service.Implementations
                 else
                 {
                     var user = users.FirstOrDefault(x => x.Id == userModel.Id);
+                    if(users.FirstOrDefault(x => x.Name == userModel.Name) != null)
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "Nickname is already in use";
+                        return response;
+                    }
                     user.Name = userModel.Name;
                     if (await _userRepository.Edit(user))
                     {
@@ -175,6 +187,11 @@ namespace Journal.Service.Implementations
                     response.StatusCode = StatusCode.ERROR;
                     response.Message = "This email is already in use";
                 }
+                if (users.Where(x => x.Name == userModel.Name).Count() > 1)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "This name is already in use";
+                }
                 else
                 {
                     if (users.FirstOrDefault(x => x.Id == userModel.Id) == null)
@@ -218,6 +235,12 @@ namespace Journal.Service.Implementations
                 {
                     baseResponse.StatusCode = StatusCode.EmailError;
                     baseResponse.Message = $"User with email {user.Email} already registred";
+                    return baseResponse;
+                }
+                if (users.FirstOrDefault(x => x.Name == user.Name) != null)
+                {
+                    baseResponse.StatusCode = StatusCode.EmailError;
+                    baseResponse.Message = $"Nickname {user.Name} is already in use";
                     return baseResponse;
                 }
                 User newUser = new User();
@@ -460,6 +483,48 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<List<ShareAccountResponseModel>>> GetLeaderboard()
+        {
+            var response = new BaseResponse<List<ShareAccountResponseModel>>();
+            try
+            {
+                var accountsResponse = new List<ShareAccountResponseModel>();
+                var users = _userRepository.SelectAll();
+                foreach (var user in users)
+                {
+                    var name = user.Name;
+                    foreach(var account in (await _mtAccountService.GetMTAccountsByUser(user.Id)).Data)
+                    {
+                        var accountData = new ShareAccountResponseModel(account);
+                        accountData.Username = name;
+                        accountsResponse.Add(accountData);
+                    }
+                    foreach (var account in (await _dxtraderAccountService.GetUserAccounts(user.Id)).Data)
+                    {
+                        var accountData = new ShareAccountResponseModel(account);
+                        accountData.Username = name;
+                        accountsResponse.Add(accountData);
+                    }
+                    foreach (var account in (await _ctraderAccountService.GetUserAccounts(user.Id)).Data)
+                    {
+                        var accountData = new ShareAccountResponseModel(account);
+                        accountData.Username = name;
+                        accountsResponse.Add(accountData);
+                    }
+                    response.Data = accountsResponse.OrderByDescending(x => x.ProfitPercentage).ThenByDescending(x => x.Profit).ToList();
+                }
+                response.StatusCode = StatusCode.OK;
+                response.Message = "Success";
+            }
+            
+            catch (Exception ex)
+            {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = ex.Message;
             }
             return response;

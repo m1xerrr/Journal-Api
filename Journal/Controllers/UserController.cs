@@ -108,6 +108,11 @@ namespace Journal.Controllers
             var response = await _userService.DeleteSubscription(id);
             return Json(response);
         }
-
+        [HttpPost("GetLeaderboard")]
+        public async Task<IActionResult> GetLeaderboard()
+        {
+            var response = await _userService.GetLeaderboard();
+            return Json(response);
+        }
     }
 }

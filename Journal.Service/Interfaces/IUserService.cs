@@ -33,5 +33,7 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<UserResponseModel>> ChangeSubscriptionType(Guid userId, SubscriptionType subscriptionType);
 
+        Task<BaseResponse<List<ShareAccountResponseModel>>> GetLeaderboard();
+
     }
 }
