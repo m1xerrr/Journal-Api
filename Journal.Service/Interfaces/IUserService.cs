@@ -35,5 +35,7 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<List<ShareAccountResponseModel>>> GetLeaderboard();
 
+        Task<BaseResponse<ShareAccountResponseModel>> GetProfit(Guid accountID, string provider, DateTime startDate, DateTime endDate);
+
     }
 }

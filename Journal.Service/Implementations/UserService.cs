@@ -17,14 +17,22 @@ namespace Journal.Service.Implementations
         private readonly IMTAccountService _mtAccountService;
         private readonly IDXTradeAccountService _dxtraderAccountService;
         private readonly ICTraderAccountService _ctraderAccountService;
+        private readonly IMTAccountRepository _mtAccountRepository;
+        private readonly IDXTradeAccountRepository _dxtraderAccountRepository;
+        private readonly ICTraderAccountRepository _ctraderAccountRepository;
+        private readonly IDealRepository _dealRepository;
 
-        public UserService(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository, IMTAccountService mtAccountService, IDXTradeAccountService dxtraderAccountService, ICTraderAccountService ctraderAccountService)
+        public UserService(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository, IMTAccountService mtAccountService, IDXTradeAccountService dxtraderAccountService, ICTraderAccountService ctraderAccountService, IMTAccountRepository mTAccountRepository, IDXTradeAccountRepository dXTradeAccountRepository, ICTraderAccountRepository cTraderAccountRepository, IDealRepository dealRepository)
         {
             _userRepository = userRepository;
             _subscriptionRepository = subscriptionRepository;
             _mtAccountService = mtAccountService;
             _ctraderAccountService = ctraderAccountService;
             _dxtraderAccountService = dxtraderAccountService;
+            _mtAccountRepository = mTAccountRepository;
+            _dxtraderAccountRepository = dXTradeAccountRepository;
+            _ctraderAccountRepository = cTraderAccountRepository;
+            _dealRepository = dealRepository;   
         }
         public async Task<BaseResponse<UserResponseModel>> ChangeName(EditUserJsonModel userModel)
         {
@@ -535,6 +543,49 @@ namespace Journal.Service.Implementations
                 response.Message = "Success";
             }
             
+            catch (Exception ex)
+            {
+                response.StatusCode = StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<ShareAccountResponseModel>> GetProfit(Guid accountID, string provider, DateTime startDate, DateTime endDate)
+        {
+            var response = new BaseResponse<ShareAccountResponseModel>();
+            try
+            {
+                response.Data = new ShareAccountResponseModel();
+                response.Data.Provider = provider;
+                switch (provider)
+                {
+                    case "MetaTrader 5":
+                        response.Data.Deposit = _mtAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountID).Deposit;
+                        response.Data.Login = _mtAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountID).Login;
+                        break;
+                    case "CTrader":
+                        response.Data.Deposit = _ctraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountID).Deposit;
+                        response.Data.Login = _ctraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountID).Login;
+                        break;
+                    case "DXTrade":
+                        response.Data.Deposit = _dxtraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountID).Deposit;
+                        response.Data.Login = _dxtraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountID).Login;
+                        break;
+                    default:
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "Provider not found";
+                        return response;
+                }
+                var deals = _dealRepository.SelectAll().Where(x => x.AccountId == accountID).Where(x => x.EntryTime > startDate).Where(x => x.ExitTime < endDate);
+                response.Data.Profit = deals.Sum(x => x.Profit);
+                response.Data.ProfitPercentage = deals.Sum(x => x.ProfitPercentage);
+                response.Data.Commission = deals.Sum(x => x.Comission);
+                response.Data.DealsCount = deals.Count();
+                response.Data.Symbols = deals.Select(deal => deal.Symbol).Distinct().ToList();
+                response.StatusCode = StatusCode.OK;
+                response.Message = "Success";
+            }
             catch (Exception ex)
             {
                 response.StatusCode = StatusCode.ERROR;

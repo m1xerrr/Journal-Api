@@ -26,6 +26,10 @@ namespace Journal.Domain.ResponseModels
 
         public int DealsCount { get; set; }
 
+        public double Commission {  get; set; }
+
+        public List<string> Symbols { get; set; }
+
         public ShareAccountResponseModel(AccountResponseModel account)
         {
             Id = account.Id;
@@ -38,5 +42,6 @@ namespace Journal.Domain.ResponseModels
             Balance = account.Balance;
             DealsCount = account.DealsCount;
         }
+        public ShareAccountResponseModel() { Symbols = new List<string>(); }  
     }
 }

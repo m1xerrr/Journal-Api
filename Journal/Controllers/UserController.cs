@@ -114,5 +114,12 @@ namespace Journal.Controllers
             var response = await _userService.GetLeaderboard();
             return Json(response);
         }
+
+        [HttpPost("ShareProfit")]
+        public async Task<IActionResult> ShareProfit([FromBody] AccountPeriodJsonModel account)
+        {
+            var response = await _userService.GetProfit(account.AccountId, account.Provider, account.StartDate, account.EndDate);
+            return Json(response);
+        }
     }
 }
