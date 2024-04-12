@@ -152,6 +152,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = ex.Message;
             }
             return response;

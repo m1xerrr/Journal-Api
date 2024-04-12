@@ -61,6 +61,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = ex.Message;
             }
             return response;
@@ -95,6 +96,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = ex.Message;
             }
             return response;
@@ -137,6 +139,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = ex.Message;
             }
             return response;
@@ -171,6 +174,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = ex.Message;
             }
             return response;
@@ -221,6 +225,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = ex.Message;
             }
             return response;
@@ -233,13 +238,13 @@ namespace Journal.Service.Implementations
                 var users = _userRepository.SelectAll();
                 if (users.FirstOrDefault(x => x.Email == user.Email) != null)
                 {
-                    baseResponse.StatusCode = StatusCode.EmailError;
+                    baseResponse.StatusCode = StatusCode.ERROR;
                     baseResponse.Message = $"User with email {user.Email} already registred";
                     return baseResponse;
                 }
                 if (users.FirstOrDefault(x => x.Name == user.Name) != null)
                 {
-                    baseResponse.StatusCode = StatusCode.EmailError;
+                    baseResponse.StatusCode = StatusCode.ERROR;
                     baseResponse.Message = $"Nickname {user.Name} is already in use";
                     return baseResponse;
                 }
@@ -262,6 +267,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                baseResponse.StatusCode = StatusCode.ERROR;
                 baseResponse.Message = $"[Create User] {ex.Message}";
             }
             return baseResponse;
@@ -296,6 +302,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = $"[Verify User] {ex.Message}";
             }
             return response;
@@ -356,6 +363,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message= ex.Message;
             }
             return response;
@@ -391,6 +399,8 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = ex.Message;
             }
             return response;
@@ -422,6 +432,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = ex.Message;
             }
             return response;
@@ -452,6 +463,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = ex.Message;
             }
             return response;
@@ -483,6 +495,7 @@ namespace Journal.Service.Implementations
             }
             catch (Exception ex)
             {
+                response.StatusCode = StatusCode.ERROR;
                 response.Message = ex.Message;
             }
             return response;
