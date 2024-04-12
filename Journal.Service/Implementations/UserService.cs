@@ -40,7 +40,7 @@ namespace Journal.Service.Implementations
                 else
                 {
                     var user = users.FirstOrDefault(x => x.Id == userModel.Id);
-                    if(users.FirstOrDefault(x => x.Name == userModel.Name) != null)
+                    if(users.Where(x => x.Name == userModel.Name).Count() > 0 && users.FirstOrDefault(x => x.Id == userModel.Id).Name != userModel.Name)
                     {
                         response.StatusCode = StatusCode.ERROR;
                         response.Message = "Nickname is already in use";
@@ -191,7 +191,7 @@ namespace Journal.Service.Implementations
                     response.StatusCode = StatusCode.ERROR;
                     response.Message = "This email is already in use";
                 }
-                if (users.Where(x => x.Name == userModel.Name).Count() > 1)
+                if (users.Where(x => x.Name == userModel.Name).Count() > 0 && users.FirstOrDefault(x => x.Id == userModel.Id).Name != userModel.Name)
                 {
                     response.StatusCode = StatusCode.ERROR;
                     response.Message = "This name is already in use";
