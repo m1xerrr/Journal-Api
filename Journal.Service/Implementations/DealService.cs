@@ -9,10 +9,18 @@ namespace Journal.Service.Implementations
     public class DealService : IDealService
     {
         private readonly IDealRepository _dealRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IMTAccountRepository _mtcRepository;
+        private readonly ICTraderAccountRepository _ctraderAccountRepository;
+        private readonly IDXTradeAccountRepository _dxtradeAccountRepository;
 
-        public DealService(IDealRepository mtDealRepository)
+        public DealService(IDealRepository mtDealRepository, IUserRepository userRepository, IMTAccountRepository mtcRepository, ICTraderAccountRepository ctraderAccountRepository, IDXTradeAccountRepository tradeAccountRepository)
         {
             _dealRepository = mtDealRepository;
+            _userRepository = userRepository;
+            _mtcRepository = mtcRepository;
+            _ctraderAccountRepository = ctraderAccountRepository;
+            _dxtradeAccountRepository = tradeAccountRepository;
         }
 
         public async Task<BaseResponse<DealResponseModel>> AddImage(int dealId, Guid accountId, string img)
@@ -101,6 +109,10 @@ namespace Journal.Service.Implementations
                 {
                     response.StatusCode = Domain.Enums.StatusCode.OK;
                     response.Data = new DealResponseModel(deal);
+                    Account account = _mtcRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                    if (account == null) account = _ctraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                    if (account == null) account = _dxtradeAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                    response.Data.Username = _userRepository.SelectAll().FirstOrDefault(x => x.Id == account.UserID).Name;
                 }
             }
             catch (Exception ex)

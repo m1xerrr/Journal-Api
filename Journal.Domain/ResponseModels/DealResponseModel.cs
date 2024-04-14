@@ -10,6 +10,7 @@ namespace Journal.Domain.ResponseModels
 {
     public class DealResponseModel
     {
+        public string Username { get; set; }
         public long PositionId { get; set; }
 
         public Direction Direction { get; set; }
