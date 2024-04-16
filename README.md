@@ -1,8 +1,10 @@
 # Forex Trading Journal API
 
 Welcome to the Forex Trading Journal API documentation! This RESTful API, developed in C# using the Onion Architecture, aims to provide users with analytical insights into their trading accounts by optimizing data retrieved from external APIs of brokers and proprietary trading firms. The application also interacts with a database to securely store user information.
-Introduction
+
+## Introduction
 The Forex Trading Journal API serves as a backend system for managing trading account data and providing analytical insights to users. It connects with external APIs of brokers and proprietary trading firms to retrieve real-time trading data and optimizes this data for frontend interaction. The application is built on the Onion Architecture, ensuring a modular and maintainable codebase.
+
 ## Architecture Overview
 The application architecture follows the principles of the Onion Architecture, which consists of layers such as Repositories, Services, Domain, and Controllers:
 * __Domain Layer:__ This layer contains the declaration of response models, input models, and other data models. It serves as the foundation for defining the structure of data entities used throughout the application.
