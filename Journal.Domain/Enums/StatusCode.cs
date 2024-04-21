@@ -9,7 +9,6 @@ namespace Journal.Domain.Enums
     public enum StatusCode
     {
         OK = 200,
-        ERROR = 500,
-        EmailError = 1
+        ERROR = 500
     }
 }

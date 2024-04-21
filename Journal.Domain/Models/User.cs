@@ -23,12 +23,15 @@ namespace Journal.Domain.Models
 
         public List<DXTradeAccount>? DXTradeAccounts { get; set; }
 
+        public List<Note> Notes { get; set; }
+
         public Subscription Subscription { get; set; }
 
         public User() { 
             MTAccounts = new List<MTAccount>();
             CTraderAccounts = new List<CTraderAccount>();
             DXTradeAccounts = new List<DXTradeAccount>(); 
+            Notes = new List<Note>();
         }
     }
 }
