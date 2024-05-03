@@ -7,6 +7,7 @@ using Journal.Domain.Models;
 using Journal.Domain.Helpers;
 using Journal.DAL.Interfaces;
 using Azure;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Journal.Service.Implementations
 {
@@ -377,9 +378,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<UserResponseModel>> Subscribe(Guid userId, DateTime ExpirationDate, SubscriptionType subscriptionType)
+        public async Task<BaseResponse<SubscriptionResponseModel>> Subscribe(Guid userId, DateTime ExpirationDate, SubscriptionType subscriptionType)
         {
-            var response = new BaseResponse<UserResponseModel>();
+            var response = new BaseResponse<SubscriptionResponseModel>();
             try
             {
                 var subscription = new Subscription();
@@ -392,16 +393,19 @@ namespace Journal.Service.Implementations
                 {
                     response.StatusCode = StatusCode.ERROR;
                     response.Message = "No users with such ID";
+                    return response;
                 }
                 if(await _subscriptionRepository.Create(subscription))
                 {
-                    response.Data = new UserResponseModel(_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId));
+                    response.Data = new SubscriptionResponseModel(subscription);
                     response.StatusCode = StatusCode.OK;
+                    return response;
                 }
                 else
                 {
                     response.StatusCode= StatusCode.ERROR;
                     response.Message = "Can not add subscription";
+                    return response;
                 }
 
             }
@@ -414,9 +418,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<UserResponseModel>> ExtendSubscription(Guid userId, DateTime ExpirationDate)
+        public async Task<BaseResponse<SubscriptionResponseModel>> ExtendSubscription(Guid userId, DateTime ExpirationDate)
         {
-            var response = new BaseResponse<UserResponseModel>();
+            var response = new BaseResponse<SubscriptionResponseModel>();
             try
             {
                 var subscription = _subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId);
@@ -425,10 +429,11 @@ namespace Journal.Service.Implementations
                 {
                     response.StatusCode = StatusCode.ERROR;
                     response.Message = "No users with such ID";
+                    return response;
                 }
                 if (await _subscriptionRepository.Edit(subscription))
                 {
-                    response.Data = new UserResponseModel(_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId));
+                    response.Data = new SubscriptionResponseModel(subscription);
                     response.StatusCode = StatusCode.OK;
                 }
                 else
@@ -446,9 +451,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<UserResponseModel>> DeleteSubscription(Guid userId)
+        public async Task<BaseResponse<bool>> DeleteSubscription(Guid userId)
         {
-            var response = new BaseResponse<UserResponseModel>();
+            var response = new BaseResponse<bool>();
             try
             {
                 var subscription = _subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId);
@@ -456,10 +461,11 @@ namespace Journal.Service.Implementations
                 {
                     response.StatusCode = StatusCode.ERROR;
                     response.Message = "No users with such ID";
+                    return response;
                 }
                 if (await _subscriptionRepository.Delete(subscription))
                 {
-                    response.Data = new UserResponseModel(_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId));
+                    response.Data = true;
                     response.StatusCode = StatusCode.OK;
                 }
                 else
@@ -477,9 +483,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<UserResponseModel>> ChangeSubscriptionType(Guid userId, SubscriptionType subscriptionType)
+        public async Task<BaseResponse<SubscriptionResponseModel>> ChangeSubscriptionType(Guid userId, SubscriptionType subscriptionType)
         {
-            var response = new BaseResponse<UserResponseModel>();
+            var response = new BaseResponse<SubscriptionResponseModel>();
             try
             {
                 var subscription = _subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId);
@@ -488,10 +494,11 @@ namespace Journal.Service.Implementations
                 {
                     response.StatusCode = StatusCode.ERROR;
                     response.Message = "No users with such ID";
+                    return response;
                 }
                 if (await _subscriptionRepository.Edit(subscription))
                 {
-                    response.Data = new UserResponseModel(_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId));
+                    response.Data = new SubscriptionResponseModel(subscription);
                     response.StatusCode = StatusCode.OK;
                 }
                 else
@@ -500,6 +507,31 @@ namespace Journal.Service.Implementations
                     response.Message = "Can not change subscription type";
                 }
 
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<SubscriptionResponseModel>> UserSubscriptionStatus(Guid userId)
+        {
+            var response = new BaseResponse<SubscriptionResponseModel>();
+            try
+            {
+                if(_subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId) == null)
+                {
+                    response.Message = "User has no subscriptions";
+                    response.StatusCode = StatusCode.ERROR;
+                }
+                else
+                {
+                    response.StatusCode = StatusCode.OK;
+                    response.Message = "Success";
+                    response.Data = new SubscriptionResponseModel(_subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId));
+                }
             }
             catch (Exception ex)
             {
@@ -593,5 +625,48 @@ namespace Journal.Service.Implementations
             }
             return response;
         }
+
+        public async Task<BaseResponse<UserResponseModel>> TGLogin(string username)
+        {
+            var response = new BaseResponse<UserResponseModel>();
+            try
+            {
+                if(_userRepository.SelectAll().FirstOrDefault(x => x.TGUsername == username) == null)
+                {
+                    User user = new User()
+                    {
+                        Id = Guid.NewGuid(),
+                        TGUsername = username,
+                        Name = username,
+                        Role = Role.User
+                    };
+                    if(await _userRepository.Create(user))
+                    {
+                        response.Message = "Success";
+                        response.StatusCode= StatusCode.OK;
+                        response.Data = new UserResponseModel(user);
+                    }
+                    else
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "Can not create new account";
+                    }
+                }
+                else
+                {
+                    response.StatusCode = StatusCode.OK;
+                    response.Message = "Success";
+                    response.Data = new UserResponseModel(_userRepository.SelectAll().FirstOrDefault(x => x.TGUsername == username));
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message= ex.Message;
+                response.StatusCode = StatusCode.ERROR;
+            }
+            return response;
+        }
+
+        
     }
 }

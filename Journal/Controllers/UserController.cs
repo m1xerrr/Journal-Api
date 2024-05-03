@@ -20,6 +20,13 @@ namespace Journal.Controllers
             _ctraderAccountService = ctraderAccountService;
             _dxTradeAccountService = dXTradeAccountService;
         }
+        [HttpPost("TGLogin")]
+        public async Task<IActionResult> TGLogin([FromBody] string username)
+        {
+            var response = await _userService.TGLogin(username);
+            return Json(response);
+        }
+
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginUserJsonModel user)
         {
@@ -102,12 +109,6 @@ namespace Journal.Controllers
             return Json(response);
         }
 
-        [HttpPost("DeleteUserSubscription")]
-        public async Task<IActionResult> DeleteSubscription([FromBody] Guid id)
-        {
-            var response = await _userService.DeleteSubscription(id);
-            return Json(response);
-        }
         [HttpPost("GetLeaderboard")]
         public async Task<IActionResult> GetLeaderboard()
         {
@@ -121,5 +122,37 @@ namespace Journal.Controllers
             var response = await _userService.GetProfit(account.AccountId, account.Provider, account.StartDate, account.EndDate);
             return Json(response);
         }
+        [HttpPost("Subscribe")]
+        public async Task<IActionResult> Subscribe([FromBody] SubscriptionJsonModel subscription)
+        {
+            var response = await _userService.Subscribe(subscription.UserId, subscription.ExpirationDate, subscription.SubscriptionType);
+            return Json(response);
+        }
+        [HttpPost("ExtendSubscription")]
+        public async Task<IActionResult> ExtendSubscription([FromBody] SubscriptionJsonModel subscription)
+        {
+            var response = await _userService.ExtendSubscription(subscription.UserId, subscription.ExpirationDate);
+            return Json(response);
+        }
+        [HttpPost("DeleteSubscription")]
+        public async Task<IActionResult> DeleteSubscription([FromBody] Guid userId)
+        {
+            var response = await _userService.DeleteSubscription(userId);
+            return Json(response);
+        }
+        [HttpPost("ChangeSubscriptionType")]
+        public async Task<IActionResult> ChangeSubscriptionType([FromBody] SubscriptionJsonModel subscription)
+        {
+            var response = await _userService.ChangeSubscriptionType(subscription.UserId, subscription.SubscriptionType);
+            return Json(response);
+        }
+
+        [HttpPost("UserSubscription")]
+        public async Task<IActionResult> UserSubscription([FromBody] Guid userId)
+        {
+            var response = await _userService.UserSubscriptionStatus(userId);
+            return Json(response);
+        }
+
     }
 }

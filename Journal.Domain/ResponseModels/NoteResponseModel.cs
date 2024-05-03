@@ -10,7 +10,9 @@ namespace Journal.Domain.ResponseModels
     public class NoteResponseModel
     {
         public Guid Id { get; set; }
-        public DateTime Time { get; set; }
+        public DateTime CreationTime { get; set; }
+
+        public DateTime LastUpdate {  get; set; }
 
         public string Text { get; set; }
 
@@ -21,7 +23,8 @@ namespace Journal.Domain.ResponseModels
             this.Id = note.Id;
             this.Text = note.Text;
             this.Symbols = note.Symbols;
-            this.Time = note.Time;
+            this.CreationTime = note.CreationTime;
+            this.LastUpdate = note.LastUpdate;
         }  
     }
 }

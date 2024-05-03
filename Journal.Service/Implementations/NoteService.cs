@@ -26,7 +26,8 @@ namespace Journal.Service.Implementations
                 note.Text = text;
                 note.Symbols = symbols;
                 note.UserId = userId;
-                note.Time = DateTime.Now;
+                note.CreationTime = DateTime.Now;
+                note.LastUpdate = note.CreationTime;
 
                 if(await _noteRepository.Create(note))
                 {
@@ -96,6 +97,7 @@ namespace Journal.Service.Implementations
 
                 note.Text = text;
                 note.Symbols = symbols;
+                note.LastUpdate = DateTime.Now;
 
                 if (await _noteRepository.Edit(note))
                 {

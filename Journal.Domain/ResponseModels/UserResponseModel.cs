@@ -11,7 +11,7 @@ namespace Journal.Domain.ResponseModels
     public class UserResponseModel
     {
         public Guid Id { get; set; }
-
+        public string TGUsername { get; set; }
         public string Name { get; set; }
 
         public string Email { get; set; }
@@ -25,6 +25,7 @@ namespace Journal.Domain.ResponseModels
             Name = user.Name;
             Email = user.Email;
             Password = user.Password;
+            TGUsername = user.TGUsername;
             Role = user.Role;
             if (user.Subscription != null)
             {

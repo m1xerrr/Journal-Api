@@ -13,7 +13,9 @@ namespace Journal.Domain.Models
 
         public Guid UserId { get; set; }
 
-        public DateTime Time { get; set; }
+        public DateTime CreationTime { get; set; }
+
+        public DateTime LastUpdate {  get; set; }
 
         public string Text { get; set; }
 

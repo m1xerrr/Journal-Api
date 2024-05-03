@@ -9,6 +9,8 @@ namespace Journal.Service.Interfaces
     {
         Task<BaseResponse<UserResponseModel>> CreateAccount(SignUpUserJsonModel user);
 
+        Task<BaseResponse<UserResponseModel>> TGLogin(string username);
+
         Task<BaseResponse<UserResponseModel>> Verify(LoginUserJsonModel user);
 
         Task<BaseResponse<bool>> DeleteAccount(Guid userId);
@@ -25,13 +27,15 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<UserResponseModel>> EditUser(EditUserJsonModel userModel);
 
-        Task<BaseResponse<UserResponseModel>> Subscribe(Guid userId, DateTime ExpirationDate, SubscriptionType subscriptionType);
+        Task<BaseResponse<SubscriptionResponseModel>> Subscribe(Guid userId, DateTime ExpirationDate, SubscriptionType subscriptionType);
 
-        Task<BaseResponse<UserResponseModel>> ExtendSubscription(Guid userId, DateTime ExpirationDate);
+        Task<BaseResponse<SubscriptionResponseModel>> ExtendSubscription(Guid userId, DateTime ExpirationDate);
 
-        Task<BaseResponse<UserResponseModel>> DeleteSubscription(Guid userId);
+        Task<BaseResponse<bool>> DeleteSubscription(Guid userId);
 
-        Task<BaseResponse<UserResponseModel>> ChangeSubscriptionType(Guid userId, SubscriptionType subscriptionType);
+        Task<BaseResponse<SubscriptionResponseModel>> ChangeSubscriptionType(Guid userId, SubscriptionType subscriptionType);
+
+        Task<BaseResponse<SubscriptionResponseModel>> UserSubscriptionStatus(Guid userId);
 
         Task<BaseResponse<List<ShareAccountResponseModel>>> GetLeaderboard();
 
