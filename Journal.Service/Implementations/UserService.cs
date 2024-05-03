@@ -637,6 +637,8 @@ namespace Journal.Service.Implementations
                     {
                         Id = Guid.NewGuid(),
                         TGUsername = username,
+                        Email = username+"@mail.com",
+                        Password = username+"Password",
                         Name = username,
                         Role = Role.User
                     };
