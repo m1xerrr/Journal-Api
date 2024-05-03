@@ -287,7 +287,7 @@ namespace Journal.Service.Implementations
             var response = new BaseResponse<UserResponseModel>();
             try
             {
-                user.Password = HashPasswordHelper.HashPassword(user.Password);
+                if(user.Password.Length != 64) user.Password = HashPasswordHelper.HashPassword(user.Password);
                 var users = _userRepository.SelectAll();
                 var u = users.ToList();
                 if (users.FirstOrDefault(x => x.Email == user.Email) != null)
@@ -638,7 +638,7 @@ namespace Journal.Service.Implementations
                         Id = Guid.NewGuid(),
                         TGUsername = username,
                         Email = username+"@mail.com",
-                        Password = username+"Password",
+                        Password = HashPasswordHelper.HashPassword(username+"Password"),
                         Name = username,
                         Role = Role.User
                     };
