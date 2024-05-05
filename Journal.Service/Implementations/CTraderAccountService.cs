@@ -19,13 +19,15 @@ namespace Journal.Service.Implementations
         private readonly ICTraderApiRepository _cTraderApiRepository;
         private readonly IUserRepository _userRepository;
         private readonly IDealRepository _dealRepository;
+        private readonly IDescriptionRepository _descriptionRepository;
 
-        public CTraderAccountService(ICTraderApiRepository apiRepository, ICTraderAccountRepository accountRepository, IUserRepository userRepository, IDealRepository dealRepository)
+        public CTraderAccountService(ICTraderApiRepository apiRepository, ICTraderAccountRepository accountRepository, IUserRepository userRepository, IDealRepository dealRepository, IDescriptionRepository descriptionRepository)
         {
             _cTraderApiRepository = apiRepository;
             _cTraderAccountRepository = accountRepository;
             _userRepository = userRepository;
             _dealRepository = dealRepository;
+            _descriptionRepository = descriptionRepository;
         }
         public async Task<BaseResponse<List<AccountResponseModel>>> AddAccounts(string accessToken, Guid UserId)
         {
@@ -281,6 +283,7 @@ namespace Journal.Service.Implementations
                     response.Message = "Account not found";
                     return response;
                 }
+                var descriptions = _descriptionRepository.SelectAll();
                 var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id);
                 if (deals.Count() == 0)
                 {

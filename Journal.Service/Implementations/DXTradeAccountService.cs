@@ -20,12 +20,14 @@ namespace Journal.Service.Implementations
         private readonly IDXTradeAccountRepository _dxTradeAccountRepository;
         private readonly IDXTradeDataRepository _dxTradeDataRepository;
         private readonly IDealRepository _dealRepository;
+        private readonly IDescriptionRepository _descriptionRepository;
 
-        public DXTradeAccountService(IDXTradeAccountRepository dxTradeAccountRepository, IDXTradeDataRepository dxTradeDataRepository, IDealRepository dealRepository)
+        public DXTradeAccountService(IDXTradeAccountRepository dxTradeAccountRepository, IDXTradeDataRepository dxTradeDataRepository, IDealRepository dealRepository, IDescriptionRepository descriptionRepository)
         {
             _dxTradeAccountRepository = dxTradeAccountRepository;
             _dxTradeDataRepository = dxTradeDataRepository;
             _dealRepository = dealRepository;
+            _descriptionRepository = descriptionRepository;
         }
 
         public async Task<BaseResponse<List<AccountResponseModel>>> AddAccounts(string username, string password, string domain, Guid UserId)
@@ -253,6 +255,7 @@ namespace Journal.Service.Implementations
                     response.Message = "Account not found";
                     return response;
                 }
+                var descriptions = _descriptionRepository.SelectAll();
                 var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id);
                 if (deals.Count() == 0)
                 {

@@ -38,6 +38,7 @@ namespace Journal
             builder.Services.AddScoped<IDXTradeDataRepository, DXTradeDataRepository>();
             builder.Services.AddScoped<INoteRepository, NoteRepository>();
             builder.Services.AddScoped<INoteService, NoteService>();
+            builder.Services.AddScoped<IDescriptionRepository, DescriptionRepository>();
 
             var app = builder.Build();
 

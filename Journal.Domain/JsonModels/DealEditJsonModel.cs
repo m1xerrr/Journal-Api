@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Journal.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,8 @@ namespace Journal.Domain.JsonModels
         public int Id { get; set; }
 
         public string Field { get; set; }
+
+        public DescriptionType Type { get; set; }
 
         public Guid accountId { get; set; }
     }

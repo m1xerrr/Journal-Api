@@ -31,10 +31,17 @@ namespace Journal.Domain.Models
 
         public Result Result { get; set; }
 
-        public string? Notes { get; set; }
+        //public string? Notes { get; set; }
 
-        public string? Image { get; set; }
+        //public string? Image { get; set; }
 
         public Account Account { get; set; }
+
+        public List<DescriptionItem>? DescriptionItems { get; set; }
+
+        public Deal() 
+        {
+            DescriptionItems = new List<DescriptionItem>();
+        }
     }
 }

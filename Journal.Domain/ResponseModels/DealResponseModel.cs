@@ -34,9 +34,10 @@ namespace Journal.Domain.ResponseModels
 
         public Result Result { get; set; }
 
-        public string Notes { get; set; }
+        //public string Notes { get; set; }
 
-        public string Image { get; set; }
+        //public string Image { get; set; }
+        public List<DescriptionItemResponseModel> DescriptionItems { get; set; }
 
         public DealResponseModel(Deal deal)
         {
@@ -51,9 +52,15 @@ namespace Journal.Domain.ResponseModels
             this.ExitTime = deal.ExitTime;
             this.Symbol = deal.Symbol;
             this.Result = deal.Result;
-            this.Notes = deal.Notes;
-            this.Image = deal.Image;
+            //this.Notes = deal.Notes;
+            //this.Image = deal.Image;
             this.ProfitPercentage = deal.ProfitPercentage;
+            DescriptionItems = new List<DescriptionItemResponseModel>();
+            foreach(var item in deal.DescriptionItems)
+            {
+                DescriptionItems.Add(new DescriptionItemResponseModel(item));
+            }
+            DescriptionItems = DescriptionItems.OrderBy(x => x.Number).ToList();
         }
         public DealResponseModel() { }
     }

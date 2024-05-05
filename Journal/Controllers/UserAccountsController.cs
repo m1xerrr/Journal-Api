@@ -76,7 +76,7 @@ namespace Journal.Controllers
             return Json(response);
         }
 
-        [HttpPost("AddDealImg")]
+        /*[HttpPost("AddDealImg")]
         public async Task<IActionResult> DealAddImg([FromBody] DealEditJsonModel deal)
         {
             var response = await _mtDealService.AddImage(deal.Id, deal.accountId, deal.Field);
@@ -88,6 +88,27 @@ namespace Journal.Controllers
         public async Task<IActionResult> DealAddNote([FromBody] DealEditJsonModel deal)
         {
             var response = await _mtDealService.AddNotes(deal.Id, deal.accountId, deal.Field);
+            return Json(response);
+        }*/
+
+        [HttpPost("AddDealDescription")]
+        public async Task<IActionResult> AddDealDescription([FromBody] DealEditJsonModel deal)
+        {
+            var response = await _mtDealService.AddDescriptionItem(deal.Id, deal.accountId, deal.Field, deal.Type);
+            return Json(response);
+        }
+
+        [HttpPost("DeleteDealDescription")]
+        public async Task<IActionResult> DeleteDescription([FromBody] Guid itemId)
+        {
+            var response = await _mtDealService.DeleteDescriptionItem(itemId);
+            return Json(response);
+        }
+
+        [HttpPost("EditDealDescription")]
+        public async Task<IActionResult> EditDealDescription([FromBody] DescriptionEditJsonModel model)
+        {
+            var response = await _mtDealService.EditDescriptionItem(model.Id, model.Field);
             return Json(response);
         }
 

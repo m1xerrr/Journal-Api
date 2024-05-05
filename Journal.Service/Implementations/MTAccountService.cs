@@ -17,13 +17,14 @@ namespace Journal.Service.Implementations
         private readonly IUserRepository _userRepository;
         private readonly IMTDataRepository _mtDataRepository;
         private readonly IDealRepository _mtDealRepository;
-
-        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository, IDealRepository mTDealRepository)
+        private readonly IDescriptionRepository _descriptionRepository;
+        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository, IDealRepository mTDealRepository, IDescriptionRepository descriptionRepository)
         {
             _mtAccountRepository = mtAccountRepository;
             _userRepository = userRepository;
             _mtDataRepository = mtDataRepository;
             _mtDealRepository = mTDealRepository;
+            _descriptionRepository = descriptionRepository;
         }
 
         public async Task<BaseResponse<AccountResponseModel>> AddAccount(MTAccountJsonModel accountModel)
@@ -292,6 +293,8 @@ namespace Journal.Service.Implementations
                     response.Message = "Account not found";
                     return response;
                 }
+
+                var descriptions = _descriptionRepository.SelectAll();
                 var deals = _mtDealRepository.SelectAll().Where(x => x.AccountId == accountId);
                 if (deals.Count() == 0)
                 {

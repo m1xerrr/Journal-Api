@@ -18,6 +18,7 @@ namespace Journal.DAL
             modelBuilder.Entity<DXTradeAccount>().HasOne(u => u.User).WithMany(ci => ci.DXTradeAccounts).HasForeignKey(ci => ci.UserID).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Deal>().HasOne(u =>u.Account).WithMany(ci => ci.Deals).HasForeignKey(ci => ci.AccountId).OnDelete(DeleteBehavior.NoAction);        
             modelBuilder.Entity<Note>().HasOne(u => u.User).WithMany(ci => ci.Notes).HasForeignKey(ci => ci.UserId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<DescriptionItem>().HasOne(u => u.Deal).WithMany(ci => ci.DescriptionItems).HasForeignKey(ci => ci.DealId).OnDelete(DeleteBehavior.NoAction);
         }
 
         public DbSet<DXTradeAccount> DXTradeAccounts { get; set; }
@@ -27,5 +28,7 @@ namespace Journal.DAL
         public DbSet<Deal> Deals { get; set; }
         public DbSet<CTraderAccount> CTraderAccounts { get; set;}
         public DbSet<Note> Notes { get; set; }
+
+        public DbSet<DescriptionItem> DealsDescriptions { get; set; }
     }
 }
