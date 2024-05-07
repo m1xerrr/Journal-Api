@@ -14,5 +14,7 @@ namespace Journal.Domain.JsonModels
         public Guid UserId { get; set; }
         public string AccessToken { get; set; }
 
+        public long AccountId { get; set; }
+
     }
 }

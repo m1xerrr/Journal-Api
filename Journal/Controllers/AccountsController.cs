@@ -52,7 +52,7 @@ namespace Journal.Controllers
         [HttpPost("AddCTraderAccount")]
         public async Task<IActionResult> AddCTraderAccount([FromBody] CTraderAccountJsonModel model)
         {
-            var response = await _ctraderAccountService.AddAccounts(model.AccessToken, model.UserId);
+            var response = await _ctraderAccountService.AddAccount(model.AccessToken, model.UserId, model.AccountId);
             return Json(response);
         }
 

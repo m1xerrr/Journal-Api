@@ -75,6 +75,8 @@ namespace Journal.DAL.Repositories
 
             await client.SendMessage(request);
 
+            await Task.Delay(300);
+
             return taskCompletionSource.Task.Result;
         }
 

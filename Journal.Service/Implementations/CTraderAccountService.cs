@@ -29,7 +29,7 @@ namespace Journal.Service.Implementations
             _dealRepository = dealRepository;
             _descriptionRepository = descriptionRepository;
         }
-        public async Task<BaseResponse<List<AccountResponseModel>>> AddAccounts(string accessToken, Guid UserId)
+        public async Task<BaseResponse<List<AccountResponseModel>>> AddAccount(string accessToken, Guid UserId, long accountId)
         {
             var response = new BaseResponse<List<AccountResponseModel>>();
             response.Data = new List<AccountResponseModel>();
@@ -46,10 +46,18 @@ namespace Journal.Service.Implementations
                     response.Message = "User not found";
                     return response;
                 }
-
-                foreach (var account in accounts.CtidTraderAccount)
+                var account = accounts.CtidTraderAccount.FirstOrDefault(x => (long)x.CtidTraderAccountId == accountId);
+                if (account == null)
                 {
-                    if (accountsDB.FirstOrDefault(x => (x.AccountId == (long)account.CtidTraderAccountId) && x.UserID == UserId) != null) continue;
+                    response.StatusCode=Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Account with such login not found";
+                }
+                else {
+                    if (accountsDB.FirstOrDefault(x => (x.AccountId == (long)account.CtidTraderAccountId) && x.UserID == UserId) != null)
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "Account with such id already added";
+                    }
                     var newAccount = new CTraderAccount()
                     {
                         AccessToken = accessToken,
