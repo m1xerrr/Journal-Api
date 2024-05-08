@@ -29,10 +29,9 @@ namespace Journal.Service.Implementations
             _dealRepository = dealRepository;
             _descriptionRepository = descriptionRepository;
         }
-        public async Task<BaseResponse<List<AccountResponseModel>>> AddAccount(string accessToken, Guid UserId, long accountId)
+        public async Task<BaseResponse<AccountResponseModel>> AddAccount(string accessToken, Guid UserId, long accountId)
         {
-            var response = new BaseResponse<List<AccountResponseModel>>();
-            response.Data = new List<AccountResponseModel>();
+            var response = new BaseResponse<AccountResponseModel>();
             try
             {
                 var accountsDB = _cTraderAccountRepository.SelectAll();
@@ -53,7 +52,7 @@ namespace Journal.Service.Implementations
                     response.Message = "Account with such login not found";
                 }
                 else {
-                    if (accountsDB.FirstOrDefault(x => (x.AccountId == (long)account.CtidTraderAccountId) && x.UserID == UserId) != null)
+                    if (accountsDB.FirstOrDefault(x => (x.AccountId == (long)account.TraderLogin) && x.UserID == UserId) != null)
                     {
                         response.StatusCode = StatusCode.ERROR;
                         response.Message = "Account with such id already added";
@@ -72,7 +71,7 @@ namespace Journal.Service.Implementations
                     {
                         var responseAccount = new AccountResponseModel(newAccount);
                         responseAccount.Provider = "CTrader";
-                        response.Data.Add(responseAccount);
+                        response.Data = responseAccount;
                     }
                     else
                     {

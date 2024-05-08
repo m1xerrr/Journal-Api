@@ -86,7 +86,7 @@ namespace Journal.Service.Implementations
                 }
                 else
                 {
-                    var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id);
+                    var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id).ToList();
                     foreach( var deal in deals)
                     {
                         _descriptionRepository.SelectAll();
