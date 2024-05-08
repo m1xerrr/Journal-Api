@@ -46,7 +46,7 @@ namespace Journal.Service.Implementations
                     response.Message = "User not found";
                     return response;
                 }
-                var account = accounts.CtidTraderAccount.FirstOrDefault(x => (long)x.CtidTraderAccountId == accountId);
+                var account = accounts.CtidTraderAccount.FirstOrDefault(x => (long)x.TraderLogin == accountId);
                 if (account == null)
                 {
                     response.StatusCode=Domain.Enums.StatusCode.ERROR;
