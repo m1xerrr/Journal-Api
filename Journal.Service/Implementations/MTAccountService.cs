@@ -94,9 +94,14 @@ namespace Journal.Service.Implementations
                 }
                 else
                 {
-                    var deals = _mtDealRepository.SelectAll().Where(x => x.AccountId == accountId);
+                    var deals = _mtDealRepository.SelectAll().Where(x => x.AccountId == accountId).ToList();
                     foreach (var deal in deals)
                     {
+                        _descriptionRepository.SelectAll();
+                        foreach (var description in deal.DescriptionItems)
+                        {
+                            await _descriptionRepository.Delete(description);
+                        }
                         await _mtDealRepository.Delete(deal);
                     }
                     if (await _mtAccountRepository.Delete(account))

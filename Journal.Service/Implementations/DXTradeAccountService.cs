@@ -89,6 +89,11 @@ namespace Journal.Service.Implementations
                     var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id);
                     foreach( var deal in deals)
                     {
+                        _descriptionRepository.SelectAll();
+                        foreach (var description in deal.DescriptionItems)
+                        {
+                            await _descriptionRepository.Delete(description);
+                        }
                         await _dealRepository.Delete(deal);
                     }
                     if(await _dxTradeAccountRepository.Delete(account))

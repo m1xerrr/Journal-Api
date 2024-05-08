@@ -108,9 +108,14 @@ namespace Journal.Service.Implementations
                     response.Message = "Account not found";
                     return response;
                 }
-                var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id);
+                var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id).ToList();
                 foreach (var deal in deals)
                 {
+                    _descriptionRepository.SelectAll();
+                    foreach(var description in deal.DescriptionItems)
+                    {
+                        await _descriptionRepository.Delete(description);
+                    }
                     await _dealRepository.Delete(deal);
                 }
 
