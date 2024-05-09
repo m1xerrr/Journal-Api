@@ -12,9 +12,9 @@ namespace Journal.Service.Interfaces
     public interface IDealService
     {
 
-        Task<BaseResponse<DealResponseModel>> GetDeal(int positionid, Guid accountId);
+        Task<BaseResponse<DealResponseModel>> GetDeal(long positionid, Guid accountId);
 
-        Task<BaseResponse<DealResponseModel>> AddDescriptionItem(int positionId, Guid accountId, string field, DescriptionType type);
+        Task<BaseResponse<DealResponseModel>> AddDescriptionItem(long positionId, Guid accountId, string field, DescriptionType type);
 
         Task<BaseResponse<DealResponseModel>> EditDescriptionItem(Guid itemId, string field);
 

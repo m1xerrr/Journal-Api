@@ -26,7 +26,7 @@ namespace Journal.Service.Implementations
             _descriptionRepository = descriptionRepository;
         }
 
-        public async Task<BaseResponse<DealResponseModel>> AddDescriptionItem(int positionId, Guid accountId, string field, DescriptionType type)
+        public async Task<BaseResponse<DealResponseModel>> AddDescriptionItem(long positionId, Guid accountId, string field, DescriptionType type)
         {
             var response = new BaseResponse<DealResponseModel>();
             try
@@ -215,7 +215,7 @@ namespace Journal.Service.Implementations
             return response;
         }*/
 
-        public async Task<BaseResponse<DealResponseModel>> GetDeal(int positionid, Guid accountId)
+        public async Task<BaseResponse<DealResponseModel>> GetDeal(long positionid, Guid accountId)
         {
             var response = new BaseResponse<DealResponseModel>();
             try
