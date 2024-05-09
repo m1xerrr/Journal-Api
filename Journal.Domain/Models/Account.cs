@@ -13,5 +13,7 @@ namespace Journal.Domain.Models
         public List<Deal>? Deals { get; set; }
 
         public double Deposit {  get; set; }
+
+
     }
 }

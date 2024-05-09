@@ -39,6 +39,9 @@ namespace Journal
             builder.Services.AddScoped<INoteRepository, NoteRepository>();
             builder.Services.AddScoped<INoteService, NoteService>();
             builder.Services.AddScoped<IDescriptionRepository, DescriptionRepository>();
+            builder.Services.AddScoped<ITradeLockerAPIRepository, TradeLockerAPIRepository>();
+            builder.Services.AddScoped<ITradeLockerAccountRepository, TradeLockerAccountRepository>();
+            builder.Services.AddScoped<ITradeLockerAccountService, TradeLockerAccountService>();
 
             var app = builder.Build();
 

@@ -7,6 +7,7 @@ namespace Journal.DAL
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
+            Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -18,16 +19,16 @@ namespace Journal.DAL
             modelBuilder.Entity<Deal>().HasOne(u =>u.Account).WithMany(ci => ci.Deals).HasForeignKey(ci => ci.AccountId).OnDelete(DeleteBehavior.NoAction);        
             modelBuilder.Entity<Note>().HasOne(u => u.User).WithMany(ci => ci.Notes).HasForeignKey(ci => ci.UserId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<DescriptionItem>().HasOne(u => u.Deal).WithMany(ci => ci.DescriptionItems).HasForeignKey(ci => ci.DealId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<TradeLockerAccount>().HasOne(u => u.User).WithMany(ci => ci.TradeLockerAccounts).HasForeignKey(ci => ci.UserID).OnDelete(DeleteBehavior.NoAction);
         }
-
+        public DbSet<TradeLockerAccount> TradeLockerAccounts { get; set; }
         public DbSet<DXTradeAccount> DXTradeAccounts { get; set; }
-        public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<CTraderAccount> CTraderAccounts { get; set; }
         public DbSet<MTAccount> MTAccounts { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Deal> Deals { get; set; }
-        public DbSet<CTraderAccount> CTraderAccounts { get; set;}
-        public DbSet<Note> Notes { get; set; }
-
         public DbSet<DescriptionItem> DealsDescriptions { get; set; }
+        public DbSet<Note> Notes { get; set; }
     }
 }

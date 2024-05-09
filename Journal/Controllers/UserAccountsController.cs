@@ -13,13 +13,15 @@ namespace Journal.Controllers
         private readonly IDealService _mtDealService;
         private readonly ICTraderAccountService _ctraderAccountService;
         private readonly IDXTradeAccountService _dxTradeAccountService;
+        private readonly ITradeLockerAccountService _tradeLockerAccountService;
 
-        public UserAccountsController(IMTAccountService mTAccountService, IDealService mtDealService, ICTraderAccountService ctraderAccountService, IDXTradeAccountService dXTradeAccountService)
+        public UserAccountsController(IMTAccountService mTAccountService, IDealService mtDealService, ICTraderAccountService ctraderAccountService, IDXTradeAccountService dXTradeAccountService, ITradeLockerAccountService tradeLockerAccountService)
         {
             _mtAccountService = mTAccountService;
             _mtDealService = mtDealService;
             _ctraderAccountService = ctraderAccountService;
             _dxTradeAccountService = dXTradeAccountService;
+            _tradeLockerAccountService = tradeLockerAccountService;
         }
 
         [HttpPost("TradingAccountData")]
@@ -43,6 +45,11 @@ namespace Journal.Controllers
                     response.Data.Provider = account.Provider;
                     response.Data.Id = account.AccountId;
                     break;
+                case "TradeLocker":
+                    response = await _tradeLockerAccountService.GetAccountData(account.AccountId);
+                    response.Data.Provider = account.Provider;
+                    response.Data.Id = account.AccountId;
+                    break;
                 default:
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     response.Message = "Invalid provider name";
@@ -61,12 +68,13 @@ namespace Journal.Controllers
                     response = await _mtAccountService.LoadAccountData(account.AccountId);
                     break;
                 case "CTrader":
-                    await _ctraderAccountService.LoadAccountData(account.AccountId);
                     response = await _ctraderAccountService.LoadAccountData(account.AccountId);
                     break;
                 case "DXTrade":
-                    await _dxTradeAccountService.LoadAccountData(account.AccountId);
                     response = await _dxTradeAccountService.LoadAccountData(account.AccountId);
+                    break;
+                case "TradeLocker":
+                    response = await _tradeLockerAccountService.LoadAccountData(account.AccountId);
                     break;
                 default:
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;

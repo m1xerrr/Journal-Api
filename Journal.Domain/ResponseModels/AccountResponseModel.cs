@@ -33,6 +33,7 @@ namespace Journal.Domain.ResponseModels
             Id = account.Id;
             UserId = account.UserID;
             Login = account.Login;
+            Deposit = account.Deposit;
             Provider = "MetaTrader 5";
         }
         public AccountResponseModel(CTraderAccount account)
@@ -40,6 +41,7 @@ namespace Journal.Domain.ResponseModels
             Id = account.Id;
             UserId = account.UserID;
             Login = account.Login;
+            Deposit = account.Deposit;
             Provider = "CTrader";
         }
         public AccountResponseModel(DXTradeAccount account) 
@@ -47,7 +49,17 @@ namespace Journal.Domain.ResponseModels
             Id = account.Id;
             UserId = account.UserID;
             Login = account.Login;
+            Deposit = account.Deposit;
             Provider = "DXTrade";
+        }
+
+        public AccountResponseModel(TradeLockerAccount account)
+        {
+            Id = account.Id;
+            UserId = account.UserID;
+            Login = account.Login;
+            Deposit = account.Deposit;
+            Provider = "TradeLocker";
         }
     }
 }

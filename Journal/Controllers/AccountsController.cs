@@ -13,11 +13,13 @@ namespace Journal.Controllers
         private readonly IMTAccountService _mtAccountService;
         private readonly ICTraderAccountService _ctraderAccountService;
         private readonly IDXTradeAccountService _dxTradeAccountService;
-        public AccountsController(IMTAccountService mTAccountService, ICTraderAccountService cTraderAccountService, IDXTradeAccountService traderAccountService)
+        private readonly ITradeLockerAccountService _tradeLockerAccountService;
+        public AccountsController(IMTAccountService mTAccountService, ICTraderAccountService cTraderAccountService, IDXTradeAccountService traderAccountService, ITradeLockerAccountService tradeLockerAccountService)
         {
             _mtAccountService = mTAccountService;
             _ctraderAccountService = cTraderAccountService;
             _dxTradeAccountService = traderAccountService;
+            _tradeLockerAccountService = tradeLockerAccountService;
         }
 
         [HttpPost("AddMTAccount")]
@@ -40,6 +42,9 @@ namespace Journal.Controllers
                     break;
                 case "DXTrade":
                     response = await _dxTradeAccountService.DeleteDXTradeAccount(account.AccountId);
+                    break;
+                case "TradeLocker":
+                    response = await _tradeLockerAccountService.DeleteAccountTradeLockerAccount(account.AccountId);
                     break;
                 default:
                     response = new BaseResponse<bool> { };
@@ -67,6 +72,12 @@ namespace Journal.Controllers
         public async Task<IActionResult> GetCTraderAccessToken([FromBody] string authorizationLink)
         {
             var response = await _ctraderAccountService.GetAccessToken(authorizationLink);
+            return Json(response);
+        }
+        [HttpPost("AddTradeLockerAccount")]
+        public async Task<IActionResult> AddTradeLockerAccount([FromBody] TradeLockerAccountJsonModel model)
+        {
+            var response = await _tradeLockerAccountService.AddAccount(model.Email, model.Server, model.Password, model.isLive, model.UserId, model.AccountId);
             return Json(response);
         }
     }

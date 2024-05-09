@@ -4,6 +4,8 @@ using System.Security.Claims;
 using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
 using Journal.Domain.Models;
+using Journal.Domain.ResponseModels;
+using Journal.Domain.Responses;
 
 namespace Journal.Controllers
 {
@@ -13,12 +15,14 @@ namespace Journal.Controllers
         private readonly IMTAccountService _mtAccountService;
         private readonly ICTraderAccountService _ctraderAccountService;
         private readonly IDXTradeAccountService _dxTradeAccountService;
-        public UserController(IUserService userService, IMTAccountService mTAccountService, ICTraderAccountService ctraderAccountService, IDXTradeAccountService dXTradeAccountService)
+        private readonly ITradeLockerAccountService _tradeLockerAccountService;
+        public UserController(IUserService userService, IMTAccountService mTAccountService, ICTraderAccountService ctraderAccountService, IDXTradeAccountService dXTradeAccountService, ITradeLockerAccountService tradeLockerAccountService)
         {
             _userService = userService;
             _mtAccountService = mTAccountService;
             _ctraderAccountService = ctraderAccountService;
             _dxTradeAccountService = dXTradeAccountService;
+            _tradeLockerAccountService = tradeLockerAccountService;
         }
         [HttpPost("TGLogin")]
         public async Task<IActionResult> TGLogin([FromBody] string username)
@@ -48,28 +52,27 @@ namespace Journal.Controllers
         [HttpPost("UserTradingAccounts")]
         public async Task<IActionResult> UserTradingAccounts([FromBody] Guid userId)
         {
+            var response = new BaseResponse<List<AccountResponseModel>>();
+            response.StatusCode = Domain.Enums.StatusCode.OK;
             var responseMT = await _mtAccountService.GetMTAccountsByUser(userId);
             var responseCT = await _ctraderAccountService.GetUserAccounts(userId);
             var responseDX = await _dxTradeAccountService.GetUserAccounts(userId);
-            if (responseMT.StatusCode == Domain.Enums.StatusCode.OK && responseCT.StatusCode == Domain.Enums.StatusCode.OK)
+            var responseTL = await _tradeLockerAccountService.GetUserAccounts(userId);
+            var accounts = new List<AccountResponseModel>();
+            foreach (var account in responseMT.Data) accounts.Add(account);
+            foreach (var account in responseCT.Data) accounts.Add(account);
+            foreach (var account in responseDX.Data) accounts.Add(account);
+            foreach (var account in responseTL.Data) accounts.Add(account);
+            if(accounts.Count == 0)
             {
-                foreach(var account in responseCT.Data)
-                {
-                    responseMT.Data.Add(account);
-                }
-                if(responseDX.StatusCode == Domain.Enums.StatusCode.OK)
-                {
-                    foreach (var account in responseDX.Data)
-                    {
-                        responseMT.Data.Add(account);
-                    }
-                }
-                else
-                {
-                    return Json(responseDX);
-                }
+                response.Message = "User has no accounts";
             }
-            return Json(responseMT);
+            else
+            {
+                response.Message = "Success";
+                response.Data = accounts;
+            }
+            return Json(response);
         }
 
         [HttpPost("ChangeUsername")]

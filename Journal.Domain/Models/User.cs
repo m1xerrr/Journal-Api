@@ -22,6 +22,8 @@ namespace Journal.Domain.Models
 
         public List<DXTradeAccount>? DXTradeAccounts { get; set; }
 
+        public List<TradeLockerAccount>? TradeLockerAccounts { get; set; }
+
         public List<Note> Notes { get; set; }
 
         public Subscription Subscription { get; set; }
@@ -30,6 +32,7 @@ namespace Journal.Domain.Models
             MTAccounts = new List<MTAccount>();
             CTraderAccounts = new List<CTraderAccount>();
             DXTradeAccounts = new List<DXTradeAccount>(); 
+            TradeLockerAccounts = new List<TradeLockerAccount>();
             Notes = new List<Note>();
         }
     }
