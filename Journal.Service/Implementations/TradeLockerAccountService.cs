@@ -70,6 +70,7 @@ namespace Journal.Service.Implementations
                             response.StatusCode = Domain.Enums.StatusCode.ERROR;
                             response.Message = "Error during saving the account";
                         }
+                        await LoadAccountData(_tradeLockerAccountRepository.SelectAll().FirstOrDefault(x => x.Login == accountId).Id);
                     }
                 }
 
