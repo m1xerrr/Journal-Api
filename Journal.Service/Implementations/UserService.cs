@@ -21,9 +21,10 @@ namespace Journal.Service.Implementations
         private readonly IMTAccountRepository _mtAccountRepository;
         private readonly IDXTradeAccountRepository _dxtraderAccountRepository;
         private readonly ICTraderAccountRepository _ctraderAccountRepository;
+        private readonly ITradeLockerAccountService _tradeLockerAccountService;
         private readonly IDealRepository _dealRepository;
 
-        public UserService(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository, IMTAccountService mtAccountService, IDXTradeAccountService dxtraderAccountService, ICTraderAccountService ctraderAccountService, IMTAccountRepository mTAccountRepository, IDXTradeAccountRepository dXTradeAccountRepository, ICTraderAccountRepository cTraderAccountRepository, IDealRepository dealRepository)
+        public UserService(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository, IMTAccountService mtAccountService, IDXTradeAccountService dxtraderAccountService, ICTraderAccountService ctraderAccountService, IMTAccountRepository mTAccountRepository, IDXTradeAccountRepository dXTradeAccountRepository, ICTraderAccountRepository cTraderAccountRepository, IDealRepository dealRepository, ITradeLockerAccountService tradeLockerAccountService)
         {
             _userRepository = userRepository;
             _subscriptionRepository = subscriptionRepository;
@@ -34,6 +35,7 @@ namespace Journal.Service.Implementations
             _dxtraderAccountRepository = dXTradeAccountRepository;
             _ctraderAccountRepository = cTraderAccountRepository;
             _dealRepository = dealRepository;   
+            _tradeLockerAccountService = tradeLockerAccountService;
         }
         public async Task<BaseResponse<UserResponseModel>> ChangeName(EditUserJsonModel userModel)
         {
@@ -564,6 +566,12 @@ namespace Journal.Service.Implementations
                         accountsResponse.Add(accountData);
                     }
                     foreach (var account in (await _ctraderAccountService.GetUserAccounts(user.Id)).Data)
+                    {
+                        var accountData = new ShareAccountResponseModel(account);
+                        accountData.Username = name;
+                        accountsResponse.Add(accountData);
+                    }
+                    foreach (var account in (await _tradeLockerAccountService.GetUserAccounts(user.Id)).Data)
                     {
                         var accountData = new ShareAccountResponseModel(account);
                         accountData.Username = name;

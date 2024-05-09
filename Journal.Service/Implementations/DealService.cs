@@ -15,8 +15,9 @@ namespace Journal.Service.Implementations
         private readonly ICTraderAccountRepository _ctraderAccountRepository;
         private readonly IDXTradeAccountRepository _dxtradeAccountRepository;
         private readonly IDescriptionRepository _descriptionRepository;
+        private readonly ITradeLockerAccountRepository _tradeLockerAccountRepository;
 
-        public DealService(IDealRepository mtDealRepository, IUserRepository userRepository, IMTAccountRepository mtcRepository, ICTraderAccountRepository ctraderAccountRepository, IDXTradeAccountRepository tradeAccountRepository, IDescriptionRepository descriptionRepository)
+        public DealService(IDealRepository mtDealRepository, IUserRepository userRepository, IMTAccountRepository mtcRepository, ICTraderAccountRepository ctraderAccountRepository, IDXTradeAccountRepository tradeAccountRepository, IDescriptionRepository descriptionRepository, ITradeLockerAccountRepository tradeLockerAccountRepository)
         {
             _dealRepository = mtDealRepository;
             _userRepository = userRepository;
@@ -24,6 +25,7 @@ namespace Journal.Service.Implementations
             _ctraderAccountRepository = ctraderAccountRepository;
             _dxtradeAccountRepository = tradeAccountRepository;
             _descriptionRepository = descriptionRepository;
+            _tradeLockerAccountRepository = tradeLockerAccountRepository;
         }
 
         public async Task<BaseResponse<DealResponseModel>> AddDescriptionItem(long positionId, Guid accountId, string field, DescriptionType type)
@@ -235,6 +237,7 @@ namespace Journal.Service.Implementations
                     Account account = _mtcRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
                     if (account == null) account = _ctraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
                     if (account == null) account = _dxtradeAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                    if (account == null) account = _tradeLockerAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
                     response.Data.Username = _userRepository.SelectAll().FirstOrDefault(x => x.Id == account.UserID).Name;
                 }
             }

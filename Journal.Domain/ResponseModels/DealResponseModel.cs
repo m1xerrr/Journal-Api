@@ -11,7 +11,7 @@ namespace Journal.Domain.ResponseModels
     public class DealResponseModel
     {
         public string Username { get; set; }
-        public long PositionId { get; set; }
+        public string PositionId { get; set; }
 
         public Direction Direction { get; set; }
 
@@ -41,7 +41,7 @@ namespace Journal.Domain.ResponseModels
 
         public DealResponseModel(Deal deal)
         {
-            this.PositionId = deal.PositionId;
+            this.PositionId = deal.PositionId.ToString();
             this.Direction = deal.Direction;
             this.EntryPrice = deal.EntryPrice;
             this.ExitPrice = deal.ExitPrice;
