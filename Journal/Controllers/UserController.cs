@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
 using Journal.Domain.Models;
 using Journal.Domain.ResponseModels;
 using Journal.Domain.Responses;
+using Journal.Domain.JsonModels.User;
+using Journal.Domain.JsonModels.TradingAccount;
 
 namespace Journal.Controllers
 {
@@ -123,37 +124,6 @@ namespace Journal.Controllers
         public async Task<IActionResult> ShareProfit([FromBody] AccountPeriodJsonModel account)
         {
             var response = await _userService.GetProfit(account.AccountId, account.Provider, account.StartDate, account.EndDate);
-            return Json(response);
-        }
-        [HttpPost("Subscribe")]
-        public async Task<IActionResult> Subscribe([FromBody] SubscriptionJsonModel subscription)
-        {
-            var response = await _userService.Subscribe(subscription.UserId, subscription.ExpirationDate, subscription.SubscriptionType);
-            return Json(response);
-        }
-        [HttpPost("ExtendSubscription")]
-        public async Task<IActionResult> ExtendSubscription([FromBody] SubscriptionJsonModel subscription)
-        {
-            var response = await _userService.ExtendSubscription(subscription.UserId, subscription.ExpirationDate);
-            return Json(response);
-        }
-        [HttpPost("DeleteSubscription")]
-        public async Task<IActionResult> DeleteSubscription([FromBody] Guid userId)
-        {
-            var response = await _userService.DeleteSubscription(userId);
-            return Json(response);
-        }
-        [HttpPost("ChangeSubscriptionType")]
-        public async Task<IActionResult> ChangeSubscriptionType([FromBody] SubscriptionJsonModel subscription)
-        {
-            var response = await _userService.ChangeSubscriptionType(subscription.UserId, subscription.SubscriptionType);
-            return Json(response);
-        }
-
-        [HttpPost("UserSubscription")]
-        public async Task<IActionResult> UserSubscription([FromBody] Guid userId)
-        {
-            var response = await _userService.UserSubscriptionStatus(userId);
             return Json(response);
         }
 

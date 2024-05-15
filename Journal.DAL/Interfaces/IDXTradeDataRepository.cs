@@ -1,4 +1,4 @@
-﻿using Journal.Domain.JsonModels;
+﻿using Journal.Domain.JsonModels.DXTrade;
 using System;
 using System.Collections.Generic;
 using System.Linq;

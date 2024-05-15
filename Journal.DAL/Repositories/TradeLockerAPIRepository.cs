@@ -1,7 +1,6 @@
 ﻿using Journal.DAL.Interfaces;
 using Newtonsoft.Json;
 using Journal.DAL.Interfaces;
-using Journal.Domain.JsonModels;
 using Journal.Domain.Models;
 using Newtonsoft.Json;
 using System;
@@ -11,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
+using Journal.Domain.JsonModels.TradeLocker;
 
 namespace Journal.DAL.Repositories
 {

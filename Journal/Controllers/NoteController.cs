@@ -1,4 +1,4 @@
-﻿using Journal.Domain.JsonModels;
+﻿using Journal.Domain.JsonModels.User;
 using Journal.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

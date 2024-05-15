@@ -1,13 +1,13 @@
 ﻿using Journal.DAL.Interfaces;
 using Journal.Domain.Models;
 using Journal.Domain.Responses;
-using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
 using Journal.Domain.ResponseModels;
 using Microsoft.EntityFrameworkCore;
 using Journal.Domain.Enums;
 using Journal.DAL.Repositories;
 using Microsoft.Identity.Client;
+using Journal.Domain.JsonModels.MetaTrader;
 
 namespace Journal.Service.Implementations
 {
@@ -202,6 +202,210 @@ namespace Journal.Service.Implementations
                     }
 
                 }
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<bool>> OpenPosition(MTOpenPositionJsonModel model)
+        {
+            var response = new BaseResponse<bool>();
+            try
+            {
+                var account = _mtAccountRepository.SelectAll().FirstOrDefault(x => x.Id == model.AccountId);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                }
+                else
+                {
+                    var order = await _mtDataRepository.PlaceOrder(account.Login, account.Password, account.Server, model.Symbol, model.Volume, model.Type, model.Price, model.Stoploss, model.TakeProfit);
+                    if (order)
+                    {
+                        response.Data = true;
+                        response.StatusCode = StatusCode.OK;
+                        response.Message = "Success";
+                    }
+                    else
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "Error occured during placing order";
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<List<MTOrderJsonModel>>> GetOrders(Guid accountId)
+        {
+            var response = new BaseResponse<List<MTOrderJsonModel>> ();
+            try
+            {
+                var account = _mtAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                }
+                else
+                {
+                    var model = new MTAccountJsonModel()
+                    {
+                        Id = account.Id,
+                        Login = account.Login,
+                        Password = account.Password,
+                        Server = account.Server,
+                        UserId = account.UserID
+                    };
+                    var orders = await _mtDataRepository.GetOrders(model);
+                    if (orders != null)
+                    {
+                        response.Data = orders;
+                        response.StatusCode = StatusCode.OK;
+                        response.Message = "Success";
+                    }
+                    else
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "User has no orders";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<List<string>>> GetSymbols(Guid accountId)
+        {
+            var response = new BaseResponse<List<string>>();
+            try
+            {
+                var account = _mtAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                }
+                else
+                {
+                    var model = new MTAccountJsonModel()
+                    {
+                        Id = account.Id,
+                        Login = account.Login,
+                        Password = account.Password,
+                        Server = account.Server,
+                        UserId = account.UserID
+                    };
+                    var symbols = await _mtDataRepository.GetSymbols(model);
+                    if (symbols != null)
+                    {
+                        response.Data = symbols;
+                        response.StatusCode = StatusCode.OK;
+                        response.Message = "Success";
+                    }
+                    else
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "Symbols not found";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<List<MTPositionJsonModel>>> GetPositions(Guid accountId)
+        {
+            var response = new BaseResponse<List<MTPositionJsonModel>>();
+            try
+            {
+                var account = _mtAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                }
+                else
+                {
+                    var model = new MTAccountJsonModel()
+                    {
+                        Id = account.Id,
+                        Login = account.Login,
+                        Password = account.Password,
+                        Server = account.Server,
+                        UserId = account.UserID
+                    };
+                    var positions = await _mtDataRepository.GetPositions(model);
+                    if (positions != null)
+                    {
+                        response.Data = positions;
+                        response.StatusCode = StatusCode.OK;
+                        response.Message = "Success";
+                    }
+                    else
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "Symbols not found";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<bool>> CloseOrder(MTCloseOrderJsonModel model)
+        {
+            var response = new BaseResponse<bool>();
+            try
+            {
+                var account = _mtAccountRepository.SelectAll().FirstOrDefault(x => x.Id == model.AccountId);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                }
+                else
+                {
+                    var order = await _mtDataRepository.DeleteOrder(account.Login, account.Password, account.Server, model.ticket);
+                    if (order)
+                    {
+                        response.Data = order;
+                        response.StatusCode = StatusCode.OK;
+                        response.Message = "Success";
+                    }
+                    else
+                    {
+                        response.StatusCode = StatusCode.ERROR;
+                        response.Message = "Symbols not found";
+                    }
+                }
+
             }
             catch (Exception ex)
             {

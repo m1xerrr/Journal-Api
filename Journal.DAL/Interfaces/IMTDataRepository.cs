@@ -1,5 +1,6 @@
-﻿using Journal.Domain.JsonModels;
+﻿using Journal.Domain.JsonModels.MetaTrader;
 using Journal.Domain.ResponseModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,16 @@ namespace Journal.DAL.Interfaces
         Task<List<MTDealJsonModel>> GetDeals(MTAccountJsonModel account);
 
         Task<bool> Initialize(MTAccountJsonModel account);
+
+        Task<bool> DeleteOrder(int login, string password, string server, long ticket);
+
+        Task<List<MTOrderJsonModel>> GetOrders(MTAccountJsonModel account);
+
+        Task<List<MTPositionJsonModel>> GetPositions(MTAccountJsonModel account);
+
+        Task<List<string>> GetSymbols(MTAccountJsonModel account);
+
+        Task<bool> PlaceOrder(int login, string password, string server, string symbol, float volume, byte type, float price, float stoploss, float takeprofit);
 
     }
 }

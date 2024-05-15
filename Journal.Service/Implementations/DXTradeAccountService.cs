@@ -1,7 +1,7 @@
 ﻿using Journal.DAL.Interfaces;
 using Journal.DAL.Repositories;
 using Journal.Domain.Enums;
-using Journal.Domain.JsonModels;
+using Journal.Domain.JsonModels.DXTrade;
 using Journal.Domain.Models;
 using Journal.Domain.ResponseModels;
 using Journal.Domain.Responses;

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Journal.Domain.JsonModels
+namespace Journal.Domain.JsonModels.DXTrade
 {
     public class DXTradeAPIAccountJsonModel
     {
@@ -39,7 +39,7 @@ namespace Journal.Domain.JsonModels
         [JsonProperty("fullName")]
         public string FullName { get; set; }
         [JsonProperty("accounts")]
-        public List<DXTradeAPIAccountJsonModel> Accounts { get; set; } 
+        public List<DXTradeAPIAccountJsonModel> Accounts { get; set; }
         [JsonProperty("username")]
         public string Username { get; set; }
     }

@@ -1,5 +1,5 @@
 ﻿using Journal.DAL.Interfaces;
-using Journal.Domain.JsonModels;
+using Journal.Domain.JsonModels.DXTrade;
 using Journal.Domain.Models;
 using Newtonsoft.Json;
 using System;

@@ -1,5 +1,4 @@
 ﻿using Journal.Domain.Responses;
-using Journal.Domain.JsonModels;
 using Journal.Service.Interfaces;
 using Journal.Domain.ResponseModels;
 using Journal.Domain.Enums;
@@ -8,13 +7,13 @@ using Journal.Domain.Helpers;
 using Journal.DAL.Interfaces;
 using Azure;
 using System.Reflection.Metadata.Ecma335;
+using Journal.Domain.JsonModels.User;
 
 namespace Journal.Service.Implementations
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IMTAccountService _mtAccountService;
         private readonly IDXTradeAccountService _dxtraderAccountService;
         private readonly ICTraderAccountService _ctraderAccountService;
@@ -27,7 +26,6 @@ namespace Journal.Service.Implementations
         public UserService(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository, IMTAccountService mtAccountService, IDXTradeAccountService dxtraderAccountService, ICTraderAccountService ctraderAccountService, IMTAccountRepository mTAccountRepository, IDXTradeAccountRepository dXTradeAccountRepository, ICTraderAccountRepository cTraderAccountRepository, IDealRepository dealRepository, ITradeLockerAccountService tradeLockerAccountService)
         {
             _userRepository = userRepository;
-            _subscriptionRepository = subscriptionRepository;
             _mtAccountService = mtAccountService;
             _ctraderAccountService = ctraderAccountService;
             _dxtraderAccountService = dxtraderAccountService;
@@ -380,168 +378,7 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<SubscriptionResponseModel>> Subscribe(Guid userId, DateTime ExpirationDate, SubscriptionType subscriptionType)
-        {
-            var response = new BaseResponse<SubscriptionResponseModel>();
-            try
-            {
-                var subscription = new Subscription();
-                subscription.UserId = userId;
-                subscription.ExpirationDate = ExpirationDate;
-                subscription.PurchaseDate = DateTime.Now;
-                subscription.Id = Guid.NewGuid();
-                subscription.Subsctiption = subscriptionType;
-                if (_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId) == null)
-                {
-                    response.StatusCode = StatusCode.ERROR;
-                    response.Message = "No users with such ID";
-                    return response;
-                }
-                if(await _subscriptionRepository.Create(subscription))
-                {
-                    response.Data = new SubscriptionResponseModel(subscription);
-                    response.StatusCode = StatusCode.OK;
-                    return response;
-                }
-                else
-                {
-                    response.StatusCode= StatusCode.ERROR;
-                    response.Message = "Can not add subscription";
-                    return response;
-                }
 
-            }
-            catch (Exception ex)
-            {
-
-                response.StatusCode = StatusCode.ERROR;
-                response.Message = ex.Message;
-            }
-            return response;
-        }
-
-        public async Task<BaseResponse<SubscriptionResponseModel>> ExtendSubscription(Guid userId, DateTime ExpirationDate)
-        {
-            var response = new BaseResponse<SubscriptionResponseModel>();
-            try
-            {
-                var subscription = _subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId);
-                subscription.ExpirationDate = ExpirationDate;
-                if (_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId) == null)
-                {
-                    response.StatusCode = StatusCode.ERROR;
-                    response.Message = "No users with such ID";
-                    return response;
-                }
-                if (await _subscriptionRepository.Edit(subscription))
-                {
-                    response.Data = new SubscriptionResponseModel(subscription);
-                    response.StatusCode = StatusCode.OK;
-                }
-                else
-                {
-                    response.StatusCode = StatusCode.ERROR;
-                    response.Message = "Can not extend subscription";
-                }
-
-            }
-            catch (Exception ex)
-            {
-                response.StatusCode = StatusCode.ERROR;
-                response.Message = ex.Message;
-            }
-            return response;
-        }
-
-        public async Task<BaseResponse<bool>> DeleteSubscription(Guid userId)
-        {
-            var response = new BaseResponse<bool>();
-            try
-            {
-                var subscription = _subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId);
-                if (_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId) == null)
-                {
-                    response.StatusCode = StatusCode.ERROR;
-                    response.Message = "No users with such ID";
-                    return response;
-                }
-                if (await _subscriptionRepository.Delete(subscription))
-                {
-                    response.Data = true;
-                    response.StatusCode = StatusCode.OK;
-                }
-                else
-                {
-                    response.StatusCode = StatusCode.ERROR;
-                    response.Message = "Can not delete subscription";
-                }
-
-            }
-            catch (Exception ex)
-            {
-                response.StatusCode = StatusCode.ERROR;
-                response.Message = ex.Message;
-            }
-            return response;
-        }
-
-        public async Task<BaseResponse<SubscriptionResponseModel>> ChangeSubscriptionType(Guid userId, SubscriptionType subscriptionType)
-        {
-            var response = new BaseResponse<SubscriptionResponseModel>();
-            try
-            {
-                var subscription = _subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId);
-                subscription.Subsctiption = subscriptionType;
-                if (_userRepository.SelectAll().FirstOrDefault(x => x.Id == userId) == null)
-                {
-                    response.StatusCode = StatusCode.ERROR;
-                    response.Message = "No users with such ID";
-                    return response;
-                }
-                if (await _subscriptionRepository.Edit(subscription))
-                {
-                    response.Data = new SubscriptionResponseModel(subscription);
-                    response.StatusCode = StatusCode.OK;
-                }
-                else
-                {
-                    response.StatusCode = StatusCode.ERROR;
-                    response.Message = "Can not change subscription type";
-                }
-
-            }
-            catch (Exception ex)
-            {
-                response.StatusCode = StatusCode.ERROR;
-                response.Message = ex.Message;
-            }
-            return response;
-        }
-
-        public async Task<BaseResponse<SubscriptionResponseModel>> UserSubscriptionStatus(Guid userId)
-        {
-            var response = new BaseResponse<SubscriptionResponseModel>();
-            try
-            {
-                if(_subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId) == null)
-                {
-                    response.Message = "User has no subscriptions";
-                    response.StatusCode = StatusCode.ERROR;
-                }
-                else
-                {
-                    response.StatusCode = StatusCode.OK;
-                    response.Message = "Success";
-                    response.Data = new SubscriptionResponseModel(_subscriptionRepository.SelectAll().FirstOrDefault(x => x.UserId == userId));
-                }
-            }
-            catch (Exception ex)
-            {
-                response.StatusCode = StatusCode.ERROR;
-                response.Message = ex.Message;
-            }
-            return response;
-        }
 
         public async Task<BaseResponse<List<ShareAccountResponseModel>>> GetLeaderboard()
         {
