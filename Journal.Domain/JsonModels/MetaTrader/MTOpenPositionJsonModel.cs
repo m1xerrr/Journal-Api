@@ -10,16 +10,16 @@ namespace Journal.Domain.JsonModels.MetaTrader
     {
         public Guid AccountId { get; set; }
 
-        public string Symbol;
+        public string Symbol { get; set; }
 
-        public float Volume;
+        public float Volume { get; set; }
 
-        public byte Type;
+        public byte Type { get; set; }
 
-        public float Price;
+        public float Price { get; set; }
 
-        public float Stoploss;
+        public float Stoploss { get; set; }
 
-        public float TakeProfit;
+        public float TakeProfit { get; set; }
     }
 }

@@ -80,6 +80,63 @@ namespace Journal.DAL.Repositories
             return taskCompletionSource.Task.Result;
         }
 
+        public async Task<ProtoOATrader> AccountStateRequest(string accessToken, long accountId, bool isLive)
+        {
+
+            var _token = new Token()
+            {
+                AccessToken = accessToken,
+            };
+
+            var host = ApiInfo.GetHost(mode: isLive ? Mode.Live : Mode.Demo);
+            var client = new OpenClient(host, ApiInfo.Port, TimeSpan.FromSeconds(10), useWebSocket: useWebScoket);
+
+            _disposables.Add(client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnException));
+
+            await client.Connect();
+
+            var applicationAuthReq = new ProtoOAApplicationAuthReq
+            {
+                ClientId = _app.ClientId,
+                ClientSecret = _app.Secret,
+            };
+
+
+            await client.SendMessage(applicationAuthReq);
+
+            await Task.Delay(300);
+
+            var authRequst = new ProtoOAAccountAuthReq
+            {
+                CtidTraderAccountId = accountId,
+                AccessToken = _token.AccessToken
+            };
+
+            await client.SendMessage(authRequst);
+
+            await Task.Delay(100);
+
+            var taskCompletionSource = new TaskCompletionSource<ProtoOATraderRes>();
+
+            IDisposable disposable = null;
+
+            disposable = client.OfType<ProtoOATraderRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
+            {
+                taskCompletionSource.SetResult(response);
+
+                disposable?.Dispose();
+            });
+
+            var request = new ProtoOATraderReq
+            {
+                CtidTraderAccountId = accountId
+            };
+
+            await client.SendMessage(request);
+
+            return taskCompletionSource.Task.Result.Trader;
+        }
+
         public async Task<RepeatedField<ProtoOADeal>> GetDeals(string accessToken, long accountId, bool isLive)
         {
             var _token = new Token()
@@ -137,6 +194,339 @@ namespace Journal.DAL.Repositories
             await client.SendMessage(request);
 
             return taskCompletionSource.Task.Result.Deal;
+        }
+
+        public async Task<RepeatedField<ProtoOAOrder>> GetOrders(string accessToken, long accountId, bool isLive)
+        {
+            var _token = new Token()
+            {
+                AccessToken = accessToken,
+            };
+
+            var host = ApiInfo.GetHost(mode: isLive ? Mode.Live : Mode.Demo);
+            var client = new OpenClient(host, ApiInfo.Port, TimeSpan.FromSeconds(10), useWebSocket: useWebScoket);
+
+            _disposables.Add(client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnException));
+
+            await client.Connect();
+
+            var applicationAuthReq = new ProtoOAApplicationAuthReq
+            {
+                ClientId = _app.ClientId,
+                ClientSecret = _app.Secret,
+            };
+
+
+            await client.SendMessage(applicationAuthReq);
+
+            await Task.Delay(300);
+
+            var authRequst = new ProtoOAAccountAuthReq
+            {
+                CtidTraderAccountId = accountId,
+                AccessToken = _token.AccessToken
+            };
+
+            await client.SendMessage(authRequst);
+
+            await Task.Delay(100);
+
+            var taskCompletionSource = new TaskCompletionSource<ProtoOAReconcileRes>();
+
+            IDisposable disposable = null;
+
+            disposable = client.OfType<ProtoOAReconcileRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
+            {
+                taskCompletionSource.SetResult(response);
+
+                disposable?.Dispose();
+            });
+
+            var request = new ProtoOAReconcileReq
+            {
+                CtidTraderAccountId = accountId,
+            };
+
+            await client.SendMessage(request);
+
+            return taskCompletionSource.Task.Result.Order;
+        }
+
+        public async Task<RepeatedField<ProtoOAPosition>> GetPositions(string accessToken, long accountId, bool isLive)
+        {
+            var _token = new Token()
+            {
+                AccessToken = accessToken,
+            };
+
+            var host = ApiInfo.GetHost(mode: isLive ? Mode.Live : Mode.Demo);
+            var client = new OpenClient(host, ApiInfo.Port, TimeSpan.FromSeconds(10), useWebSocket: useWebScoket);
+
+            _disposables.Add(client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnException));
+
+            await client.Connect();
+
+            var applicationAuthReq = new ProtoOAApplicationAuthReq
+            {
+                ClientId = _app.ClientId,
+                ClientSecret = _app.Secret,
+            };
+
+
+            await client.SendMessage(applicationAuthReq);
+
+            await Task.Delay(300);
+
+            var authRequst = new ProtoOAAccountAuthReq
+            {
+                CtidTraderAccountId = accountId,
+                AccessToken = _token.AccessToken
+            };
+
+            await client.SendMessage(authRequst);
+
+            await Task.Delay(100);
+
+            var taskCompletionSource = new TaskCompletionSource<ProtoOAReconcileRes>();
+
+            IDisposable disposable = null;
+
+            disposable = client.OfType<ProtoOAReconcileRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
+            {
+                taskCompletionSource.SetResult(response);
+
+                disposable?.Dispose();
+            });
+
+            var request = new ProtoOAReconcileReq
+            {
+                CtidTraderAccountId = accountId,
+            };
+
+            await client.SendMessage(request);
+
+            return taskCompletionSource.Task.Result.Position;
+        }
+
+        public async Task<bool> PlaceOrder(string accessToken, long accountId, bool isLive, string symbol, byte type, long volume, double stopLoss, double takeProfit, double price)
+        {
+            var _token = new Token()
+            {
+                AccessToken = accessToken,
+            };
+
+            var host = ApiInfo.GetHost(mode: isLive ? Mode.Live : Mode.Demo);
+            var client = new OpenClient(host, ApiInfo.Port, TimeSpan.FromSeconds(10), useWebSocket: useWebScoket);
+
+            _disposables.Add(client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnException));
+
+            await client.Connect();
+
+            var applicationAuthReq = new ProtoOAApplicationAuthReq
+            {
+                ClientId = _app.ClientId,
+                ClientSecret = _app.Secret,
+            };
+
+
+            await client.SendMessage(applicationAuthReq);
+
+            await Task.Delay(300);
+
+            var authRequst = new ProtoOAAccountAuthReq
+            {
+                CtidTraderAccountId = accountId,
+                AccessToken = _token.AccessToken
+            };
+
+            await client.SendMessage(authRequst);
+
+            await Task.Delay(100);
+
+            var symbols = await GetSymbols(accessToken, accountId, isLive);
+            var symbolId = symbols.FirstOrDefault(x => x.SymbolName == symbol).SymbolId;
+
+            ProtoOAOrderType orderType = ProtoOAOrderType.Market;
+            ProtoOATradeSide tradeSide = ProtoOATradeSide.Buy;
+
+            switch(type)
+            {
+                case 1:
+                    orderType = ProtoOAOrderType.Market;
+                    tradeSide = ProtoOATradeSide.Buy;
+                    break;
+                case 2:
+                    orderType = ProtoOAOrderType.Market;
+                    tradeSide = ProtoOATradeSide.Sell;
+                    break;
+                case 3:
+                    orderType = ProtoOAOrderType.Limit;
+                    tradeSide = ProtoOATradeSide.Buy;
+                    break;
+                case 4:
+                    orderType = ProtoOAOrderType.Limit;
+                    tradeSide = ProtoOATradeSide.Sell;
+                    break;
+                default:
+                    return false;
+            }
+            ProtoOANewOrderReq request = new ProtoOANewOrderReq();
+            if (orderType == ProtoOAOrderType.Market)
+            {
+                request = new ProtoOANewOrderReq
+                {
+                    CtidTraderAccountId = accountId,
+                    SymbolId = symbolId,
+                    OrderType = orderType,
+                    TradeSide = tradeSide,
+                    Volume = volume
+                };
+            }
+            else {
+                if(stopLoss != 0 && takeProfit != 0)
+                request = new ProtoOANewOrderReq
+                {
+                    CtidTraderAccountId = accountId,
+                    SymbolId = symbolId,
+                    OrderType = orderType,
+                    TradeSide = tradeSide,
+                    Volume = volume,
+                    LimitPrice = price,
+                    StopLoss = stopLoss,
+                    TakeProfit = takeProfit,
+                };
+                else if(stopLoss == 0)
+                {
+                    request = new ProtoOANewOrderReq
+                    {
+                        CtidTraderAccountId = accountId,
+                        SymbolId = symbolId,
+                        OrderType = orderType,
+                        TradeSide = tradeSide,
+                        Volume = volume,
+                        LimitPrice = price,
+                        TakeProfit = takeProfit,
+                    };
+                }
+                else if(takeProfit == 0)
+                {
+                    request = new ProtoOANewOrderReq
+                    {
+                        CtidTraderAccountId = accountId,
+                        SymbolId = symbolId,
+                        OrderType = orderType,
+                        TradeSide = tradeSide,
+                        Volume = volume,
+                        LimitPrice = price,
+                        StopLoss = stopLoss,
+                    };
+                }
+                else
+                {
+                    request = new ProtoOANewOrderReq
+                    {
+                        CtidTraderAccountId = accountId,
+                        SymbolId = symbolId,
+                        OrderType = orderType,
+                        TradeSide = tradeSide,
+                        Volume = volume,
+                        LimitPrice = price,
+                    };
+                }
+            }
+
+            await client.SendMessage(request);
+
+            return true;
+        }
+
+        public async Task DeleteOrder(string accessToken, long accountId, bool isLive, long id)
+        {
+            var _token = new Token()
+            {
+                AccessToken = accessToken,
+            };
+
+            var host = ApiInfo.GetHost(mode: isLive ? Mode.Live : Mode.Demo);
+            var client = new OpenClient(host, ApiInfo.Port, TimeSpan.FromSeconds(10), useWebSocket: useWebScoket);
+
+            _disposables.Add(client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnException));
+
+            await client.Connect();
+
+            var applicationAuthReq = new ProtoOAApplicationAuthReq
+            {
+                ClientId = _app.ClientId,
+                ClientSecret = _app.Secret,
+            };
+
+
+            await client.SendMessage(applicationAuthReq);
+
+            await Task.Delay(300);
+
+            var authRequst = new ProtoOAAccountAuthReq
+            {
+                CtidTraderAccountId = accountId,
+                AccessToken = _token.AccessToken
+            };
+
+            await client.SendMessage(authRequst);
+
+            await Task.Delay(100);
+
+
+            var request = new ProtoOACancelOrderReq
+            {
+                CtidTraderAccountId = accountId,
+                OrderId = id
+            };
+            await client.SendMessage(request);
+        }
+
+        public async Task DeletePosition(string accessToken, long accountId, bool isLive, long id, long volume)
+        {
+            var _token = new Token()
+            {
+                AccessToken = accessToken,
+            };
+
+            var host = ApiInfo.GetHost(mode: isLive ? Mode.Live : Mode.Demo);
+            var client = new OpenClient(host, ApiInfo.Port, TimeSpan.FromSeconds(10), useWebSocket: useWebScoket);
+
+            _disposables.Add(client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnException));
+
+            await client.Connect();
+
+            var applicationAuthReq = new ProtoOAApplicationAuthReq
+            {
+                ClientId = _app.ClientId,
+                ClientSecret = _app.Secret,
+            };
+
+
+            await client.SendMessage(applicationAuthReq);
+
+            await Task.Delay(300);
+
+            var authRequst = new ProtoOAAccountAuthReq
+            {
+                CtidTraderAccountId = accountId,
+                AccessToken = _token.AccessToken
+            };
+
+            await client.SendMessage(authRequst);
+
+            await Task.Delay(100);
+
+
+            var request = new ProtoOAClosePositionReq
+            {
+                CtidTraderAccountId = accountId,
+                PositionId = id,
+                Volume = volume
+            };
+            await client.SendMessage(request);
         }
 
         public async Task<RepeatedField<ProtoOALightSymbol>> GetSymbols(string accessToken, long accountId, bool isLive)

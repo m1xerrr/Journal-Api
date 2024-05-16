@@ -25,10 +25,10 @@ namespace Journal.Domain.JsonModels.MetaTrader
         public double Fee { get; set; }
 
         [JsonProperty("magic")]
-        public int Magic { get; set; }
+        public long Magic { get; set; }
 
         [JsonProperty("order")]
-        public int Order { get; set; }
+        public long Order { get; set; }
 
         [JsonProperty("position_id")]
         public long PositionId { get; set; }

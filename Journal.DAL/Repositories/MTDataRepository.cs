@@ -9,7 +9,7 @@ namespace Journal.DAL.Repositories
 {
     public class MTDataRepository : IMTDataRepository
     {
-        string baseUrl = "http://10.125.40.38";
+        string baseUrl = "http://10.125.40.38:5000";
         public async Task<List<MTDealJsonModel>> GetDeals(MTAccountJsonModel account)
         {
            string endpoint = $"/get_deals?login={account.Login}&password={account.Password}&server={account.Server}";
@@ -135,8 +135,8 @@ namespace Journal.DAL.Repositories
         public async Task<bool> DeleteOrder(int login, string password, string server, long ticket)
         {
             
-            string endpointOrder = $"/close_order?login={login}&password={password}&server={server}&ticket={ticket};";
-            string endpointPosition = $"/close_position?login={login}&password={password}&server={server}&ticket={ticket};";
+            string endpointOrder = $"/close_order?login={login}&password={password}&server={server}&ticket={ticket}";
+            string endpointPosition = $"/close_position?login={login}&password={password}&server={server}&ticket={ticket}";
 
             try
             {
@@ -144,11 +144,18 @@ namespace Journal.DAL.Repositories
                 {
                     HttpResponseMessage responseOrder = await client.GetAsync(baseUrl + endpointOrder);
                     string contentOrder = await responseOrder.Content.ReadAsStringAsync();
-                    HttpResponseMessage responsePosition = await client.GetAsync(baseUrl + endpointPosition);
-                    string contentPosition = await responsePosition.Content.ReadAsStringAsync();
-                    if (contentPosition.Contains("success") || contentOrder.Contains("success"))
+                    if (contentOrder.Contains("success"))
                     {
                         return true;
+                    }
+                    else
+                    {
+                        HttpResponseMessage responsePosition = await client.GetAsync(baseUrl + endpointPosition);
+                        string contentPosition = await responsePosition.Content.ReadAsStringAsync();
+                        if (contentPosition.Contains("success"))
+                        {
+                            return true;
+                        }
                     }
                 }
             }

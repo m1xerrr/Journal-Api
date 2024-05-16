@@ -12,6 +12,7 @@ namespace Journal.Domain.JsonModels.CTrader
         public Guid Id { get; set; }
 
         public Guid UserId { get; set; }
+
         public string AccessToken { get; set; }
 
         public long AccountId { get; set; }

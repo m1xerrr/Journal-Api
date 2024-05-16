@@ -277,8 +277,9 @@ namespace Journal.Service.Implementations
                     }
                     else
                     {
-                        response.StatusCode = StatusCode.ERROR;
+                        response.StatusCode = StatusCode.OK;
                         response.Message = "User has no orders";
+                        response.Data = new List<MTOrderJsonModel>();
                     }
                 }
 
@@ -365,8 +366,9 @@ namespace Journal.Service.Implementations
                     }
                     else
                     {
-                        response.StatusCode = StatusCode.ERROR;
-                        response.Message = "Symbols not found";
+                        response.StatusCode = StatusCode.OK;
+                        response.Message = "Positions not found";
+                        response.Data = new List<MTPositionJsonModel>();
                     }
                 }
 
@@ -402,7 +404,7 @@ namespace Journal.Service.Implementations
                     else
                     {
                         response.StatusCode = StatusCode.ERROR;
-                        response.Message = "Symbols not found";
+                        response.Message = "Error during closing order";
                     }
                 }
 
@@ -420,7 +422,7 @@ namespace Journal.Service.Implementations
             var account = new AccountData();
             try
             {
-                var deposits = dealsList.Where(deal => deal.Comment.Contains("Deposit")).ToList();
+                var deposits = dealsList.Where(deal => deal.Comment.ToLower().Contains("deposit")).ToList();
                 foreach (var deposit in deposits)
                 {
                     account.Deposit += deposit.Profit;
@@ -469,7 +471,7 @@ namespace Journal.Service.Implementations
         private async Task<double> GetDeposit(List<MTDealJsonModel> dealsList)
         {
             double Deposit = 0;
-            var deposits = dealsList.Where(deal => deal.Comment.Contains("Deposit")).ToList();
+            var deposits = dealsList.Where(deal => deal.Comment.ToLower().Contains("deposit")).ToList();
             foreach (var deposit in deposits)
             {
                 Deposit += deposit.Profit;
@@ -504,7 +506,7 @@ namespace Journal.Service.Implementations
                 }
 
                 var descriptions = _descriptionRepository.SelectAll();
-                var deals = _mtDealRepository.SelectAll().Where(x => x.AccountId == accountId);
+                var deals = _mtDealRepository.SelectAll().Where(x => x.AccountId == accountId).ToList();
                 if (deals.Count() == 0)
                 {
                     response.Message = "Deals not found";

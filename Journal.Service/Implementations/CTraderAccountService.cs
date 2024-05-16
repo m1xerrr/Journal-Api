@@ -190,11 +190,198 @@ namespace Journal.Service.Implementations
             return response;
         }
 
+        public async Task<BaseResponse<RepeatedField<ProtoOAOrder>>> GetOrders(Guid accountId)
+        {
+            var response = new BaseResponse<RepeatedField<ProtoOAOrder>>();
+            try
+            {
+                var account = _cTraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                if (account == null)
+                {
+                    response.Message = "Account not found";
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    return response;
+                }
+
+                var ordersResponse = await _cTraderApiRepository.GetOrders(account.AccessToken, account.AccountId, account.IsLive);
+                if (ordersResponse.Count() == 0)
+                {
+                    response.Data = new RepeatedField<ProtoOAOrder>();
+                    response.StatusCode = Domain.Enums.StatusCode.OK;
+                    response.Message = "No orders found";
+                    return response;
+                }
+                response.Data = ordersResponse;
+                response.StatusCode = Domain.Enums.StatusCode.OK;
+                response.Message = "Success";
+
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<RepeatedField<ProtoOAPosition>>> GetPositions(Guid accountId)
+        {
+            var response = new BaseResponse<RepeatedField<ProtoOAPosition>>();
+            try
+            {
+                var account = _cTraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                if (account == null)
+                {
+                    response.Message = "Account not found";
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    return response;
+                }
+
+                var positionsResponse = await _cTraderApiRepository.GetPositions(account.AccessToken, account.AccountId, account.IsLive);
+                if (positionsResponse.Count() == 0)
+                {
+                    response.Data = new RepeatedField<ProtoOAPosition>();
+                    response.StatusCode = Domain.Enums.StatusCode.OK;
+                    response.Message = "No positions found";
+                    return response;
+                }
+                response.Data = positionsResponse;
+                response.StatusCode = Domain.Enums.StatusCode.OK;
+                response.Message = "Success";
+
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<bool>> PlaceOrder(Guid accountId, string symbol, byte type, float volume, double stopLoss, double takeProfit, double price)
+        {
+            var response = new BaseResponse<bool>();
+            try
+            {
+                var account = _cTraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                if (account == null)
+                {
+                    response.Message = "Account not found";
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    return response;
+                }
+                var longVolume = (long)(volume*10000000);
+                var newOrder = await _cTraderApiRepository.PlaceOrder(account.AccessToken, account.AccountId, account.IsLive, symbol, type, longVolume, stopLoss, takeProfit, price);
+                if (newOrder)
+                {
+                    response.Data = true;
+                    response.StatusCode = Domain.Enums.StatusCode.OK;
+                    response.Message = "Order sent on CTrader platform";
+                }
+                else
+                {
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Error during placing order";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<bool>> CloseOrder(Guid accountId, long id)
+        {
+            var response = new BaseResponse<bool>();
+            try
+            {
+                var account = _cTraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                if (account == null)
+                {
+                    response.Message = "Account not found";
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    return response;
+                }
+                var position = (await _cTraderApiRepository.GetPositions(account.AccessToken, account.AccountId, account.IsLive)).FirstOrDefault(x => x.PositionId == id);
+                var order = (await _cTraderApiRepository.GetOrders(account.AccessToken, account.AccountId, account.IsLive)).FirstOrDefault(x => x.OrderId == id);
+                if(position != null)
+                {
+                    await _cTraderApiRepository.DeletePosition(account.AccessToken, account.AccountId, account.IsLive, id, position.TradeData.Volume);
+                    response.Data = true;
+                    response.Message = "Close position command has been sent";
+                    response.StatusCode = StatusCode.OK;
+                }
+                else if(order != null)
+                {
+                    await _cTraderApiRepository.DeleteOrder(account.AccessToken, account.AccountId, account.IsLive, id);
+                    response.Data = true;
+                    response.Message = "Delete order command has been sent";
+                    response.StatusCode = StatusCode.OK;
+                }
+                else
+                {
+                    response.StatusCode= StatusCode.ERROR;
+                    response.Message = "Order or position with such id has not been found";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<List<string>>> GetSymbols(Guid accountId)
+        {
+            var response = new BaseResponse<List<string>> ();
+            try
+            {
+                var account = _cTraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                if (account == null)
+                {
+                    response.Message = "Account not found";
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    return response;
+                }
+
+                var symbolsResponse = await _cTraderApiRepository.GetSymbols(account.AccessToken, account.AccountId, account.IsLive);
+                if (symbolsResponse.Count() == 0)
+                {
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Symbols not found";
+                    return response;
+                }
+                response.Data = symbolsResponse.Select(x => x.SymbolName).ToList();
+                response.StatusCode = Domain.Enums.StatusCode.OK;
+                response.Message = "Success";
+
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
         private async Task<double> GetDeposit(string accessToken, long accountId, bool isLive)
         {
             var dealsResponse = await _cTraderApiRepository.GetDeals(accessToken, accountId, isLive);
-            var protoDeals = dealsResponse.OrderBy(x => x.ExecutionTimestamp).ToList();
-            var Deposit = (protoDeals[1].ClosePositionDetail.Balance - (protoDeals[1].ClosePositionDetail.Commission + protoDeals[1].ClosePositionDetail.GrossProfit)) / Math.Pow(10, protoDeals[1].MoneyDigits);
+            double Deposit = 0;
+            if (dealsResponse.Count > 1)
+            {
+                var protoDeals = dealsResponse.OrderBy(x => x.ExecutionTimestamp).ToList();
+                Deposit = (protoDeals[1].ClosePositionDetail.Balance - (protoDeals[1].ClosePositionDetail.Commission + protoDeals[1].ClosePositionDetail.GrossProfit)) / Math.Pow(10, protoDeals[1].MoneyDigits);
+            }
+            else
+            {
+                var accountState = await _cTraderApiRepository.AccountStateRequest(accessToken, accountId, isLive);
+                Deposit = accountState.Balance /100;
+            }
             return Deposit;
         }
 

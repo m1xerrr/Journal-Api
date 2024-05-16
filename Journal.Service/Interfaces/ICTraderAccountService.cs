@@ -2,6 +2,7 @@
 using Journal.Domain.JsonModels;
 using Journal.Domain.ResponseModels;
 using Journal.Domain.Models;
+using Google.Protobuf.Collections;
 
 namespace Journal.Service.Interfaces
 {
@@ -18,5 +19,15 @@ namespace Journal.Service.Interfaces
         Task<BaseResponse<AccountData>> GetAccountData(Guid id);
 
         Task<BaseResponse<List<AccountResponseModel>>> GetUserAccounts(Guid UserId);
+
+        Task<BaseResponse<RepeatedField<ProtoOAOrder>>> GetOrders(Guid accountId);
+
+        Task<BaseResponse<RepeatedField<ProtoOAPosition>>> GetPositions(Guid accountId);
+
+        Task<BaseResponse<bool>> PlaceOrder(Guid accountId, string symbol, byte type, float volume, double stopLoss, double takeProfit, double price);
+
+        Task<BaseResponse<List<string>>> GetSymbols(Guid accountId);
+
+        Task<BaseResponse<bool>> CloseOrder(Guid accountId, long id);
     }
 }
