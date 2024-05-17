@@ -13,5 +13,10 @@ namespace Journal.DAL.Interfaces
         Task<string> Initialize(string email, string password, string server, bool isLive);
         Task<double> GetDeposit(string email, string password, string server, bool isLive, long accountId);
         Task<TradeLockerAPIDealsJsonModel> GetDeals(string email, string password, string server, bool isLive, long accountId);
+        Task<TradeLockerSymbolJsonModel> GetSymbols(string email, string password, string server, bool isLive, long accountId);
+        Task<TradeLockerPositionsJsonModel> GetPositions(string email, string password, string server, bool isLive, long accountId);
+        Task<TradeLockerOrdersJsonModel> GetOrders(string email, string password, string server, bool isLive, long accountId);
+        Task<bool> PlaceOrder(string email, string password, string server, bool isLive, long accountId, double price, double stoploss, double takeprofit, double volume, byte type, string symbol);
+        Task<bool> DeleteOrder(string email, string password, string server, bool isLive, long accountId, long positionId);
     }
 }

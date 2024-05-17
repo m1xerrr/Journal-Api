@@ -1,4 +1,6 @@
-﻿using Journal.Domain.Models;
+﻿using Journal.Domain.Enums;
+using Journal.Domain.JsonModels.TradeLocker;
+using Journal.Domain.Models;
 using Journal.Domain.ResponseModels;
 using Journal.Domain.Responses;
 using System;
@@ -20,5 +22,15 @@ namespace Journal.Service.Interfaces
         Task<BaseResponse<AccountData>> GetAccountData(Guid id);
 
         Task<BaseResponse<List<AccountResponseModel>>> GetUserAccounts(Guid UserId);
+
+        Task<BaseResponse<List<string>>> GetSymbols(Guid id);
+
+        Task<BaseResponse<TradeLockerOrdersJsonModel>> GetOrders(Guid id);
+
+        Task<BaseResponse<TradeLockerPositionsJsonModel>> GetPositions(Guid id);
+
+        Task<BaseResponse<bool>> PlaceOrder(TradeLockerPlaceOrderJsonModel model);
+
+        Task<BaseResponse<bool>> DeleteOrder(TradeLockerCloseOrderJsonModel model);
     }
 }

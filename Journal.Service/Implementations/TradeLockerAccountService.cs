@@ -1,6 +1,7 @@
 ﻿using Journal.DAL.Interfaces;
 using Journal.DAL.Repositories;
 using Journal.Domain.Enums;
+using Journal.Domain.JsonModels.TradeLocker;
 using Journal.Domain.Models;
 using Journal.Domain.ResponseModels;
 using Journal.Domain.Responses;
@@ -159,6 +160,182 @@ namespace Journal.Service.Implementations
                     accountData.ProfitPercentage = Math.Round(accountData.Profit / accountData.Deposit * 100, 2);
                     accountData.Provider = "DXTrade";
                     response.Data = accountData;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<List<string>>> GetSymbols(Guid id)
+        {
+            var response = new BaseResponse<List<string>> ();
+            try
+            {
+
+                var account = _tradeLockerAccountRepository.SelectAll().FirstOrDefault(x => x.Id == id);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                    return response;
+                }
+                var symbolsResponse = await _tradeLockerAPIRepository.GetSymbols(account.Email, account.Password, account.Server, account.Live, account.Login);
+                
+                if (symbolsResponse == null)
+                {
+                    response.Message = "Symbols not found";
+                    response.StatusCode = StatusCode.ERROR;
+                }
+                else
+                {
+                    var symbols = symbolsResponse.Data.Instruments.Select(x => x.Name).ToList();
+                    response.Data = symbols;
+                    response.Message = "Success";
+                    response.StatusCode = StatusCode.OK;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<TradeLockerOrdersJsonModel>> GetOrders(Guid id)
+        {
+            var response = new BaseResponse<TradeLockerOrdersJsonModel>();
+            try
+            {
+
+                var account = _tradeLockerAccountRepository.SelectAll().FirstOrDefault(x => x.Id == id);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                    return response;
+                }
+                var ordersResponse = await _tradeLockerAPIRepository.GetOrders(account.Email, account.Password, account.Server, account.Live, account.Login);
+
+                if (ordersResponse == null)
+                {
+                    response.Message = "Error occured";
+                    response.StatusCode = StatusCode.ERROR;
+                }
+                else
+                {
+                    response.Data = ordersResponse;
+                    response.Message = "Success";
+                    response.StatusCode = StatusCode.OK;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<bool>> PlaceOrder(TradeLockerPlaceOrderJsonModel model)
+        {
+            var response = new BaseResponse<bool>();
+            try
+            {
+
+                var account = _tradeLockerAccountRepository.SelectAll().FirstOrDefault(x => x.Id == model.AccountId);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                    return response;
+                }
+                var ordersResponse = await _tradeLockerAPIRepository.PlaceOrder(account.Email, account.Password, account.Server, account.Live, account.Login, model.Price, model.StopLoss, model.TakeProfit, model.Volume, model.Type, model.Symbol);
+
+                if (!ordersResponse)
+                {
+                    response.Message = "Error occured";
+                    response.StatusCode = StatusCode.ERROR;
+                }
+                else
+                {
+                    response.Data = ordersResponse;
+                    response.Message = "Success";
+                    response.StatusCode = StatusCode.OK;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<bool>> DeleteOrder(TradeLockerCloseOrderJsonModel model)
+        {
+            var response = new BaseResponse<bool>();
+            try
+            {
+
+                var account = _tradeLockerAccountRepository.SelectAll().FirstOrDefault(x => x.Id == model.AccountId);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                    return response;
+                }
+                var ordersResponse = await _tradeLockerAPIRepository.DeleteOrder(account.Email, account.Password, account.Server, account.Live, account.Login, model.positionId);
+
+                if (!ordersResponse)
+                {
+                    response.Message = "Error occured";
+                    response.StatusCode = StatusCode.ERROR;
+                }
+                else
+                {
+                    response.Data = ordersResponse;
+                    response.Message = "Success";
+                    response.StatusCode = StatusCode.OK;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = Domain.Enums.StatusCode.ERROR;
+            }
+            return response;
+        }
+
+        public async Task<BaseResponse<TradeLockerPositionsJsonModel>> GetPositions(Guid id)
+        {
+            var response = new BaseResponse<TradeLockerPositionsJsonModel>();
+            try
+            {
+
+                var account = _tradeLockerAccountRepository.SelectAll().FirstOrDefault(x => x.Id == id);
+                if (account == null)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Account not found";
+                    return response;
+                }
+                var positionsResponse = await _tradeLockerAPIRepository.GetPositions(account.Email, account.Password, account.Server, account.Live, account.Login);
+
+                if (positionsResponse == null)
+                {
+                    response.Message = "Error occured";
+                    response.StatusCode = StatusCode.ERROR;
+                }
+                else
+                {
+                    response.Data = positionsResponse;
+                    response.Message = "Success";
+                    response.StatusCode = StatusCode.OK;
                 }
             }
             catch (Exception ex)
