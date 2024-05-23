@@ -12,6 +12,7 @@ namespace Journal.Domain.Models
     {
         public Guid Id { get; set; }
         public string? TGUsername { get; set; }
+
         public string? TGId { get; set; }
         public string Name { get; set; }
         public string? Email { get; set; }

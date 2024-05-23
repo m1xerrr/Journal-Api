@@ -481,9 +481,8 @@ namespace Journal.Service.Implementations
                     User user = new User()
                     {
                         Id = Guid.NewGuid(),
-                        TGId = model.TelegramId,
                         TGUsername = model.Username,
-                        Email = model.Username+"@mail.com",
+                        Email = model.Username + "@mail.com",
                         Password = HashPasswordHelper.HashPassword(model.Username + "Password"),
                         Name = model.Username,
                         Role = Role.User
