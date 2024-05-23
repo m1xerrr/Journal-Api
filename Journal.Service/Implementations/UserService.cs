@@ -471,20 +471,21 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<UserResponseModel>> TGLogin(string username)
+        public async Task<BaseResponse<UserResponseModel>> TGLogin(TGLoginJsonModel model)
         {
             var response = new BaseResponse<UserResponseModel>();
             try
             {
-                if(_userRepository.SelectAll().FirstOrDefault(x => x.TGUsername == username) == null)
+                if(_userRepository.SelectAll().FirstOrDefault(x => x.TGId == model.TelegramId) == null)
                 {
                     User user = new User()
                     {
                         Id = Guid.NewGuid(),
-                        TGUsername = username,
-                        Email = username+"@mail.com",
-                        Password = HashPasswordHelper.HashPassword(username+"Password"),
-                        Name = username,
+                        TGId = model.TelegramId,
+                        TGUsername = model.Username,
+                        Email = model.Username+"@mail.com",
+                        Password = HashPasswordHelper.HashPassword(model.Username + "Password"),
+                        Name = model.Username,
                         Role = Role.User
                     };
                     if(await _userRepository.Create(user))
@@ -503,7 +504,7 @@ namespace Journal.Service.Implementations
                 {
                     response.StatusCode = StatusCode.OK;
                     response.Message = "Success";
-                    response.Data = new UserResponseModel(_userRepository.SelectAll().FirstOrDefault(x => x.TGUsername == username));
+                    response.Data = new UserResponseModel(_userRepository.SelectAll().FirstOrDefault(x => x.TGId == model.TelegramId));
                 }
             }
             catch (Exception ex)

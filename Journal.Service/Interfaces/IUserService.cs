@@ -9,7 +9,7 @@ namespace Journal.Service.Interfaces
     {
         Task<BaseResponse<UserResponseModel>> CreateAccount(SignUpUserJsonModel user);
 
-        Task<BaseResponse<UserResponseModel>> TGLogin(string username);
+        Task<BaseResponse<UserResponseModel>> TGLogin(TGLoginJsonModel model);
 
         Task<BaseResponse<UserResponseModel>> Verify(LoginUserJsonModel user);
 

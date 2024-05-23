@@ -26,9 +26,9 @@ namespace Journal.Controllers
             _tradeLockerAccountService = tradeLockerAccountService;
         }
         [HttpPost("TGLogin")]
-        public async Task<IActionResult> TGLogin([FromBody] string username)
+        public async Task<IActionResult> TGLogin([FromBody] TGLoginJsonModel model)
         {
-            var response = await _userService.TGLogin(username);
+            var response = await _userService.TGLogin(model);
             return Json(response);
         }
 
