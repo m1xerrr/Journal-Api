@@ -585,6 +585,63 @@ namespace Journal.DAL.Repositories
             return taskCompletionSource.Task.Result.Symbol;
         }
 
+        public async Task<RepeatedField<ProtoOASymbolCategory>> GetSymbolCategories(string accessToken, long accountId, bool isLive)
+        {
+            var _token = new Token()
+            {
+                AccessToken = accessToken,
+            };
+
+            var host = ApiInfo.GetHost(mode: isLive ? Mode.Live : Mode.Demo);
+            var client = new OpenClient(host, ApiInfo.Port, TimeSpan.FromSeconds(10), useWebSocket: useWebScoket);
+
+            _disposables.Add(client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnException));
+
+            await client.Connect();
+
+            var applicationAuthReq = new ProtoOAApplicationAuthReq
+            {
+                ClientId = _app.ClientId,
+                ClientSecret = _app.Secret,
+            };
+
+
+            await client.SendMessage(applicationAuthReq);
+
+            await Task.Delay(300);
+
+            var authRequst = new ProtoOAAccountAuthReq
+            {
+                CtidTraderAccountId = accountId,
+                AccessToken = _token.AccessToken
+            };
+
+            await client.SendMessage(authRequst);
+
+            await Task.Delay(100);
+
+            var taskCompletionSource = new TaskCompletionSource<ProtoOASymbolCategoryListRes>();
+
+            IDisposable disposable = null;
+
+            disposable = client.OfType<ProtoOASymbolCategoryListRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
+            {
+                taskCompletionSource.SetResult(response);
+
+                disposable?.Dispose();
+            });
+
+            var request = new ProtoOASymbolCategoryListReq
+            {
+                CtidTraderAccountId = accountId,
+            };
+
+            await client.SendMessage(request);
+
+            return taskCompletionSource.Task.Result.SymbolCategory;
+        }
+
+
         private static void OnMessageReceived(IMessage message)
         {
             Console.WriteLine($"\nMessage Received:\n{message}");

@@ -28,5 +28,7 @@ namespace Journal.DAL.Interfaces
         Task DeleteOrder(string accessToken, long accountId, bool isLive, long id);
 
         Task<RepeatedField<ProtoOALightSymbol>> GetSymbols(string accessToken, long accountId, bool isLive);
+
+        Task<RepeatedField<ProtoOASymbolCategory>> GetSymbolCategories(string accessToken, long accountId, bool isLive);
     }
 }

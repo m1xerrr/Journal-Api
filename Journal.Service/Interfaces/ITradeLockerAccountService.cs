@@ -1,5 +1,6 @@
 ﻿using Journal.Domain.Enums;
 using Journal.Domain.JsonModels.TradeLocker;
+using Journal.Domain.JsonModels.TradingAccount;
 using Journal.Domain.Models;
 using Journal.Domain.ResponseModels;
 using Journal.Domain.Responses;
@@ -25,12 +26,12 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<List<string>>> GetSymbols(Guid id);
 
-        Task<BaseResponse<TradeLockerOrdersJsonModel>> GetOrders(Guid id);
+        Task<BaseResponse<List<OrderResponseModel>>> GetOrders(Guid id);
 
-        Task<BaseResponse<TradeLockerPositionsJsonModel>> GetPositions(Guid id);
+        Task<BaseResponse<List<PositionResponseModel>>> GetPositions(Guid id);
 
-        Task<BaseResponse<bool>> PlaceOrder(TradeLockerPlaceOrderJsonModel model);
+        Task<BaseResponse<bool>> PlaceOrder(OpenPositionJsonModel model);
 
-        Task<BaseResponse<bool>> DeleteOrder(TradeLockerCloseOrderJsonModel model);
+        Task<BaseResponse<bool>> DeleteOrder(ClosePositionJsonModel model);
     }
 }

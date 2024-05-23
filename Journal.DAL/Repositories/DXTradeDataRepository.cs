@@ -1,4 +1,5 @@
-﻿using Journal.DAL.Interfaces;
+﻿using CloudflareSolverRe;
+using Journal.DAL.Interfaces;
 using Journal.Domain.JsonModels.DXTrade;
 using Journal.Domain.Models;
 using Newtonsoft.Json;
@@ -115,11 +116,25 @@ namespace Journal.DAL.Repositories
         {
             string sessionToken = null;
             string json = $"{{\"username\": \"{username}\", \"domain\": \"default\", \"password\": \"{password}\"}}";
-            using (HttpClient client = new HttpClient())
+
+            var target = new Uri(url+"/login");
+
+            var cf = new CloudflareSolver
+            {
+                MaxTries = 3,
+                ClearanceDelay = 3000
+            };
+
+            var handler = new HttpClientHandler();
+
+
+            using (HttpClient client = new HttpClient(handler))
             {
                 try
                 {
                     client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var result = cf.Solve(client, handler, target).Result;
 
                     HttpResponseMessage response = await client.PostAsync(url + "/login", new StringContent(json, Encoding.UTF8, "application/json"));
 

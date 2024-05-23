@@ -8,6 +8,7 @@ using Journal.Domain.Enums;
 using Journal.DAL.Repositories;
 using Microsoft.Identity.Client;
 using Journal.Domain.JsonModels.MetaTrader;
+using Journal.Domain.JsonModels.TradingAccount;
 
 namespace Journal.Service.Implementations
 {
@@ -211,7 +212,7 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<bool>> OpenPosition(MTOpenPositionJsonModel model)
+        public async Task<BaseResponse<bool>> OpenPosition(OpenPositionJsonModel model)
         {
             var response = new BaseResponse<bool>();
             try
@@ -247,9 +248,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<List<MTOrderJsonModel>>> GetOrders(Guid accountId)
+        public async Task<BaseResponse<List<OrderResponseModel>>> GetOrders(Guid accountId)
         {
-            var response = new BaseResponse<List<MTOrderJsonModel>> ();
+            var response = new BaseResponse<List<OrderResponseModel>> ();
             try
             {
                 var account = _mtAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
@@ -271,7 +272,19 @@ namespace Journal.Service.Implementations
                     var orders = await _mtDataRepository.GetOrders(model);
                     if (orders != null)
                     {
-                        response.Data = orders;
+                        response.Data = new List<OrderResponseModel>();
+                        foreach (var order in orders)
+                        {
+                            response.Data.Add(new OrderResponseModel
+                            {
+                                Id = order.Ticket,
+                                Direction = order.Type == 2 ? Direction.Long : Direction.Short,
+                                OrderTime = DateTimeOffset.FromUnixTimeSeconds(order.TimeSetup).UtcDateTime,
+                                Price = order.PriceOpen,
+                                Symbol = order.Symbol,
+                                Volume = order.VolumeInitial
+                            });
+                        }
                         response.StatusCode = StatusCode.OK;
                         response.Message = "Success";
                     }
@@ -279,7 +292,7 @@ namespace Journal.Service.Implementations
                     {
                         response.StatusCode = StatusCode.OK;
                         response.Message = "User has no orders";
-                        response.Data = new List<MTOrderJsonModel>();
+                        response.Data = new List<OrderResponseModel>();
                     }
                 }
 
@@ -336,9 +349,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<List<MTPositionJsonModel>>> GetPositions(Guid accountId)
+        public async Task<BaseResponse<List<PositionResponseModel>>> GetPositions(Guid accountId)
         {
-            var response = new BaseResponse<List<MTPositionJsonModel>>();
+            var response = new BaseResponse<List<PositionResponseModel>>();
             try
             {
                 var account = _mtAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
@@ -360,7 +373,19 @@ namespace Journal.Service.Implementations
                     var positions = await _mtDataRepository.GetPositions(model);
                     if (positions != null)
                     {
-                        response.Data = positions;
+                        response.Data = new List<PositionResponseModel>();
+                        foreach (var position in positions)
+                        {
+                            response.Data.Add(new PositionResponseModel
+                            {
+                                Id = position.Ticket,
+                                Direction = position.Type == 0 ? Direction.Long : Direction.Short,
+                                Volume = position.Volume,
+                                OpenPrice = position.PriceOpen,
+                                OpenTime = DateTimeOffset.FromUnixTimeSeconds(position.Time).UtcDateTime,
+                                Symbol = position.Symbol,
+                            });
+                        }
                         response.StatusCode = StatusCode.OK;
                         response.Message = "Success";
                     }
@@ -368,7 +393,7 @@ namespace Journal.Service.Implementations
                     {
                         response.StatusCode = StatusCode.OK;
                         response.Message = "Positions not found";
-                        response.Data = new List<MTPositionJsonModel>();
+                        response.Data = new List<PositionResponseModel>();
                     }
                 }
 
@@ -381,7 +406,7 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<bool>> CloseOrder(MTCloseOrderJsonModel model)
+        public async Task<BaseResponse<bool>> CloseOrder(ClosePositionJsonModel model)
         {
             var response = new BaseResponse<bool>();
             try
@@ -394,7 +419,7 @@ namespace Journal.Service.Implementations
                 }
                 else
                 {
-                    var order = await _mtDataRepository.DeleteOrder(account.Login, account.Password, account.Server, model.ticket);
+                    var order = await _mtDataRepository.DeleteOrder(account.Login, account.Password, account.Server, model.positionId);
                     if (order)
                     {
                         response.Data = order;

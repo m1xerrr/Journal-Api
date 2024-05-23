@@ -190,9 +190,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<RepeatedField<ProtoOAOrder>>> GetOrders(Guid accountId)
+        public async Task<BaseResponse<List<OrderResponseModel>>> GetOrders(Guid accountId)
         {
-            var response = new BaseResponse<RepeatedField<ProtoOAOrder>>();
+            var response = new BaseResponse<List<OrderResponseModel>>();
             try
             {
                 var account = _cTraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
@@ -206,15 +206,32 @@ namespace Journal.Service.Implementations
                 var ordersResponse = await _cTraderApiRepository.GetOrders(account.AccessToken, account.AccountId, account.IsLive);
                 if (ordersResponse.Count() == 0)
                 {
-                    response.Data = new RepeatedField<ProtoOAOrder>();
+                    response.Data = new List<OrderResponseModel>();
                     response.StatusCode = Domain.Enums.StatusCode.OK;
                     response.Message = "No orders found";
-                    return response;
                 }
-                response.Data = ordersResponse;
-                response.StatusCode = Domain.Enums.StatusCode.OK;
-                response.Message = "Success";
+                else { 
 
+                    response.Data = new List<OrderResponseModel>();
+                    var symbols = await _cTraderApiRepository.GetSymbols(account.AccessToken, account.AccountId, account.IsLive);
+                    foreach(var order in ordersResponse)
+                    {
+                        var symbol = symbols.FirstOrDefault(x => x.SymbolId == order.TradeData.SymbolId);
+                        int multiplier = symbol.SymbolCategoryId == 1 ? 10000000 : 100;
+                        if (symbol.SymbolName.Contains("XAU")) multiplier *= 100;
+                        response.Data.Add(new OrderResponseModel()
+                        {
+                            Id = order.PositionId,
+                            Direction = order.TradeData.TradeSide == ProtoOATradeSide.Buy ? Direction.Long : Direction.Short,
+                            Price = order.ExecutionPrice,
+                            OrderTime = DateTimeOffset.FromUnixTimeMilliseconds(order.UtcLastUpdateTimestamp).UtcDateTime,
+                            Symbol = symbol.SymbolName,
+                            Volume = order.TradeData.Volume / multiplier,
+                        });
+                    }
+                    response.StatusCode = Domain.Enums.StatusCode.OK;
+                    response.Message = "Success";
+                }
             }
             catch (Exception ex)
             {
@@ -224,9 +241,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<RepeatedField<ProtoOAPosition>>> GetPositions(Guid accountId)
+        public async Task<BaseResponse<List<PositionResponseModel>>> GetPositions(Guid accountId)
         {
-            var response = new BaseResponse<RepeatedField<ProtoOAPosition>>();
+            var response = new BaseResponse<List<PositionResponseModel>>();
             try
             {
                 var account = _cTraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
@@ -240,14 +257,31 @@ namespace Journal.Service.Implementations
                 var positionsResponse = await _cTraderApiRepository.GetPositions(account.AccessToken, account.AccountId, account.IsLive);
                 if (positionsResponse.Count() == 0)
                 {
-                    response.Data = new RepeatedField<ProtoOAPosition>();
+                    response.Data = new List<PositionResponseModel>();
                     response.StatusCode = Domain.Enums.StatusCode.OK;
                     response.Message = "No positions found";
-                    return response;
                 }
-                response.Data = positionsResponse;
-                response.StatusCode = Domain.Enums.StatusCode.OK;
-                response.Message = "Success";
+                else {
+                    response.Data = new List<PositionResponseModel>();
+                    var symbols = await _cTraderApiRepository.GetSymbols(account.AccessToken, account.AccountId, account.IsLive);
+                    foreach (var position in positionsResponse)
+                    {
+                        var symbol = symbols.FirstOrDefault(x => x.SymbolId == position.TradeData.SymbolId);
+                        int multiplier = symbol.SymbolCategoryId == 1 ? 10000000 : 100;
+                        if (symbol.SymbolName.Contains("XAU")) multiplier *= 100;
+                        response.Data.Add(new PositionResponseModel()
+                        {
+                            Id = position.PositionId,
+                            Symbol = symbol.SymbolName,
+                            Direction = position.TradeData.TradeSide == ProtoOATradeSide.Buy ? Direction.Long : Direction.Short,
+                            OpenPrice = position.Price,
+                            OpenTime = DateTimeOffset.FromUnixTimeMilliseconds(position.TradeData.OpenTimestamp).UtcDateTime,
+                            Volume = position.TradeData.Volume / multiplier,
+                        });
+                    }
+                    response.StatusCode = Domain.Enums.StatusCode.OK;
+                    response.Message = "Success";
+                }
 
             }
             catch (Exception ex)

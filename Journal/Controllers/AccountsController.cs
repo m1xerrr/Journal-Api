@@ -9,6 +9,8 @@ using Journal.Domain.JsonModels.DXTrade;
 using Journal.Domain.JsonModels.CTrader;
 using Journal.Domain.JsonModels.TradeLocker;
 using Journal.Domain.JsonModels.Deal;
+using Journal.Domain.JsonModels.TradingAccount;
+using Journal.Domain.ResponseModels;
 
 namespace Journal.Controllers
 {
@@ -140,6 +142,121 @@ namespace Journal.Controllers
         public async Task<IActionResult> Deal([FromBody] DealEditJsonModel deal)
         {
             var response = await _dealService.GetDeal(deal.Id, deal.accountId);
+            return Json(response);
+        }
+
+        [HttpPost("GetAccountOrders")]
+        public async Task<IActionResult> GetAccountOrders([FromBody] TradingAccountJsonModel account)
+        {
+            var response = new BaseResponse<List<OrderResponseModel>>();
+            switch (account.Provider)
+            {
+                case "MetaTrader 5":
+                    response = await _mtAccountService.GetOrders(account.AccountId);
+                    break;
+                case "CTrader":
+                    response = await _ctraderAccountService.GetOrders(account.AccountId);
+                    break;
+                case "TradeLocker":
+                    response = await _tradeLockerAccountService.GetOrders(account.AccountId);
+                    break;
+                default:
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Invalid provider name";
+                    break;
+            }
+            return Json(response);
+        }
+
+        [HttpPost("GetAccountPositions")]
+        public async Task<IActionResult> GetAccountPositions([FromBody] TradingAccountJsonModel account)
+        {
+            var response = new BaseResponse<List<PositionResponseModel>>();
+            switch (account.Provider)
+            {
+                case "MetaTrader 5":
+                    response = await _mtAccountService.GetPositions(account.AccountId);
+                    break;
+                case "CTrader":
+                    response = await _ctraderAccountService.GetPositions(account.AccountId);
+                    break;
+                case "TradeLocker":
+                    response = await _tradeLockerAccountService.GetPositions(account.AccountId);
+                    break;
+                default:
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Invalid provider name";
+                    break;
+            }
+            return Json(response);
+        }
+
+        [HttpPost("GetAccountSymbols")]
+        public async Task<IActionResult> GetAccountSymbols([FromBody] TradingAccountJsonModel account)
+        {
+            var response = new BaseResponse<List<string>>();
+            switch (account.Provider)
+            {
+                case "MetaTrader 5":
+                    response = await _mtAccountService.GetSymbols(account.AccountId);
+                    break;
+                case "CTrader":
+                    response = await _ctraderAccountService.GetSymbols(account.AccountId);
+                    break;
+                case "TradeLocker":
+                    response = await _tradeLockerAccountService.GetSymbols(account.AccountId);
+                    break;
+                default:
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Invalid provider name";
+                    break;
+            }
+            return Json(response);
+        }
+
+        [HttpPost("OpenPosition")]
+        public async Task<IActionResult> OpenPosition([FromBody] OpenPositionJsonModel model)
+        {
+            var response = new BaseResponse<bool>();
+            switch (model.Provider)
+            {
+                case "MetaTrader 5":
+                    response = await _mtAccountService.OpenPosition(model);
+                    break;
+                case "CTrader":
+                    response = await _ctraderAccountService.PlaceOrder(model.AccountId, model.Symbol, model.Type, model.Volume, model.Stoploss, model.TakeProfit, model.Price);
+                    break;
+                case "TradeLocker":
+                    response = await _tradeLockerAccountService.PlaceOrder(model);
+                    break;
+                default:
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Invalid provider name";
+                    break;
+            }
+            return Json(response);
+        }
+
+        [HttpPost("ClosePosition")]
+        public async Task<IActionResult> ClosePosition([FromBody] ClosePositionJsonModel model)
+        {
+            var response = new BaseResponse<bool>();
+            switch (model.Provider)
+            {
+                case "MetaTrader 5":
+                    response = await _mtAccountService.CloseOrder(model);
+                    break;
+                case "CTrader":
+                    response = await _ctraderAccountService.CloseOrder(model.AccountId, model.positionId);
+                    break;
+                case "TradeLocker":
+                    response = await _tradeLockerAccountService.DeleteOrder(model);
+                    break;
+                default:
+                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
+                    response.Message = "Invalid provider name";
+                    break;
+            }
             return Json(response);
         }
     }

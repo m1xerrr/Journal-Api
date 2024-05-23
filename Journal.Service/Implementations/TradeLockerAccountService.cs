@@ -2,6 +2,7 @@
 using Journal.DAL.Repositories;
 using Journal.Domain.Enums;
 using Journal.Domain.JsonModels.TradeLocker;
+using Journal.Domain.JsonModels.TradingAccount;
 using Journal.Domain.Models;
 using Journal.Domain.ResponseModels;
 using Journal.Domain.Responses;
@@ -206,9 +207,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<TradeLockerOrdersJsonModel>> GetOrders(Guid id)
+        public async Task<BaseResponse<List<OrderResponseModel>>> GetOrders(Guid id)
         {
-            var response = new BaseResponse<TradeLockerOrdersJsonModel>();
+            var response = new BaseResponse<List<OrderResponseModel>>();
             try
             {
 
@@ -228,7 +229,21 @@ namespace Journal.Service.Implementations
                 }
                 else
                 {
-                    response.Data = ordersResponse;
+                    var symbols = await _tradeLockerAPIRepository.GetSymbols(account.Email, account.Password, account.Server, account.Live, account.Login);
+                    response.Data = new List<OrderResponseModel>();
+                    foreach(var order in ordersResponse.Data.Orders)
+                    {
+
+                        response.Data.Add(new OrderResponseModel()
+                        {
+                            Id = Int64.Parse(order[0].ToString()),
+                            Direction = order[4].ToString().ToLower() == "buy" ? Direction.Long : Direction.Short,
+                            Symbol = symbols.Data.Instruments.FirstOrDefault(x => x.TradableInstrumentId == Int32.Parse(order[1].ToString())).Name,
+                            OrderTime = DateTimeOffset.FromUnixTimeMilliseconds(Int64.Parse(order[13].ToString())).UtcDateTime,
+                            Price = Double.Parse(order[9].ToString()),
+                            Volume = Double.Parse(order[3].ToString()),
+                        });
+                    }
                     response.Message = "Success";
                     response.StatusCode = StatusCode.OK;
                 }
@@ -241,7 +256,7 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<bool>> PlaceOrder(TradeLockerPlaceOrderJsonModel model)
+        public async Task<BaseResponse<bool>> PlaceOrder(OpenPositionJsonModel model)
         {
             var response = new BaseResponse<bool>();
             try
@@ -254,7 +269,7 @@ namespace Journal.Service.Implementations
                     response.Message = "Account not found";
                     return response;
                 }
-                var ordersResponse = await _tradeLockerAPIRepository.PlaceOrder(account.Email, account.Password, account.Server, account.Live, account.Login, model.Price, model.StopLoss, model.TakeProfit, model.Volume, model.Type, model.Symbol);
+                var ordersResponse = await _tradeLockerAPIRepository.PlaceOrder(account.Email, account.Password, account.Server, account.Live, account.Login, model.Price, model.Stoploss, model.TakeProfit, model.Volume, model.Type, model.Symbol);
 
                 if (!ordersResponse)
                 {
@@ -276,7 +291,7 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<bool>> DeleteOrder(TradeLockerCloseOrderJsonModel model)
+        public async Task<BaseResponse<bool>> DeleteOrder(ClosePositionJsonModel model)
         {
             var response = new BaseResponse<bool>();
             try
@@ -311,9 +326,9 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<TradeLockerPositionsJsonModel>> GetPositions(Guid id)
+        public async Task<BaseResponse<List<PositionResponseModel>>> GetPositions(Guid id)
         {
-            var response = new BaseResponse<TradeLockerPositionsJsonModel>();
+            var response = new BaseResponse<List<PositionResponseModel>>();
             try
             {
 
@@ -333,7 +348,21 @@ namespace Journal.Service.Implementations
                 }
                 else
                 {
-                    response.Data = positionsResponse;
+                    response.Data = new List<PositionResponseModel>();
+                    var symbols = await _tradeLockerAPIRepository.GetSymbols(account.Email, account.Password, account.Server, account.Live, account.Login);
+                    foreach (var position in positionsResponse.Data.Positions)
+                    {
+
+                        response.Data.Add(new PositionResponseModel()
+                        {
+                            Id = Int64.Parse(position[0].ToString()),
+                            Direction = position[3].ToString().ToLower() == "buy" ? Direction.Long : Direction.Short,
+                            Symbol = symbols.Data.Instruments.FirstOrDefault(x => x.TradableInstrumentId == Int32.Parse(position[1].ToString())).Name,
+                            OpenTime = DateTimeOffset.FromUnixTimeMilliseconds(Int64.Parse(position[8].ToString())).UtcDateTime,
+                            OpenPrice = Double.Parse(position[5].ToString()),
+                            Volume = Double.Parse(position[4].ToString()),
+                        });
+                    }
                     response.Message = "Success";
                     response.StatusCode = StatusCode.OK;
                 }

@@ -3,6 +3,7 @@ using Journal.Domain.ResponseModels;
 using Journal.Domain.Models;
 using Journal.Domain.JsonModels.MetaTrader;
 using Journal.Domain.Enums;
+using Journal.Domain.JsonModels.TradingAccount;
 
 namespace Journal.Service.Interfaces
 {
@@ -18,14 +19,14 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<AccountData>> GetAccountData(Guid accountId);
 
-        Task<BaseResponse<bool>> OpenPosition(MTOpenPositionJsonModel model);
+        Task<BaseResponse<bool>> OpenPosition(OpenPositionJsonModel model);
 
-        Task<BaseResponse<List<MTOrderJsonModel>>> GetOrders(Guid accountId);
+        Task<BaseResponse<List<OrderResponseModel>>> GetOrders(Guid accountId);
 
         Task<BaseResponse<List<string>>> GetSymbols(Guid accountId);
 
-        Task<BaseResponse<List<MTPositionJsonModel>>> GetPositions(Guid accountId);
+        Task<BaseResponse<List<PositionResponseModel>>> GetPositions(Guid accountId);
 
-        Task<BaseResponse<bool>> CloseOrder(MTCloseOrderJsonModel model);
+        Task<BaseResponse<bool>> CloseOrder(ClosePositionJsonModel model);
     }
 }

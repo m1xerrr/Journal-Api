@@ -20,9 +20,9 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<List<AccountResponseModel>>> GetUserAccounts(Guid UserId);
 
-        Task<BaseResponse<RepeatedField<ProtoOAOrder>>> GetOrders(Guid accountId);
+        Task<BaseResponse<List<OrderResponseModel>>> GetOrders(Guid accountId);
 
-        Task<BaseResponse<RepeatedField<ProtoOAPosition>>> GetPositions(Guid accountId);
+        Task<BaseResponse<List<PositionResponseModel>>> GetPositions(Guid accountId);
 
         Task<BaseResponse<bool>> PlaceOrder(Guid accountId, string symbol, byte type, float volume, double stopLoss, double takeProfit, double price);
 
