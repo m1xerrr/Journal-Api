@@ -498,7 +498,6 @@ namespace Journal.Service.Implementations
                         response.StatusCode = StatusCode.ERROR;
                         response.Message = "Can not create new account";
                     }
-                    var abc = "cba";
                 }
                 else
                 {
