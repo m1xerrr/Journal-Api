@@ -21,15 +21,13 @@ namespace Journal.Controllers
         private readonly IDXTradeAccountService _dxTradeAccountService;
         private readonly ITradeLockerAccountService _tradeLockerAccountService;
         private readonly IDealService _dealService;
-        private readonly ITradingAccountService _tradingAccountService;
-        public AccountsController(IMTAccountService mTAccountService, ICTraderAccountService cTraderAccountService, IDXTradeAccountService traderAccountService, ITradeLockerAccountService tradeLockerAccountService, IDealService dealService, ITradingAccountService tradingAccountService)
+        public AccountsController(IMTAccountService mTAccountService, ICTraderAccountService cTraderAccountService, IDXTradeAccountService traderAccountService, ITradeLockerAccountService tradeLockerAccountService, IDealService dealService)
         {
             _mtAccountService = mTAccountService;
             _ctraderAccountService = cTraderAccountService;
             _dxTradeAccountService = traderAccountService;
             _tradeLockerAccountService = tradeLockerAccountService;
             _dealService = dealService;
-            _tradingAccountService = tradingAccountService;
         }
 
         
