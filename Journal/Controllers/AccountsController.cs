@@ -21,13 +21,15 @@ namespace Journal.Controllers
         private readonly IDXTradeAccountService _dxTradeAccountService;
         private readonly ITradeLockerAccountService _tradeLockerAccountService;
         private readonly IDealService _dealService;
-        public AccountsController(IMTAccountService mTAccountService, ICTraderAccountService cTraderAccountService, IDXTradeAccountService traderAccountService, ITradeLockerAccountService tradeLockerAccountService, IDealService dealService)
+        private readonly ITradingAccountService _tradingAccountService;
+        public AccountsController(IMTAccountService mTAccountService, ICTraderAccountService cTraderAccountService, IDXTradeAccountService traderAccountService, ITradeLockerAccountService tradeLockerAccountService, IDealService dealService, ITradingAccountService tradingAccountService)
         {
             _mtAccountService = mTAccountService;
             _ctraderAccountService = cTraderAccountService;
             _dxTradeAccountService = traderAccountService;
             _tradeLockerAccountService = tradeLockerAccountService;
             _dealService = dealService;
+            _tradingAccountService = tradingAccountService;
         }
 
         
@@ -192,24 +194,57 @@ namespace Journal.Controllers
         }
 
         [HttpPost("GetAccountSymbols")]
-        public async Task<IActionResult> GetAccountSymbols([FromBody] TradingAccountJsonModel account)
+        public async Task<IActionResult> GetAccountSymbols([FromBody] List<TradingAccountJsonModel> accounts)
         {
-            var response = new BaseResponse<List<string>>();
-            switch (account.Provider)
+            var responses = new List<BaseResponse<List<string>>>();
+            foreach (var account in accounts)
             {
-                case "MetaTrader 5":
-                    response = await _mtAccountService.GetSymbols(account.AccountId);
-                    break;
-                case "CTrader":
-                    response = await _ctraderAccountService.GetSymbols(account.AccountId);
-                    break;
-                case "TradeLocker":
-                    response = await _tradeLockerAccountService.GetSymbols(account.AccountId);
-                    break;
-                default:
-                    response.StatusCode = Domain.Enums.StatusCode.ERROR;
-                    response.Message = "Invalid provider name";
-                    break;
+                BaseResponse<List<string>> responseTmp = account.Provider switch
+                {
+                    "MetaTrader 5" => await _mtAccountService.GetSymbols(account.AccountId),
+                    "CTrader" => await _ctraderAccountService.GetSymbols(account.AccountId),
+                    "TradeLocker" => await _tradeLockerAccountService.GetSymbols(account.AccountId),
+                    _ => new BaseResponse<List<string>>
+                    {
+                        StatusCode = Domain.Enums.StatusCode.ERROR,
+                        Message = "Unsupported provider"
+                    }
+                };
+
+                responses.Add(responseTmp);
+            }
+
+            var successfulResponses = responses.Where(x => x.StatusCode == Domain.Enums.StatusCode.OK).ToList();
+            var response = new BaseResponse<List<string>>();
+            if (successfulResponses.Count > 1)
+            {
+                var intersectedData = successfulResponses
+                    .Select(x => x.Data)
+                    .Aggregate((prevList, nextList) => prevList.Intersect(nextList).ToList());
+
+                response =  new BaseResponse<List<string>>
+                {
+                    StatusCode = Domain.Enums.StatusCode.OK,
+                    Message = "Success",
+                    Data = intersectedData
+                };
+            }
+            else if (successfulResponses.Any())
+            {
+               response =  new BaseResponse<List<string>>
+                {
+                    StatusCode = Domain.Enums.StatusCode.OK,
+                    Data = successfulResponses.First().Data,
+                    Message = "Success"
+                };
+            }
+            else
+            {
+                response = new BaseResponse<List<string>>
+                {
+                    StatusCode = Domain.Enums.StatusCode.ERROR,
+                    Message = "No symbols found"
+                };
             }
             return Json(response);
         }
