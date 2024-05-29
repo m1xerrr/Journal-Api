@@ -222,10 +222,11 @@ namespace Journal.Service.Implementations
             var response = new BaseResponse<bool>();
             try
             {
-                var deals = _dealRepository.SelectAll();
+                var accounts = _mtcRepository.SelectAll().Select(x => x.Id);
+                var deals = _dealRepository.SelectAll().Where(x => accounts.Contains(x.AccountId));
                 foreach ( var deal in deals)
                 {
-                    if (deal.Profit < 0) deal.Result = Result.Loss; else deal.Result = Result.Win;
+                    deal.Volume /= 2;
                     await _dealRepository.Edit(deal);
                 }
             }

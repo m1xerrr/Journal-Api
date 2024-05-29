@@ -475,7 +475,6 @@ namespace Journal.Service.Implementations
                         var accountDeal = dbDeals.FirstOrDefault(x => x.PositionId == deal.PositionId);
                         accountDeal.ExitPrice = deal.Price;
                         accountDeal.Profit += deal.Profit;
-                        accountDeal.Volume += deal.Volume;
                         accountDeal.Comission += deal.Commission;
                         accountDeal.ExitTime = DateTimeOffset.FromUnixTimeSeconds(deal.Time).UtcDateTime;
                         accountDeal.ProfitPercentage = Math.Round(deal.Profit / account.Deposit * 100, 2);
