@@ -220,6 +220,73 @@ namespace Journal.DAL.Repositories
             return null;
         }
 
+        public async Task<double> GetPrice(string symbol, string email = "alihuim1xar1@gmail.com", string password = "gCvDDs7$", string server = "OSP-DEMO", bool isLive = false, long accountId = 518920)
+        {
+            string baseUrl;
+            if (isLive) baseUrl = baseUrlLive;
+            else baseUrl = baseUrlDemo;
+
+            double deposit = 0;
+
+            string sessionToken = await Initialize(email, password, server, isLive);
+
+            int accNum = 0;
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {sessionToken}");
+
+                    HttpResponseMessage response = await client.GetAsync(baseUrl + "/auth/jwt/all-accounts");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonContent = await response.Content.ReadAsStringAsync();
+
+                        TradeLockerApiAccountsContainerJsonModel container = JsonConvert.DeserializeObject<TradeLockerApiAccountsContainerJsonModel>(jsonContent);
+
+                        deposit += container.Accounts.FirstOrDefault(x => x.Id == accountId).AccountBalance;
+
+                        accNum = container.Accounts.FirstOrDefault(x => x.Id == accountId).AccNum;
+                    }
+                }
+
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("accept", "application/json");
+                    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {sessionToken}");
+                    client.DefaultRequestHeaders.Add("accNum", accNum.ToString());
+
+                    
+                    var symbolInfo = (await GetSymbols(email, password, server, isLive, accountId)).Data.Instruments.FirstOrDefault(x => x.Name == symbol);
+                    if (symbolInfo == null) return 0;
+                    
+
+                    int routeId = symbolInfo.Routes.FirstOrDefault(x => x.Type == "INFO").Id;
+                    int tradableInstrumentId = symbolInfo.TradableInstrumentId;
+
+                    string url = $"{baseUrl}/trade/dailyBar?routeId={routeId}&barType=ASK&tradableInstrumentId={tradableInstrumentId}";
+
+                    HttpResponseMessage response = await client.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonContent = await response.Content.ReadAsStringAsync();
+                        var dailyBar = JsonConvert.DeserializeObject<DailyBarResponse>(jsonContent);
+                        if (dailyBar.Status == "ok") return dailyBar.Data.CPrice;
+                    }
+
+                    return 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred: " + ex.Message);
+            }
+            return 0;
+        }
+
         public async Task<TradeLockerPositionsJsonModel> GetPositions(string email, string password, string server, bool isLive, long accountId)
         {
             string baseUrl;
@@ -532,6 +599,31 @@ namespace Journal.DAL.Repositories
             public string AccessToken { get; set; }
             public string RefreshToken { get; set; }
             public DateTime ExpireDate { get; set; }
+        }
+
+        private class DailyBarResponse
+        {
+            [JsonProperty("d")]
+            public DailyBarData Data { get; set; }
+            [JsonProperty("s")]
+            public string Status { get; set; }
+        }
+        private class DailyBarData
+        {
+            [JsonProperty("o")]
+            public double OPrice { get; set; }
+
+            [JsonProperty("h")]
+            public double HPrice { get; set; }
+
+            [JsonProperty("l")]
+            public double LPrice { get; set; }
+
+            [JsonProperty("c")]
+            public double CPrice { get; set; }
+
+            [JsonProperty("v")]
+            public double? VPrice { get; set; }
         }
     }
 }

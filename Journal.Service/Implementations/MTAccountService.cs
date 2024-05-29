@@ -9,6 +9,7 @@ using Journal.DAL.Repositories;
 using Microsoft.Identity.Client;
 using Journal.Domain.JsonModels.MetaTrader;
 using Journal.Domain.JsonModels.TradingAccount;
+using Journal.Domain.Helpers;
 
 namespace Journal.Service.Implementations
 {
@@ -19,13 +20,15 @@ namespace Journal.Service.Implementations
         private readonly IMTDataRepository _mtDataRepository;
         private readonly IDealRepository _mtDealRepository;
         private readonly IDescriptionRepository _descriptionRepository;
-        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository, IDealRepository mTDealRepository, IDescriptionRepository descriptionRepository)
+        private readonly ITradeLockerAPIRepository _tradeLockerAPIRepository;
+        public MTAccountService(IMTAccountRepository mtAccountRepository, IUserRepository userRepository, IMTDataRepository mtDataRepository, IDealRepository mTDealRepository, IDescriptionRepository descriptionRepository, ITradeLockerAPIRepository tradeLockerAPIRepository)
         {
             _mtAccountRepository = mtAccountRepository;
             _userRepository = userRepository;
             _mtDataRepository = mtDataRepository;
             _mtDealRepository = mTDealRepository;
             _descriptionRepository = descriptionRepository;
+            _tradeLockerAPIRepository = tradeLockerAPIRepository;
         }
 
         public async Task<BaseResponse<AccountResponseModel>> AddAccount(MTAccountJsonModel accountModel)
@@ -225,7 +228,15 @@ namespace Journal.Service.Implementations
                 }
                 else
                 {
-                    var order = await _mtDataRepository.PlaceOrder(account.Login, account.Password, account.Server, model.Symbol, model.Volume, model.Type, model.Price, model.Stoploss, model.TakeProfit);
+                    double volume = 0;
+                    if (model.Price == 0 && model.Type < 3) { 
+                        double priceTmp = await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol);
+                        if (priceTmp == 0) throw new Exception("Invalid symbol data");
+                        volume = CalculateLotsHelper.CalculateForexLots(model.Risk, (await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol)), model.Stoploss);
+                    }
+                    else
+                        volume = CalculateLotsHelper.CalculateForexLots(model.Risk, model.Price, model.Stoploss);
+                    var order = await _mtDataRepository.PlaceOrder(account.Login, account.Password, account.Server, model.Symbol, volume, model.Type, model.Price, model.Stoploss, model.TakeProfit);
                     if (order)
                     {
                         response.Data = true;

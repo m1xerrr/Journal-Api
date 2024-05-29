@@ -1,6 +1,7 @@
 ﻿using Journal.DAL.Interfaces;
 using Journal.DAL.Repositories;
 using Journal.Domain.Enums;
+using Journal.Domain.Helpers;
 using Journal.Domain.JsonModels.TradeLocker;
 using Journal.Domain.JsonModels.TradingAccount;
 using Journal.Domain.Models;
@@ -272,7 +273,17 @@ namespace Journal.Service.Implementations
                     response.Message = "Account not found";
                     return response;
                 }
-                var ordersResponse = await _tradeLockerAPIRepository.PlaceOrder(account.Email, account.Password, account.Server, account.Live, account.Login, model.Price, model.Stoploss, model.TakeProfit, model.Volume, model.Type, model.Symbol);
+
+                double volume = 0;
+                if (model.Price == 0 && model.Type < 3)
+                {
+                    double priceTmp = await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol);
+                    if (priceTmp == 0) throw new Exception("Invalid symbol data");
+                    volume = CalculateLotsHelper.CalculateForexLots(model.Risk, (await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol)), model.Stoploss);
+                }
+                else
+                    volume = CalculateLotsHelper.CalculateForexLots(model.Risk, model.Price, model.Stoploss);
+                var ordersResponse = await _tradeLockerAPIRepository.PlaceOrder(account.Email, account.Password, account.Server, account.Live, account.Login, model.Price, model.Stoploss, model.TakeProfit, volume, model.Type, model.Symbol);
 
                 if (!ordersResponse)
                 {

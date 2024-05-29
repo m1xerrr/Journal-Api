@@ -3,6 +3,7 @@ using Journal.Domain.JsonModels;
 using Journal.Domain.ResponseModels;
 using Journal.Domain.Models;
 using Google.Protobuf.Collections;
+using Journal.Domain.JsonModels.TradingAccount;
 
 namespace Journal.Service.Interfaces
 {
@@ -24,7 +25,7 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<List<PositionResponseModel>>> GetPositions(Guid accountId);
 
-        Task<BaseResponse<bool>> PlaceOrder(Guid accountId, string symbol, byte type, float volume, double stopLoss, double takeProfit, double price);
+        Task<BaseResponse<bool>> PlaceOrder(OpenPositionJsonModel model);
 
         Task<BaseResponse<List<string>>> GetSymbols(Guid accountId);
 

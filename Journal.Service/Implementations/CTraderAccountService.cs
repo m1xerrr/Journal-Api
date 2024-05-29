@@ -10,6 +10,8 @@ using Microsoft.Identity.Client;
 using System.Security.Principal;
 using Journal.DAL.Repositories;
 using Journal.Domain.Enums;
+using Journal.Domain.JsonModels.TradingAccount;
+using Journal.Domain.Helpers;
 
 namespace Journal.Service.Implementations
 {
@@ -20,14 +22,16 @@ namespace Journal.Service.Implementations
         private readonly IUserRepository _userRepository;
         private readonly IDealRepository _dealRepository;
         private readonly IDescriptionRepository _descriptionRepository;
+        private readonly ITradeLockerAPIRepository _tradeLockerAPIRepository;
 
-        public CTraderAccountService(ICTraderApiRepository apiRepository, ICTraderAccountRepository accountRepository, IUserRepository userRepository, IDealRepository dealRepository, IDescriptionRepository descriptionRepository)
+        public CTraderAccountService(ICTraderApiRepository apiRepository, ICTraderAccountRepository accountRepository, IUserRepository userRepository, IDealRepository dealRepository, IDescriptionRepository descriptionRepository, ITradeLockerAPIRepository tradeLockerAPIRepository)
         {
             _cTraderApiRepository = apiRepository;
             _cTraderAccountRepository = accountRepository;
             _userRepository = userRepository;
             _dealRepository = dealRepository;
             _descriptionRepository = descriptionRepository;
+            _tradeLockerAPIRepository = tradeLockerAPIRepository;
         }
         public async Task<BaseResponse<AccountResponseModel>> AddAccount(string accessToken, Guid UserId, long accountId)
         {
@@ -292,20 +296,29 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        public async Task<BaseResponse<bool>> PlaceOrder(Guid accountId, string symbol, byte type, float volume, double stopLoss, double takeProfit, double price)
+        public async Task<BaseResponse<bool>> PlaceOrder(OpenPositionJsonModel model)
         {
             var response = new BaseResponse<bool>();
             try
             {
-                var account = _cTraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == accountId);
+                var account = _cTraderAccountRepository.SelectAll().FirstOrDefault(x => x.Id == model.AccountId);
                 if (account == null)
                 {
                     response.Message = "Account not found";
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     return response;
                 }
+                double volume = 0;
+                if (model.Price == 0 && model.Type < 3)
+                {
+                    double priceTmp = await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol);
+                    if (priceTmp == 0) throw new Exception("Invalid symbol data");
+                    volume = CalculateLotsHelper.CalculateForexLots(model.Risk, (await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol)), model.Stoploss);
+                }
+                else
+                    volume = CalculateLotsHelper.CalculateForexLots(model.Risk, model.Price, model.Stoploss);
                 var longVolume = (long)(volume*10000000);
-                var newOrder = await _cTraderApiRepository.PlaceOrder(account.AccessToken, account.AccountId, account.IsLive, symbol, type, longVolume, stopLoss, takeProfit, price);
+                var newOrder = await _cTraderApiRepository.PlaceOrder(account.AccessToken, account.AccountId, account.IsLive, model.Symbol, model.Type, longVolume, model.Stoploss, model.TakeProfit, model.Price);
                 if (newOrder)
                 {
                     response.Data = true;

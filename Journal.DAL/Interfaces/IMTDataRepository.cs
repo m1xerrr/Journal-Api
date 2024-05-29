@@ -23,7 +23,7 @@ namespace Journal.DAL.Interfaces
 
         Task<List<string>> GetSymbols(MTAccountJsonModel account);
 
-        Task<bool> PlaceOrder(int login, string password, string server, string symbol, float volume, byte type, float price, float stoploss, float takeprofit);
+        Task<bool> PlaceOrder(int login, string password, string server, string symbol, double volume, byte type, float price, float stoploss, float takeprofit);
 
     }
 }

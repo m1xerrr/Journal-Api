@@ -110,7 +110,7 @@ namespace Journal.DAL.Repositories
             return null;
         }
 
-        public async Task<bool> PlaceOrder(int login, string password, string server, string symbol, float volume, byte type, float price, float stoploss, float takeprofit)
+        public async Task<bool> PlaceOrder(int login, string password, string server, string symbol, double volume, byte type, float price, float stoploss, float takeprofit)
         {
             string endpoint = $"/place_order?login={login}&password={password}&server={server}&symbol={symbol}&volume={volume}&type={type}&price={price}&sl={stoploss}&tp={takeprofit}";
             try

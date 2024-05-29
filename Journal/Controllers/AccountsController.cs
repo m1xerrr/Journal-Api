@@ -265,7 +265,7 @@ namespace Journal.Controllers
                     response = await _mtAccountService.OpenPosition(model);
                     break;
                 case "CTrader":
-                    response = await _ctraderAccountService.PlaceOrder(model.AccountId, model.Symbol, model.Type, model.Volume, model.Stoploss, model.TakeProfit, model.Price);
+                    response = await _ctraderAccountService.PlaceOrder(model);
                     break;
                 case "TradeLocker":
                     response = await _tradeLockerAccountService.PlaceOrder(model);

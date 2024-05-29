@@ -13,7 +13,7 @@ namespace Journal.Domain.JsonModels.TradingAccount
 
         public string Symbol { get; set; }
 
-        public float Volume { get; set; }
+        public double Risk { get; set; }
 
         public byte Type { get; set; }
 
