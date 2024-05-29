@@ -9,7 +9,6 @@ namespace Journal.Domain.Enums
     public enum Result
     {
         Win = 1,
-        Loss = 2,
-        Breakeven = 3
+        Loss = 2
     }
 }

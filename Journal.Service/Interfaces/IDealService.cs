@@ -20,6 +20,8 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<bool>> DeleteDescriptionItem(Guid itemId);
 
+        Task<BaseResponse<bool>> FixDeals();
+
         //Task<BaseResponse<DealResponseModel>> AddImage(int dealId, Guid accountId, string img);
 
         //Task<BaseResponse<DealResponseModel>> AddNotes(int dealId, Guid accountId, string note);

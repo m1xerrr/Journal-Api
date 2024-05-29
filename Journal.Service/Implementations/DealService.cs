@@ -217,6 +217,27 @@ namespace Journal.Service.Implementations
             return response;
         }*/
 
+        public async Task<BaseResponse<bool>> FixDeals()
+        {
+            var response = new BaseResponse<bool>();
+            try
+            {
+                var deals = _dealRepository.SelectAll();
+                foreach ( var deal in deals)
+                {
+                    if (deal.Profit < 0) deal.Result = Result.Loss; else deal.Result = Result.Win;
+                    await _dealRepository.Edit(deal);
+                }
+            }
+            catch (Exception ex)
+            {
+
+
+                response.Message = "Error";
+            }
+            return response;
+        }
+
         public async Task<BaseResponse<DealResponseModel>> GetDeal(long positionid, Guid accountId)
         {
             var response = new BaseResponse<DealResponseModel>();

@@ -33,11 +33,17 @@ namespace Journal.Domain.Models
 
         public int WonDeals { get; set; }
 
-        public int BreakevenDeals { get; set; }
-
         public int LongDeals { get; set; }
 
         public int ShortDeals { get; set; }
+
+        public double Winrate { get; set; }
+
+        public double AverageWin {  get; set; }
+
+        public double AverageLoss { get; set; }
+
+        public double Lots { get; set; }
 
     }
 }

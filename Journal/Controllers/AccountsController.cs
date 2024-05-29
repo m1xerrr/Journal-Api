@@ -191,6 +191,14 @@ namespace Journal.Controllers
             return Json(response);
         }
 
+        [HttpPost("FixDeals")]
+        public async Task<IActionResult> FixDeals()
+        {
+            var response = await _dealService.FixDeals();
+            
+            return Json(response);
+        }
+
         [HttpPost("GetAccountSymbols")]
         public async Task<IActionResult> GetAccountSymbols([FromBody] List<TradingAccountJsonModel> accounts)
         {

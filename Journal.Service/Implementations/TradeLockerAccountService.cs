@@ -155,10 +155,13 @@ namespace Journal.Service.Implementations
                     accountData.TotalDeals = accountData.Deals.Count;
                     accountData.WonDeals = accountData.Deals.Where(x => x.Result == Result.Win).Count();
                     accountData.LostDeals = accountData.Deals.Where(x => x.Result == Result.Loss).Count();
-                    accountData.BreakevenDeals = accountData.Deals.Where(x => x.Result == Result.Breakeven).Count();
                     accountData.LongDeals = accountData.Deals.Where(x => x.Direction == Direction.Long).Count();
                     accountData.ShortDeals = accountData.Deals.Where(x => x.Direction == Direction.Short).Count();
                     accountData.ProfitPercentage = Math.Round(accountData.Profit / accountData.Deposit * 100, 2);
+                    accountData.Winrate = accountData.WonDeals / accountData.TotalDeals * 100;
+                    accountData.Lots = accountData.Deals.Select(x => x.Volume).Sum();
+                    accountData.AverageLoss = accountData.Deals.Where(x => x.Result == Result.Loss).Select(x => x.Profit).Average();
+                    accountData.AverageWin = accountData.Deals.Where(x => x.Result == Result.Win).Select(x => x.Profit).Average();
                     accountData.Provider = "DXTrade";
                     response.Data = accountData;
                 }
@@ -440,8 +443,7 @@ namespace Journal.Service.Implementations
                             PositionId = Int64.Parse(deal.Last()),
                         };
                         if (newDeal.ProfitPercentage < -0.1) newDeal.Result = Result.Loss;
-                        else if (newDeal.ProfitPercentage > 0.1) newDeal.Result = Result.Win;
-                        else newDeal.Result = Result.Breakeven;
+                        else  newDeal.Result = Result.Win; 
                         deals.Add(newDeal);
                     }
                     await DealsToDB(deals);
