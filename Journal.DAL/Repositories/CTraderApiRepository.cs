@@ -370,6 +370,54 @@ namespace Journal.DAL.Repositories
                 default:
                     return false;
             }
+
+            int countBefore = 0;
+
+            if (orderType == ProtoOAOrderType.Limit)
+            {
+                var taskCompletionSource = new TaskCompletionSource<ProtoOAReconcileRes>();
+
+                IDisposable disposable = null;
+
+                disposable = client.OfType<ProtoOAReconcileRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
+                {
+                    taskCompletionSource.SetResult(response);
+
+                    disposable?.Dispose();
+                });
+
+                var requestPositions = new ProtoOAReconcileReq
+                {
+                    CtidTraderAccountId = accountId,
+                };
+
+                await client.SendMessage(requestPositions);
+
+                countBefore = taskCompletionSource.Task.Result.Position.Count();
+            }
+            else
+            {
+                var taskCompletionSource = new TaskCompletionSource<ProtoOAReconcileRes>();
+
+                IDisposable disposable = null;
+
+                disposable = client.OfType<ProtoOAReconcileRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
+                {
+                    taskCompletionSource.SetResult(response);
+
+                    disposable?.Dispose();
+                });
+
+                var requestOrders = new ProtoOAReconcileReq
+                {
+                    CtidTraderAccountId = accountId,
+                };
+
+                await client.SendMessage(requestOrders);
+
+                countBefore = taskCompletionSource.Task.Result.Order.Count();
+            }
+
             ProtoOANewOrderReq request = new ProtoOANewOrderReq();
             if (orderType == ProtoOAOrderType.Market)
             {
@@ -437,7 +485,55 @@ namespace Journal.DAL.Repositories
 
             await client.SendMessage(request);
 
-            return true;
+            int countAfter = 0;
+
+            if (orderType == ProtoOAOrderType.Limit)
+            {
+                var taskCompletionSource = new TaskCompletionSource<ProtoOAReconcileRes>();
+
+                IDisposable disposable = null;
+
+                disposable = client.OfType<ProtoOAReconcileRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
+                {
+                    taskCompletionSource.SetResult(response);
+
+                    disposable?.Dispose();
+                });
+
+                var requestPositions = new ProtoOAReconcileReq
+                {
+                    CtidTraderAccountId = accountId,
+                };
+
+                await client.SendMessage(requestPositions);
+
+                countAfter = taskCompletionSource.Task.Result.Position.Count();
+            }
+            else
+            {
+                var taskCompletionSource = new TaskCompletionSource<ProtoOAReconcileRes>();
+
+                IDisposable disposable = null;
+
+                disposable = client.OfType<ProtoOAReconcileRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
+                {
+                    taskCompletionSource.SetResult(response);
+
+                    disposable?.Dispose();
+                });
+
+                var requestOrders = new ProtoOAReconcileReq
+                {
+                    CtidTraderAccountId = accountId,
+                };
+
+                await client.SendMessage(requestOrders);
+
+                countAfter = taskCompletionSource.Task.Result.Order.Count();
+            }
+
+
+            return countAfter > countBefore;
         }
 
         public async Task DeleteOrder(string accessToken, long accountId, bool isLive, long id)
