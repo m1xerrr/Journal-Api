@@ -36,6 +36,16 @@ namespace Journal.Domain.ResponseModels
             Deposit = account.Deposit;
             Provider = "MetaTrader 5";
         }
+
+        public AccountResponseModel(MatchTradeAccount account) 
+        {
+            Id = account.Id;
+            UserId = account.UserID;
+            Login = account.Login;
+            Deposit = account.Deposit;
+            Provider = "MatchTrade";
+        }
+
         public AccountResponseModel(CTraderAccount account)
         {
             Id = account.Id;

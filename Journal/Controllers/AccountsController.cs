@@ -20,13 +20,15 @@ namespace Journal.Controllers
         private readonly ICTraderAccountService _ctraderAccountService;
         private readonly IDXTradeAccountService _dxTradeAccountService;
         private readonly ITradeLockerAccountService _tradeLockerAccountService;
+        private readonly IMatchTradeAccountService _matchTradeAccountService;
         private readonly IDealService _dealService;
-        public AccountsController(IMTAccountService mTAccountService, ICTraderAccountService cTraderAccountService, IDXTradeAccountService traderAccountService, ITradeLockerAccountService tradeLockerAccountService, IDealService dealService)
+        public AccountsController(IMTAccountService mTAccountService, ICTraderAccountService cTraderAccountService, IDXTradeAccountService traderAccountService, ITradeLockerAccountService tradeLockerAccountService, IDealService dealService, IMatchTradeAccountService matchTradeAccountService)
         {
             _mtAccountService = mTAccountService;
             _ctraderAccountService = cTraderAccountService;
             _dxTradeAccountService = traderAccountService;
             _tradeLockerAccountService = tradeLockerAccountService;
+            _matchTradeAccountService = matchTradeAccountService;
             _dealService = dealService;
         }
 
@@ -48,6 +50,9 @@ namespace Journal.Controllers
                     break;
                 case "TradeLocker":
                     response = await _tradeLockerAccountService.DeleteAccountTradeLockerAccount(account.AccountId);
+                    break;
+                case "MatchTrade":
+                    response = await _matchTradeAccountService.DeleteAccount(account.AccountId);
                     break;
                 default:
                     response = new BaseResponse<bool> { };
@@ -83,6 +88,11 @@ namespace Journal.Controllers
                     response.Data.Provider = account.Provider;
                     response.Data.Id = account.AccountId;
                     break;
+                case "MatchTrade":
+                    response = await _matchTradeAccountService.GetAccountData(account.AccountId);
+                    response.Data.Provider = account.Provider;
+                    response.Data.Id = account.AccountId; 
+                    break;
                 default:
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     response.Message = "Invalid provider name";
@@ -108,6 +118,9 @@ namespace Journal.Controllers
                     break;
                 case "TradeLocker":
                     response = await _tradeLockerAccountService.LoadAccountData(account.AccountId);
+                    break;
+                case "MatchTrade":
+                    response = await _matchTradeAccountService.LoadAccountData(account.AccountId);
                     break;
                 default:
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
@@ -160,6 +173,9 @@ namespace Journal.Controllers
                 case "TradeLocker":
                     response = await _tradeLockerAccountService.GetOrders(account.AccountId);
                     break;
+                case "MatchTrade":
+                    response = await _matchTradeAccountService.GetOrders(account.AccountId);
+                    break;
                 default:
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     response.Message = "Invalid provider name";
@@ -182,6 +198,9 @@ namespace Journal.Controllers
                     break;
                 case "TradeLocker":
                     response = await _tradeLockerAccountService.GetPositions(account.AccountId);
+                    break;
+                case "MatchTrade":
+                    response = await _matchTradeAccountService.GetPositions(account.AccountId);
                     break;
                 default:
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
@@ -210,13 +229,13 @@ namespace Journal.Controllers
                     "MetaTrader 5" => await _mtAccountService.GetSymbols(account.AccountId),
                     "CTrader" => await _ctraderAccountService.GetSymbols(account.AccountId),
                     "TradeLocker" => await _tradeLockerAccountService.GetSymbols(account.AccountId),
+                    "MatchTrade" => await _tradeLockerAccountService.GetSymbols(account.AccountId),
                     _ => new BaseResponse<List<string>>
                     {
                         StatusCode = Domain.Enums.StatusCode.ERROR,
                         Message = "Unsupported provider"
                     }
                 };
-
                 responses.Add(responseTmp);
             }
 
@@ -270,6 +289,9 @@ namespace Journal.Controllers
                 case "TradeLocker":
                     response = await _tradeLockerAccountService.PlaceOrder(model);
                     break;
+                case "MatchTrade":
+                    response = await _matchTradeAccountService.PlaceOrder(model);
+                    break;
                 default:
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     response.Message = "Invalid provider name";
@@ -288,10 +310,13 @@ namespace Journal.Controllers
                     response = await _mtAccountService.CloseOrder(model);
                     break;
                 case "CTrader":
-                    response = await _ctraderAccountService.CloseOrder(model.AccountId, model.positionId);
+                    response = await _ctraderAccountService.CloseOrder(model.AccountId, Int64.Parse(model.positionId));
                     break;
                 case "TradeLocker":
                     response = await _tradeLockerAccountService.DeleteOrder(model);
+                    break;
+                case "MatchTrade":
+                    response = await _matchTradeAccountService.DeleteOrder(model);
                     break;
                 default:
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;

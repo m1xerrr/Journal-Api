@@ -119,22 +119,17 @@ namespace Journal.DAL.Repositories
 
             var target = new Uri(url+"/login");
 
-            var cf = new CloudflareSolver
-            {
-                MaxTries = 3,
-                ClearanceDelay = 3000
-            };
-
-            var handler = new HttpClientHandler();
-
-
-            using (HttpClient client = new HttpClient(handler))
+            using (HttpClient client = new HttpClient())
             {
                 try
                 {
-                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+                    client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
+                    client.DefaultRequestHeaders.Add("Referer", "https://www.ftmo.com");
+                    client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.9");
+                    client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                    client.DefaultRequestHeaders.Add("Cache-Control", "no-cache");
 
-                    var result = cf.Solve(client, handler, target).Result;
 
                     HttpResponseMessage response = await client.PostAsync(url + "/login", new StringContent(json, Encoding.UTF8, "application/json"));
 
@@ -145,11 +140,6 @@ namespace Journal.DAL.Repositories
 
                         SessionResponse sessionResponse = JsonConvert.DeserializeObject<SessionResponse>(responseBody);
 
-                        sessionToken = sessionResponse.SessionToken;
-                        TimeSpan timeout = sessionResponse.Timeout;
-
-                        Console.WriteLine("Session Token: " + sessionToken);
-                        Console.WriteLine("Timeout: " + timeout);
                     }
                     else
                     {

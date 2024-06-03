@@ -9,7 +9,7 @@ namespace Journal.Domain.ResponseModels
 {
     public class OrderResponseModel
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public string Symbol { get; set; }
 

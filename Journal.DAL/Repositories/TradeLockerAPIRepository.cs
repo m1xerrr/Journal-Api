@@ -572,16 +572,11 @@ namespace Journal.DAL.Repositories
                     if (response.IsSuccessStatusCode)
                     {
                         string responseBody = await response.Content.ReadAsStringAsync();
-                        Console.WriteLine("Response: " + responseBody);
 
                         SessionResponse sessionResponse = JsonConvert.DeserializeObject<SessionResponse>(responseBody);
 
                         sessionToken = sessionResponse.AccessToken;
                         DateTime timeout = sessionResponse.ExpireDate;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
                     }
                 }
                 catch (Exception ex)

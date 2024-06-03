@@ -16,14 +16,16 @@ namespace Journal.Controllers
         private readonly IMTAccountService _mtAccountService;
         private readonly ICTraderAccountService _ctraderAccountService;
         private readonly IDXTradeAccountService _dxTradeAccountService;
+        private readonly IMatchTradeAccountService _matchTradeAccountService;
         private readonly ITradeLockerAccountService _tradeLockerAccountService;
-        public UserController(IUserService userService, IMTAccountService mTAccountService, ICTraderAccountService ctraderAccountService, IDXTradeAccountService dXTradeAccountService, ITradeLockerAccountService tradeLockerAccountService)
+        public UserController(IUserService userService, IMTAccountService mTAccountService, ICTraderAccountService ctraderAccountService, IDXTradeAccountService dXTradeAccountService, ITradeLockerAccountService tradeLockerAccountService, IMatchTradeAccountService matchTradeAccountService)
         {
             _userService = userService;
             _mtAccountService = mTAccountService;
             _ctraderAccountService = ctraderAccountService;
             _dxTradeAccountService = dXTradeAccountService;
             _tradeLockerAccountService = tradeLockerAccountService;
+            _matchTradeAccountService = matchTradeAccountService;
         }
         [HttpPost("TGLogin")]
         public async Task<IActionResult> TGLogin([FromBody] TGLoginJsonModel model)
@@ -59,12 +61,14 @@ namespace Journal.Controllers
             var responseCT = await _ctraderAccountService.GetUserAccounts(userId);
             var responseDX = await _dxTradeAccountService.GetUserAccounts(userId);
             var responseTL = await _tradeLockerAccountService.GetUserAccounts(userId);
+            var responseMTT = await _matchTradeAccountService.GetUserAccounts(userId);
             var accounts = new List<AccountResponseModel>();
             foreach (var account in responseMT.Data) accounts.Add(account);
             foreach (var account in responseCT.Data) accounts.Add(account);
             foreach (var account in responseDX.Data) accounts.Add(account);
             foreach (var account in responseTL.Data) accounts.Add(account);
-            if(accounts.Count == 0)
+            foreach (var account in responseMTT.Data) accounts.Add(account);
+            if (accounts.Count == 0)
             {
                 response.Message = "User has no accounts";
             }

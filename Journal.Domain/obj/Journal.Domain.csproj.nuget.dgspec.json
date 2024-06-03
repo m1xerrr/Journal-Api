@@ -73,6 +73,10 @@
               "target": "Package",
               "version": "[6.5.0, )"
             },
+            "WebSocket4Net": {
+              "target": "Package",
+              "version": "[0.15.2, )"
+            },
             "cTrader.OpenAPI.Net": {
               "target": "Package",
               "version": "[1.4.4, )"

@@ -18,6 +18,8 @@ namespace Journal.Domain.Models
         public string? Email { get; set; }
         public string? Password { get; set; }
         public Role Role { get; set; }
+
+        public List<MatchTradeAccount>? MatchTradeAccounts { get; set; }
         public List<MTAccount>? MTAccounts { get; set; }
         
         public List<CTraderAccount>? CTraderAccounts { get; set; }
@@ -35,6 +37,7 @@ namespace Journal.Domain.Models
             CTraderAccounts = new List<CTraderAccount>();
             DXTradeAccounts = new List<DXTradeAccount>(); 
             TradeLockerAccounts = new List<TradeLockerAccount>();
+            MatchTradeAccounts = new List<MatchTradeAccount>();
             Notes = new List<Note>();
         }
     }

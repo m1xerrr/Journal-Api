@@ -10,6 +10,6 @@ namespace Journal.Domain.JsonModels.TradingAccount
     {
         public string Provider { get; set; }
         public Guid AccountId { get; set; }
-        public long positionId { get; set; }
+        public string positionId { get; set; }
     }
 }

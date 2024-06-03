@@ -43,6 +43,9 @@ namespace Journal
             builder.Services.AddScoped<ITradeLockerAPIRepository, TradeLockerAPIRepository>();
             builder.Services.AddScoped<ITradeLockerAccountRepository, TradeLockerAccountRepository>();
             builder.Services.AddScoped<ITradeLockerAccountService, TradeLockerAccountService>();
+            builder.Services.AddScoped<IMatchTradeAccountRepository, MatchTradeAccountRepository>();
+            builder.Services.AddScoped<IMatchTradeApiRepository, MatchTradeApiRepository>();
+            builder.Services.AddScoped<IMatchTradeAccountService, MatchTradeAccountService>();
 
             var app = builder.Build();
 

@@ -7,6 +7,7 @@ namespace Journal.DAL
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -16,6 +17,7 @@ namespace Journal.DAL
             modelBuilder.Entity<MTAccount>().HasOne(u => u.User).WithMany(u => u.MTAccounts).HasForeignKey(u => u.UserID).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<CTraderAccount>().HasOne(u => u.User).WithMany(ci => ci.CTraderAccounts).HasForeignKey(ci => ci.UserID).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<DXTradeAccount>().HasOne(u => u.User).WithMany(ci => ci.DXTradeAccounts).HasForeignKey(ci => ci.UserID).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<MatchTradeAccount>().HasOne(u => u.User).WithMany(ci => ci.MatchTradeAccounts).HasForeignKey(ci => ci.UserID).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Deal>().HasOne(u =>u.Account).WithMany(ci => ci.Deals).HasForeignKey(ci => ci.AccountId).OnDelete(DeleteBehavior.NoAction);        
             modelBuilder.Entity<Note>().HasOne(u => u.User).WithMany(ci => ci.Notes).HasForeignKey(ci => ci.UserId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<DescriptionItem>().HasOne(u => u.Deal).WithMany(ci => ci.DescriptionItems).HasForeignKey(ci => ci.DealId).OnDelete(DeleteBehavior.NoAction);
@@ -25,6 +27,8 @@ namespace Journal.DAL
         public DbSet<DXTradeAccount> DXTradeAccounts { get; set; }
         public DbSet<CTraderAccount> CTraderAccounts { get; set; }
         public DbSet<MTAccount> MTAccounts { get; set; }
+
+        public DbSet<MatchTradeAccount> MatchTradeAccounts { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Deal> Deals { get; set; }

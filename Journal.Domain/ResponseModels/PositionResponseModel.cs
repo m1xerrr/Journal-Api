@@ -12,7 +12,7 @@ namespace Journal.Domain.ResponseModels
 {
     public class PositionResponseModel
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public string Symbol { get; set; }
 
@@ -23,6 +23,8 @@ namespace Journal.Domain.ResponseModels
         public double Volume { get; set; }
 
         public DateTime OpenTime { get; set; }
+
+        public double Profit { get; set; }
 
         public PositionResponseModel() { }
     }

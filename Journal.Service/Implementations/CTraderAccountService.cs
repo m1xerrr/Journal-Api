@@ -225,7 +225,7 @@ namespace Journal.Service.Implementations
                         if (symbol.SymbolName.Contains("XAU")) multiplier *= 100;
                         response.Data.Add(new OrderResponseModel()
                         {
-                            Id = order.PositionId,
+                            Id = order.PositionId.ToString(),
                             Direction = order.TradeData.TradeSide == ProtoOATradeSide.Buy ? Direction.Long : Direction.Short,
                             Price = order.ExecutionPrice,
                             OrderTime = DateTimeOffset.FromUnixTimeMilliseconds(order.UtcLastUpdateTimestamp).UtcDateTime,
@@ -271,11 +271,10 @@ namespace Journal.Service.Implementations
                     foreach (var position in positionsResponse)
                     {
                         var symbol = symbols.FirstOrDefault(x => x.SymbolId == position.TradeData.SymbolId);
-                        int multiplier = symbol.SymbolCategoryId == 1 ? 10000000 : 100;
-                        if (symbol.SymbolName.Contains("XAU")) multiplier *= 100;
+                        double multiplier = Math.Pow(10, position.MoneyDigits);
                         response.Data.Add(new PositionResponseModel()
                         {
-                            Id = position.PositionId,
+                            Id = position.PositionId.ToString(),
                             Symbol = symbol.SymbolName,
                             Direction = position.TradeData.TradeSide == ProtoOATradeSide.Buy ? Direction.Long : Direction.Short,
                             OpenPrice = position.Price,
@@ -313,7 +312,7 @@ namespace Journal.Service.Implementations
                 {
                     double priceTmp = await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol);
                     if (priceTmp == 0) throw new Exception("Invalid symbol data");
-                    volume = CalculateLotsHelper.CalculateForexLots(model.Risk, (await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol)), model.Stoploss);
+                    volume = CalculateLotsHelper.CalculateForexLots(model.Risk, priceTmp, model.Stoploss);
                 }
                 else
                     volume = CalculateLotsHelper.CalculateForexLots(model.Risk, model.Price, model.Stoploss);

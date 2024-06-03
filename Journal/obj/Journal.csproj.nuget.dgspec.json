@@ -53,9 +53,17 @@
               "target": "Package",
               "version": "[1.0.6, )"
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
             "Swashbuckle.AspNetCore.Swagger": {
               "target": "Package",
               "version": "[6.5.0, )"
+            },
+            "WebSocket4Net": {
+              "target": "Package",
+              "version": "[0.15.2, )"
             },
             "cTrader.OpenAPI.Net": {
               "target": "Package",
@@ -150,6 +158,10 @@
             "Swashbuckle.AspNetCore.Swagger": {
               "target": "Package",
               "version": "[6.5.0, )"
+            },
+            "WebSocket4Net": {
+              "target": "Package",
+              "version": "[0.15.2, )"
             },
             "cTrader.OpenAPI.Net": {
               "target": "Package",
@@ -252,6 +264,10 @@
               "target": "Package",
               "version": "[6.5.0, )"
             },
+            "WebSocket4Net": {
+              "target": "Package",
+              "version": "[0.15.2, )"
+            },
             "cTrader.OpenAPI.Net": {
               "target": "Package",
               "version": "[1.4.4, )"
@@ -332,6 +348,10 @@
               "target": "Package",
               "version": "[1.0.6, )"
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
@@ -339,6 +359,10 @@
             "Swashbuckle.AspNetCore.Swagger": {
               "target": "Package",
               "version": "[6.5.0, )"
+            },
+            "WebSocket4Net": {
+              "target": "Package",
+              "version": "[0.15.2, )"
             },
             "cTrader.OpenAPI.Net": {
               "target": "Package",

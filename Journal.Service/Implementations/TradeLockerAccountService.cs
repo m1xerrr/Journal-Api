@@ -240,7 +240,7 @@ namespace Journal.Service.Implementations
 
                         response.Data.Add(new OrderResponseModel()
                         {
-                            Id = Int64.Parse(order[0].ToString()),
+                            Id = order[0].ToString(),
                             Direction = order[4].ToString().ToLower() == "buy" ? Direction.Long : Direction.Short,
                             Symbol = symbols.Data.Instruments.FirstOrDefault(x => x.TradableInstrumentId == Int32.Parse(order[1].ToString())).Name,
                             OrderTime = DateTimeOffset.FromUnixTimeMilliseconds(Int64.Parse(order[13].ToString())).UtcDateTime,
@@ -279,7 +279,7 @@ namespace Journal.Service.Implementations
                 {
                     double priceTmp = await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol);
                     if (priceTmp == 0) throw new Exception("Invalid symbol data");
-                    volume = CalculateLotsHelper.CalculateForexLots(model.Risk, (await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol)), model.Stoploss);
+                    volume = CalculateLotsHelper.CalculateForexLots(model.Risk, priceTmp, model.Stoploss);
                 }
                 else
                     volume = CalculateLotsHelper.CalculateForexLots(model.Risk, model.Price, model.Stoploss);
@@ -318,7 +318,7 @@ namespace Journal.Service.Implementations
                     response.Message = "Account not found";
                     return response;
                 }
-                var ordersResponse = await _tradeLockerAPIRepository.DeleteOrder(account.Email, account.Password, account.Server, account.Live, account.Login, model.positionId);
+                var ordersResponse = await _tradeLockerAPIRepository.DeleteOrder(account.Email, account.Password, account.Server, account.Live, account.Login, Int64.Parse(model.positionId));
 
                 if (!ordersResponse)
                 {
@@ -369,12 +369,13 @@ namespace Journal.Service.Implementations
 
                         response.Data.Add(new PositionResponseModel()
                         {
-                            Id = Int64.Parse(position[0].ToString()),
+                            Id = position[0].ToString(),
                             Direction = position[3].ToString().ToLower() == "buy" ? Direction.Long : Direction.Short,
                             Symbol = symbols.Data.Instruments.FirstOrDefault(x => x.TradableInstrumentId == Int32.Parse(position[1].ToString())).Name,
                             OpenTime = DateTimeOffset.FromUnixTimeMilliseconds(Int64.Parse(position[8].ToString())).UtcDateTime,
                             OpenPrice = Double.Parse(position[5].ToString()),
                             Volume = Double.Parse(position[4].ToString()),
+                            Profit = Double.Parse(position[9].ToString()),
                         });
                     }
                     response.Message = "Success";

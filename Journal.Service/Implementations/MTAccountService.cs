@@ -229,10 +229,11 @@ namespace Journal.Service.Implementations
                 else
                 {
                     double volume = 0;
-                    if (model.Price == 0 && model.Type < 3) { 
+                    if (model.Price == 0 && model.Type < 3)
+                    {
                         double priceTmp = await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol);
                         if (priceTmp == 0) throw new Exception("Invalid symbol data");
-                        volume = CalculateLotsHelper.CalculateForexLots(model.Risk, (await _tradeLockerAPIRepository.GetPrice(symbol: model.Symbol)), model.Stoploss);
+                        volume = CalculateLotsHelper.CalculateForexLots(model.Risk, priceTmp, model.Stoploss);
                     }
                     else
                         volume = CalculateLotsHelper.CalculateForexLots(model.Risk, model.Price, model.Stoploss);
@@ -288,7 +289,7 @@ namespace Journal.Service.Implementations
                         {
                             response.Data.Add(new OrderResponseModel
                             {
-                                Id = order.Ticket,
+                                Id = order.Ticket.ToString(),
                                 Direction = order.Type == 2 ? Direction.Long : Direction.Short,
                                 OrderTime = DateTimeOffset.FromUnixTimeSeconds(order.TimeSetup).UtcDateTime,
                                 Price = order.PriceOpen,
@@ -389,12 +390,13 @@ namespace Journal.Service.Implementations
                         {
                             response.Data.Add(new PositionResponseModel
                             {
-                                Id = position.Ticket,
+                                Id = position.Ticket.ToString(),
                                 Direction = position.Type == 0 ? Direction.Long : Direction.Short,
                                 Volume = position.Volume,
                                 OpenPrice = position.PriceOpen,
                                 OpenTime = DateTimeOffset.FromUnixTimeSeconds(position.Time).UtcDateTime,
                                 Symbol = position.Symbol,
+                                Profit = position.Profit,
                             });
                         }
                         response.StatusCode = StatusCode.OK;
@@ -430,7 +432,7 @@ namespace Journal.Service.Implementations
                 }
                 else
                 {
-                    var order = await _mtDataRepository.DeleteOrder(account.Login, account.Password, account.Server, model.positionId);
+                    var order = await _mtDataRepository.DeleteOrder(account.Login, account.Password, account.Server, Int64.Parse(model.positionId));
                     if (order)
                     {
                         response.Data = order;
