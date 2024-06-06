@@ -138,8 +138,38 @@ namespace Journal.Service.Implementations
                 var deals = _dealRepository.SelectAll().Where(x => x.AccountId == id);
                 if (deals.Count() == 0)
                 {
-                    response.Message = "Deals not found";
-                    response.StatusCode = StatusCode.ERROR;
+                    await LoadAccountData(id);
+                    var newDeals = _dealRepository.SelectAll().Where(_x => _x.AccountId == id);
+                    if (newDeals.Count() == 0)
+                    {
+                        response.Message = "Deals not found";
+                        response.StatusCode = StatusCode.ERROR;
+                    }
+                    else
+                    {
+                        var accountData = new AccountData();
+                        foreach (var deal in deals)
+                        {
+                            accountData.Deals.Add(new DealResponseModel(deal));
+                        }
+                        accountData.UserId = account.UserID;
+                        accountData.Deposit = account.Deposit;
+                        accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
+                        accountData.currentBalance = accountData.Deposit + accountData.Profit;
+                        accountData.TotalDeals = accountData.Deals.Count;
+                        accountData.WonDeals = accountData.Deals.Where(x => x.Result == Result.Win).Count();
+                        accountData.LostDeals = accountData.Deals.Where(x => x.Result == Result.Loss).Count();
+                        accountData.LongDeals = accountData.Deals.Where(x => x.Direction == Direction.Long).Count();
+                        accountData.ShortDeals = accountData.Deals.Where(x => x.Direction == Direction.Short).Count();
+                        accountData.ProfitPercentage = Math.Round(accountData.Profit / accountData.Deposit * 100, 2);
+                        accountData.Winrate = Math.Round((double)accountData.WonDeals / (double)accountData.TotalDeals * 100, 2);
+                        accountData.Lots = accountData.Deals.Select(x => x.Volume).Sum();
+                        accountData.AverageLoss = accountData.Deals.Where(x => x.Result == Result.Loss).Select(x => x.Profit).Average();
+                        accountData.AverageWin = accountData.Deals.Where(x => x.Result == Result.Win).Select(x => x.Profit).Average();
+                        accountData.DailyProfit = accountData.Deals.Where(x => x.EntryTime.Date == DateTime.Today).Sum(x => x.Profit + x.Comission);
+                        accountData.Provider = "TradeLocker";
+                        response.Data = accountData;
+                    }
                 }
                 else
                 {
@@ -148,7 +178,6 @@ namespace Journal.Service.Implementations
                     {
                         accountData.Deals.Add(new DealResponseModel(deal));
                     }
-
                     accountData.UserId = account.UserID;
                     accountData.Deposit = account.Deposit;
                     accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
@@ -167,6 +196,7 @@ namespace Journal.Service.Implementations
                     accountData.Provider = "TradeLocker";
                     response.Data = accountData;
                 }
+
             }
             catch (Exception ex)
             {

@@ -545,21 +545,48 @@ namespace Journal.Service.Implementations
                 var deals = _mtDealRepository.SelectAll().Where(x => x.AccountId == accountId).ToList();
                 if (deals.Count() == 0)
                 {
-                    response.Message = "Deals not found";
-                    response.StatusCode = StatusCode.ERROR;
+                    await LoadAccountData(accountId);
+                    var newDeals = _mtDealRepository.SelectAll().Where(_x => _x.AccountId == accountId);
+                    if (newDeals.Count() == 0)
+                    {
+                        response.Message = "Deals not found";
+                        response.StatusCode = StatusCode.ERROR;
+                    }
+                    else
+                    {
+                        var accountData = new AccountData();
+                        foreach (var deal in deals)
+                        {
+                            accountData.Deals.Add(new DealResponseModel(deal));
+                        }
+                        accountData.UserId = account.UserID;
+                        accountData.Deposit = account.Deposit;
+                        accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
+                        accountData.currentBalance = accountData.Deposit + accountData.Profit;
+                        accountData.TotalDeals = accountData.Deals.Count;
+                        accountData.WonDeals = accountData.Deals.Where(x => x.Result == Result.Win).Count();
+                        accountData.LostDeals = accountData.Deals.Where(x => x.Result == Result.Loss).Count();
+                        accountData.LongDeals = accountData.Deals.Where(x => x.Direction == Direction.Long).Count();
+                        accountData.ShortDeals = accountData.Deals.Where(x => x.Direction == Direction.Short).Count();
+                        accountData.ProfitPercentage = Math.Round(accountData.Profit / accountData.Deposit * 100, 2);
+                        accountData.Winrate = Math.Round((double)accountData.WonDeals / (double)accountData.TotalDeals * 100, 2);
+                        accountData.Lots = accountData.Deals.Select(x => x.Volume).Sum();
+                        accountData.AverageLoss = accountData.Deals.Where(x => x.Result == Result.Loss).Select(x => x.Profit).Average();
+                        accountData.AverageWin = accountData.Deals.Where(x => x.Result == Result.Win).Select(x => x.Profit).Average();
+                        accountData.DailyProfit = accountData.Deals.Where(x => x.EntryTime.Date == DateTime.Today).Sum(x => x.Profit + x.Comission);
+                        accountData.Provider = "MetaTrader 5";
+                        response.Data = accountData;
+                    }
                 }
                 else
                 {
                     var accountData = new AccountData();
-                    var dealsResponse = new List<DealResponseModel>();
                     foreach (var deal in deals)
                     {
-                        dealsResponse.Add(new DealResponseModel(deal));
+                        accountData.Deals.Add(new DealResponseModel(deal));
                     }
-
                     accountData.UserId = account.UserID;
                     accountData.Deposit = account.Deposit;
-                    accountData.Deals = dealsResponse;
                     accountData.Profit = accountData.Deals.Sum(x => x.Profit) + account.Deals.Sum(x => x.Comission);
                     accountData.currentBalance = accountData.Deposit + accountData.Profit;
                     accountData.TotalDeals = accountData.Deals.Count;
