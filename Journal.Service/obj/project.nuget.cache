@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "qRUqDuZAjQnoch8dZ/3kEMr2rhlkqJz34qGl5dJ+GzuV2kwGvJdf/wOoccClk6UxPXfHY3SymM4zq0ah8LSbCQ==",
+  "dgSpecHash": "LakdbUjSi32SlmcS4oQ4UMt+YjyyGRDg5Wp5mmPG7rEvU1UbgMc7BuUC9HEEthj3ZCeE6bfAYQZiZJOiGTfbEA==",
   "success": true,
   "projectFilePath": "D:\\SE\\C#\\REST API\\Journal.Service\\Journal.Service.csproj",
   "expectedPackageFiles": [
@@ -142,7 +142,8 @@
     "C:\\Users\\mikgy\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\mikgy\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
     "C:\\Users\\mikgy\\.nuget\\packages\\websocket.client\\4.4.43\\websocket.client.4.4.43.nupkg.sha512",
-    "C:\\Users\\mikgy\\.nuget\\packages\\websocket4net\\0.15.2\\websocket4net.0.15.2.nupkg.sha512"
+    "C:\\Users\\mikgy\\.nuget\\packages\\websocket4net\\0.15.2\\websocket4net.0.15.2.nupkg.sha512",
+    "C:\\Users\\mikgy\\.nuget\\packages\\websocketsharp-netstandard\\1.0.1\\websocketsharp-netstandard.1.0.1.nupkg.sha512"
   ],
   "logs": []
 }

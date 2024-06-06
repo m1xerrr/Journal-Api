@@ -18,6 +18,7 @@
           "Newtonsoft.Json": "13.0.3",
           "Swashbuckle.AspNetCore.Swagger": "6.5.0",
           "WebSocket4Net": "0.15.2",
+          "WebSocketSharp-netstandard": "1.0.1",
           "cTrader.OpenAPI.Net": "1.4.4"
         },
         "runtime": {
@@ -1339,6 +1340,14 @@
           }
         }
       },
+      "WebSocketSharp-netstandard/1.0.1": {
+        "runtime": {
+          "lib/netstandard2.0/websocket-sharp.dll": {
+            "assemblyVersion": "1.0.1.0",
+            "fileVersion": "1.0.1.0"
+          }
+        }
+      },
       "Journal.DAL/1.0.0": {
         "dependencies": {
           "CloudflareSolverRe": "1.0.6",
@@ -1346,6 +1355,7 @@
           "Newtonsoft.Json": "13.0.3",
           "Swashbuckle.AspNetCore.Swagger": "6.5.0",
           "WebSocket4Net": "0.15.2",
+          "WebSocketSharp-netstandard": "1.0.1",
           "cTrader.OpenAPI.Net": "1.4.4"
         },
         "runtime": {
@@ -1362,6 +1372,7 @@
           "Newtonsoft.Json": "13.0.3",
           "Swashbuckle.AspNetCore.Swagger": "6.5.0",
           "WebSocket4Net": "0.15.2",
+          "WebSocketSharp-netstandard": "1.0.1",
           "cTrader.OpenAPI.Net": "1.4.4"
         },
         "runtime": {
@@ -2348,6 +2359,13 @@
       "sha512": "sha512-xu6NiIDP6BEwO8cgXLUdWI8teB/TxVjzMjMYE7hcP93+MpZdxzDzz1cTFxU4OWVP0NESchcQO5LkiJ/wgB03AQ==",
       "path": "websocket4net/0.15.2",
       "hashPath": "websocket4net.0.15.2.nupkg.sha512"
+    },
+    "WebSocketSharp-netstandard/1.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-knoinAv31vbdxXdypnzN2MPX5hyntVLWceq6OdWRXkr9zzqp/RWbxSuLFGbkW8De1061URgNAN43BUTlgMx1CA==",
+      "path": "websocketsharp-netstandard/1.0.1",
+      "hashPath": "websocketsharp-netstandard.1.0.1.nupkg.sha512"
     },
     "Journal.DAL/1.0.0": {
       "type": "project",

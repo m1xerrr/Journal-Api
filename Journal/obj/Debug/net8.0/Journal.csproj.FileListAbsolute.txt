@@ -239,3 +239,4 @@ D:\SE\C#\REST API\Journal\bin\Debug\net8.0\Websocket.Client.dll
 D:\SE\C#\REST API\Journal\bin\Debug\net8.0\CloudflareSolverRe.dll
 D:\SE\C#\REST API\Journal\bin\Debug\net8.0\SuperSocket.ClientEngine.dll
 D:\SE\C#\REST API\Journal\bin\Debug\net8.0\WebSocket4Net.dll
+D:\SE\C#\REST API\Journal\bin\Debug\net8.0\websocket-sharp.dll

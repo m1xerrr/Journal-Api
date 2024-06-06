@@ -65,6 +65,10 @@
               "target": "Package",
               "version": "[0.15.2, )"
             },
+            "WebSocketSharp-netstandard": {
+              "target": "Package",
+              "version": "[1.0.1, )"
+            },
             "cTrader.OpenAPI.Net": {
               "target": "Package",
               "version": "[1.4.4, )"
@@ -162,6 +166,10 @@
             "WebSocket4Net": {
               "target": "Package",
               "version": "[0.15.2, )"
+            },
+            "WebSocketSharp-netstandard": {
+              "target": "Package",
+              "version": "[1.0.1, )"
             },
             "cTrader.OpenAPI.Net": {
               "target": "Package",
@@ -267,6 +275,10 @@
             "WebSocket4Net": {
               "target": "Package",
               "version": "[0.15.2, )"
+            },
+            "WebSocketSharp-netstandard": {
+              "target": "Package",
+              "version": "[1.0.1, )"
             },
             "cTrader.OpenAPI.Net": {
               "target": "Package",

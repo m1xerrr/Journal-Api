@@ -5,12 +5,11 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebSocket4Net;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics.Metrics;
 using System.Diagnostics;
+using System.Net.WebSockets;
 
 namespace Journal.DAL.Repositories
 {
@@ -22,21 +21,19 @@ namespace Journal.DAL.Repositories
         public async Task<List<MatchTradeDealJsonModel>> GetDeals(bool isLive, string email, string password, int brokerId, long accountNumber, string tradingApiToken, string coAuthToken)
         {
             string url = "wss://mtr-demo-prod.match-trader.com/app/snapshot/closed-positions";
+            var client = new ClientWebSocket();
+            client.Options.SetRequestHeader("Accept", "application/json");
+            client.Options.SetRequestHeader("Content-Type", "application/json");
+            client.Options.SetRequestHeader("Auth-trading-api", tradingApiToken);
+            client.Options.SetRequestHeader("Cookie", $"co-auth={coAuthToken}");
+            client.Options.SetRequestHeader("User-Agent", "PostmanRuntime/7.37.3");
 
-            var taskCompletionSource = new TaskCompletionSource<MatchTradeDealsJsonModel>();
-            bool isCompleted = false;
+            var cancellationToken = new CancellationTokenSource();
+            cancellationToken.CancelAfter(TimeSpan.FromSeconds(30)); // 30 seconds timeout
 
-            WebSocket websocket = new WebSocket(url, customHeaderItems: new List<KeyValuePair<string, string>>()
+            try
             {
-                new KeyValuePair<string, string>("Accept", "application/json"),
-                new KeyValuePair<string, string>("Content-Type", "application/json"),
-                new KeyValuePair<string, string>("Auth-trading-api", tradingApiToken),
-                new KeyValuePair<string, string>("Cookie", $"co-auth={coAuthToken}"),
-                new KeyValuePair<string, string>("User-Agent", "PostmanRuntime/7.37.3")
-            });
-
-            websocket.Opened += (s, e) =>
-            {
+                await client.ConnectAsync(new Uri(url), cancellationToken.Token);
                 Console.WriteLine("WebSocket connection opened.");
 
                 var requestBody = new
@@ -47,67 +44,49 @@ namespace Journal.DAL.Repositories
                 };
 
                 string requestJson = JsonConvert.SerializeObject(requestBody);
-                websocket.Send(requestJson);
-            };
+                var requestBytes = Encoding.UTF8.GetBytes(requestJson);
+                var requestSegment = new ArraySegment<byte>(requestBytes);
 
-            websocket.MessageReceived += (s, e) =>
-            {
-                if (!isCompleted)
+                await client.SendAsync(requestSegment, WebSocketMessageType.Text, true, cancellationToken.Token);
+
+                var buffer = new ArraySegment<byte>(new byte[2048]);
+                WebSocketReceiveResult result = await client.ReceiveAsync(buffer, cancellationToken.Token);
+                var responseString = Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
+
+                if (result.MessageType == WebSocketMessageType.Close)
                 {
-                    Console.WriteLine("Message received: " + e.Message);
-
-                    try
-                    {
-                        var response = JsonConvert.DeserializeObject<MatchTradeDealsJsonModel>(e.Message);
-                        taskCompletionSource.SetResult(response);
-                        isCompleted = true;
-                        websocket.Close();
-                        foreach (var operation in response.Operations)
-                        {
-                            Console.WriteLine($"Operation: {operation.Id}, Amount: {operation.Profit}");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        taskCompletionSource.SetException(ex);
-                        isCompleted = true;
-                        websocket.Close();
-                        Console.WriteLine("Error deserializing JSON response: " + ex.Message);
-                    }
+                    await client.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, cancellationToken.Token);
+                    throw new WebSocketException("WebSocket connection closed unexpectedly.");
                 }
-            };
 
-            websocket.Error += (s, e) =>
-            {
-                if (!isCompleted)
+                Console.WriteLine("Message received: " + responseString);
+                var response = JsonConvert.DeserializeObject<MatchTradeDealsJsonModel>(responseString);
+
+                foreach (var operation in response.Operations)
                 {
-                    Console.WriteLine("WebSocket error: " + e.Exception.Message);
-                    taskCompletionSource.SetException(e.Exception);
-                    isCompleted = true;
-                    websocket.Close();
+                    Console.WriteLine($"Operation: {operation.Id}, Amount: {operation.Profit}");
                 }
-            };
 
-            websocket.Closed += (s, e) =>
-            {
-                if (!isCompleted)
-                {
-                    Console.WriteLine("WebSocket connection closed.");
-                    taskCompletionSource.SetCanceled();
-                    isCompleted = true;
-                }
-            };
+                await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Completed", CancellationToken.None);
 
-            websocket.Open();
-            await Task.Delay(500);
-            try
+                return response.Operations;
+            }
+            catch (WebSocketException ex)
             {
-                return (await taskCompletionSource.Task).Operations;
+                Console.WriteLine("WebSocket error: " + ex.Message);
+                throw;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error processing WebSocket task: " + ex.Message);
                 throw;
+            }
+            finally
+            {
+                if (client.State == WebSocketState.Open || client.State == WebSocketState.CloseReceived)
+                {
+                    await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+                }
             }
         }
 

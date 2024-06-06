@@ -491,7 +491,7 @@ namespace Journal.Service.Implementations
                         accountDeal.Comission += deal.Commission;
                         accountDeal.ExitTime = DateTimeOffset.FromUnixTimeSeconds(deal.Time).UtcDateTime;
                         accountDeal.ProfitPercentage = Math.Round(deal.Profit / account.Deposit * 100, 2);
-                        if (accountDeal.ProfitPercentage > 0.1) { accountDeal.Result = Result.Win; }
+                        if (accountDeal.ProfitPercentage > 0) { accountDeal.Result = Result.Win; }
                         else { accountDeal.Result = Result.Loss; }
                     }
                 }
@@ -568,7 +568,7 @@ namespace Journal.Service.Implementations
                     accountData.LongDeals = accountData.Deals.Where(x => x.Direction == Direction.Long).Count();
                     accountData.ShortDeals = accountData.Deals.Where(x => x.Direction == Direction.Short).Count();
                     accountData.ProfitPercentage = Math.Round(accountData.Profit / accountData.Deposit * 100, 2);
-                    accountData.Winrate = accountData.WonDeals / accountData.TotalDeals * 100;
+                    accountData.Winrate = (double)accountData.WonDeals / (double)accountData.TotalDeals * 100;
                     accountData.Lots = accountData.Deals.Select(x => x.Volume).Sum();
                     accountData.AverageLoss = accountData.Deals.Where(x => x.Result == Result.Loss).Select(x => x.Profit).Average();
                     accountData.AverageWin = accountData.Deals.Where(x => x.Result == Result.Win).Select(x => x.Profit).Average();
