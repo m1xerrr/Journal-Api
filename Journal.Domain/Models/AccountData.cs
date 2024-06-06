@@ -1,4 +1,5 @@
 ﻿using Journal.Domain.ResponseModels;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,8 @@ namespace Journal.Domain.Models
         public double AverageLoss { get; set; }
 
         public double Lots { get; set; }
+
+        public double DailyProfit { get; set; }
 
     }
 }

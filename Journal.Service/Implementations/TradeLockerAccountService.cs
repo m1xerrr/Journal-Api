@@ -159,11 +159,12 @@ namespace Journal.Service.Implementations
                     accountData.LongDeals = accountData.Deals.Where(x => x.Direction == Direction.Long).Count();
                     accountData.ShortDeals = accountData.Deals.Where(x => x.Direction == Direction.Short).Count();
                     accountData.ProfitPercentage = Math.Round(accountData.Profit / accountData.Deposit * 100, 2);
-                    accountData.Winrate = (double)accountData.WonDeals / (double)accountData.TotalDeals * 100;
+                    accountData.Winrate = Math.Round((double)accountData.WonDeals / (double)accountData.TotalDeals * 100, 2);
                     accountData.Lots = accountData.Deals.Select(x => x.Volume).Sum();
                     accountData.AverageLoss = accountData.Deals.Where(x => x.Result == Result.Loss).Select(x => x.Profit).Average();
                     accountData.AverageWin = accountData.Deals.Where(x => x.Result == Result.Win).Select(x => x.Profit).Average();
-                    accountData.Provider = "DXTrade";
+                    accountData.DailyProfit = accountData.Deals.Where(x => x.EntryTime.Date == DateTime.Today).Sum(x => x.Profit + x.Comission);
+                    accountData.Provider = "TradeLocker";
                     response.Data = accountData;
                 }
             }
