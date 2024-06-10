@@ -310,6 +310,8 @@ namespace Journal.DAL.Repositories
 
         public async Task<bool> PlaceOrder(string accessToken, long accountId, bool isLive, string symbol, byte type, long volume, double stopLoss, double takeProfit, double price)
         {
+            
+            
             var _token = new Token()
             {
                 AccessToken = accessToken,
@@ -318,38 +320,13 @@ namespace Journal.DAL.Repositories
             var host = ApiInfo.GetHost(mode: isLive ? Mode.Live : Mode.Demo);
             var client = new OpenClient(host, ApiInfo.Port, TimeSpan.FromSeconds(10), useWebSocket: useWebScoket);
 
-            _disposables.Add(client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnException));
-
-            await client.Connect();
-
-            var applicationAuthReq = new ProtoOAApplicationAuthReq
-            {
-                ClientId = _app.ClientId,
-                ClientSecret = _app.Secret,
-            };
-
-
-            await client.SendMessage(applicationAuthReq);
-
-            await Task.Delay(300);
-
-            var authRequst = new ProtoOAAccountAuthReq
-            {
-                CtidTraderAccountId = accountId,
-                AccessToken = _token.AccessToken
-            };
-
-            await client.SendMessage(authRequst);
-
-            await Task.Delay(100);
-
             var symbols = await GetSymbols(accessToken, accountId, isLive);
             var symbolId = symbols.FirstOrDefault(x => x.SymbolName == symbol).SymbolId;
 
             ProtoOAOrderType orderType = ProtoOAOrderType.Market;
             ProtoOATradeSide tradeSide = ProtoOATradeSide.Buy;
 
-            switch(type)
+            switch (type)
             {
                 case 1:
                     orderType = ProtoOAOrderType.Market;
@@ -375,48 +352,37 @@ namespace Journal.DAL.Repositories
 
             if (orderType == ProtoOAOrderType.Limit)
             {
-                var taskCompletionSource = new TaskCompletionSource<ProtoOAReconcileRes>();
-
-                IDisposable disposable = null;
-
-                disposable = client.OfType<ProtoOAReconcileRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
-                {
-                    taskCompletionSource.SetResult(response);
-
-                    disposable?.Dispose();
-                });
-
-                var requestPositions = new ProtoOAReconcileReq
-                {
-                    CtidTraderAccountId = accountId,
-                };
-
-                await client.SendMessage(requestPositions);
-
-                countBefore = taskCompletionSource.Task.Result.Position.Count();
+                countBefore = (await GetDeals(accessToken, accountId, isLive)).Count();
             }
             else
             {
-                var taskCompletionSource = new TaskCompletionSource<ProtoOAReconcileRes>();
-
-                IDisposable disposable = null;
-
-                disposable = client.OfType<ProtoOAReconcileRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
-                {
-                    taskCompletionSource.SetResult(response);
-
-                    disposable?.Dispose();
-                });
-
-                var requestOrders = new ProtoOAReconcileReq
-                {
-                    CtidTraderAccountId = accountId,
-                };
-
-                await client.SendMessage(requestOrders);
-
-                countBefore = taskCompletionSource.Task.Result.Order.Count();
+                countBefore = (await GetPositions(accessToken, accountId, isLive)).Count();
             }
+
+            _disposables.Add(client.Where(iMessage => iMessage is not ProtoHeartbeatEvent).Subscribe(OnMessageReceived, OnException));
+
+            await client.Connect();
+
+            var applicationAuthReq = new ProtoOAApplicationAuthReq
+            {
+                ClientId = _app.ClientId,
+                ClientSecret = _app.Secret,
+            };
+
+
+            await client.SendMessage(applicationAuthReq);
+
+            await Task.Delay(300);
+
+            var authRequst = new ProtoOAAccountAuthReq
+            {
+                CtidTraderAccountId = accountId,
+                AccessToken = _token.AccessToken
+            };
+
+            await client.SendMessage(authRequst);
+
+            await Task.Delay(100);
 
             ProtoOANewOrderReq request = new ProtoOANewOrderReq();
             if (orderType == ProtoOAOrderType.Market)
@@ -489,47 +455,11 @@ namespace Journal.DAL.Repositories
 
             if (orderType == ProtoOAOrderType.Limit)
             {
-                var taskCompletionSource = new TaskCompletionSource<ProtoOAReconcileRes>();
-
-                IDisposable disposable = null;
-
-                disposable = client.OfType<ProtoOAReconcileRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
-                {
-                    taskCompletionSource.SetResult(response);
-
-                    disposable?.Dispose();
-                });
-
-                var requestPositions = new ProtoOAReconcileReq
-                {
-                    CtidTraderAccountId = accountId,
-                };
-
-                await client.SendMessage(requestPositions);
-
-                countAfter = taskCompletionSource.Task.Result.Position.Count();
+                countAfter = (await GetDeals(accessToken, accountId, isLive)).Count();
             }
             else
             {
-                var taskCompletionSource = new TaskCompletionSource<ProtoOAReconcileRes>();
-
-                IDisposable disposable = null;
-
-                disposable = client.OfType<ProtoOAReconcileRes>().Where(response => response.CtidTraderAccountId == accountId).Subscribe(response =>
-                {
-                    taskCompletionSource.SetResult(response);
-
-                    disposable?.Dispose();
-                });
-
-                var requestOrders = new ProtoOAReconcileReq
-                {
-                    CtidTraderAccountId = accountId,
-                };
-
-                await client.SendMessage(requestOrders);
-
-                countAfter = taskCompletionSource.Task.Result.Order.Count();
+                countAfter = (await GetPositions(accessToken, accountId, isLive)).Count();
             }
 
 
