@@ -176,14 +176,11 @@ namespace Journal.DAL.Repositories
                 {
                     HttpResponseMessage response = await client.GetAsync(baseUrl + endpoint);
 
-                    if (response.IsSuccessStatusCode)
-                    {
                         string content = await response.Content.ReadAsStringAsync();
-                        if(content.Contains("Success"))
+                        if(content.ToLower().Contains("success"))
                         {
                             return true;
                         }
-                    }
                 }
             }
             catch (Exception ex)

@@ -37,12 +37,12 @@ namespace Journal.Service.Implementations
             try
             {
                 var accs = _mtAccountRepository.SelectAll();
-                if (accs.FirstOrDefault(x => x.Login == accountModel.Login) != null)
+                /*if (accs.FirstOrDefault(x => x.Login == accountModel.Login) != null)
                 {
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     response.Message = "Account exists";
                     return response;
-                }
+                }*/
                 if (!await _mtDataRepository.Initialize(accountModel))
                 {
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
@@ -64,8 +64,9 @@ namespace Journal.Service.Implementations
                 if (await _mtAccountRepository.Create(account))
                     {
                         response.StatusCode = Domain.Enums.StatusCode.OK;
+                        
                         response.Data = new AccountResponseModel(account);
-                    await LoadAccountData(account.Id);
+                        await LoadAccountData(account.Id);
                     }
                     else
                     {
@@ -150,11 +151,23 @@ namespace Journal.Service.Implementations
                     accountJson.Id = account.Id;
                     var accountResponse = new AccountResponseModel(account);
                     var accountData = await GetAccountData(account.Id);
-                    accountResponse.Profit = accountData.Data.Profit;
-                    accountResponse.Balance = accountData.Data.currentBalance;
-                    accountResponse.ProfitPercentage = accountData.Data.ProfitPercentage;
-                    accountResponse.DealsCount = accountData.Data.TotalDeals;
-                    accountResponse.Deposit = accountData.Data.Deposit;
+                    if (accountData.Data != null) 
+                    {
+
+                        accountResponse.Profit = accountData.Data.Profit;
+                        accountResponse.Balance = accountData.Data.currentBalance;
+                        accountResponse.ProfitPercentage = accountData.Data.ProfitPercentage;
+                        accountResponse.DealsCount = accountData.Data.TotalDeals;
+                        accountResponse.Deposit = accountData.Data.Deposit;
+                    }
+                    else
+                    {
+                        accountResponse.Profit = 0;
+                        accountResponse.Balance = account.Deposit;
+                        accountResponse.ProfitPercentage = 0;
+                        accountResponse.DealsCount = 0;
+                        accountResponse.Deposit = account.Deposit;
+                    }
                     accountsResponse.Add(accountResponse);
                 }
                 response.StatusCode = Domain.Enums.StatusCode.OK;
