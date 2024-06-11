@@ -23,6 +23,7 @@ namespace Journal.DAL.Repositories
                     if (response.IsSuccessStatusCode)
                     {
                         string content = await response.Content.ReadAsStringAsync();
+                        Console.WriteLine(content);
                         List<MTDealJsonModel> deals = JsonConvert.DeserializeObject<List<MTDealJsonModel>>(content);
                         return deals;
                     }

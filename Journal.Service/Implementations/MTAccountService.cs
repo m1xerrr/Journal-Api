@@ -37,12 +37,12 @@ namespace Journal.Service.Implementations
             try
             {
                 var accs = _mtAccountRepository.SelectAll();
-                /*if (accs.FirstOrDefault(x => x.Login == accountModel.Login) != null)
+                if (accs.FirstOrDefault(x => x.Login == accountModel.Login) != null)
                 {
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
                     response.Message = "Account exists";
                     return response;
-                }*/
+                }
                 if (!await _mtDataRepository.Initialize(accountModel))
                 {
                     response.StatusCode = Domain.Enums.StatusCode.ERROR;
