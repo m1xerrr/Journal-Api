@@ -134,6 +134,7 @@ namespace Journal.Controllers
         [HttpPost("Heartbeat")]
         public async Task<IActionResult> Heartbeat()
         {
+            Console.WriteLine("Heartbeat");
             await _userService.GetAllUsers();
             return Json("Running");
         }
