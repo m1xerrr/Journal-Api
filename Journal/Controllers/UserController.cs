@@ -133,6 +133,7 @@ namespace Journal.Controllers
 
         public async Task<IActionResult> Heartbeat()
         {
+            await Task.Delay(500);
             return Json("Running");
         }
     }
