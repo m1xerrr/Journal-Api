@@ -33,5 +33,7 @@ namespace Journal.Service.Interfaces
         Task<BaseResponse<bool>> PlaceOrder(OpenPositionJsonModel model);
 
         Task<BaseResponse<bool>> DeleteOrder(ClosePositionJsonModel model);
+
+        Task<BaseResponse<double>> GetPrice(string symbol);
     }
 }

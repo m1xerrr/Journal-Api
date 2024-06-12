@@ -510,5 +510,32 @@ namespace Journal.Service.Implementations
                 else await _dealRepository.Create(deal);
             }
         }
+
+        public async Task<BaseResponse<double>> GetPrice(string symbol)
+        {
+            var response = new BaseResponse<double>();
+            try
+            {
+                var price = await _tradeLockerAPIRepository.GetPrice(symbol);
+                if(price == 0)
+                {
+                    response.StatusCode = StatusCode.ERROR;
+                    response.Message = "Unknown symbol";
+                    
+                }
+                else {
+                    response.StatusCode = StatusCode.OK;
+                    response.Message = "Success";
+                    response.Data = price;
+                
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = StatusCode.OK;
+            }
+            return response;
+        }
     }
 }

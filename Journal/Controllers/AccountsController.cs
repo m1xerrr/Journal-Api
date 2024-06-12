@@ -32,6 +32,11 @@ namespace Journal.Controllers
             _dealService = dealService;
         }
 
+        public async Task<IActionResult> GetPrice([FromBody] string symbol)
+        {
+            var response = _tradeLockerAccountService.GetPrice(symbol);
+            return Json(response);
+        }
         
         [HttpPost("DeleteTradingAccount")]
         public async Task<IActionResult> DeleteTradingAccount([FromBody] TradingAccountJsonModel account)
@@ -238,7 +243,7 @@ namespace Journal.Controllers
                 };
                 responses.Add(responseTmp);
             }
-
+            responses.Add(await _tradeLockerAccountService.GetSymbols(new Guid("be6fadb7-8fc8-4c99-90c9-cfbf53940341")));
             var successfulResponses = responses.Where(x => x.StatusCode == Domain.Enums.StatusCode.OK).ToList();
             var response = new BaseResponse<List<string>>();
             if (successfulResponses.Count > 1)
