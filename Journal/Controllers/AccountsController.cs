@@ -31,7 +31,7 @@ namespace Journal.Controllers
             _matchTradeAccountService = matchTradeAccountService;
             _dealService = dealService;
         }
-
+        [HttpPost("GetPrice")]
         public async Task<IActionResult> GetPrice([FromBody] string symbol)
         {
             var response = await _tradeLockerAccountService.GetPrice(symbol);

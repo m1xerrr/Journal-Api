@@ -131,6 +131,7 @@ namespace Journal.Controllers
             return Json(response);
         }
 
+        [HttpPost("Heartbeat")]
         public async Task<IActionResult> Heartbeat()
         {
             await Task.Delay(500);
