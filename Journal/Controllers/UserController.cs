@@ -131,5 +131,9 @@ namespace Journal.Controllers
             return Json(response);
         }
 
+        public async Task<IActionResult> Heartbeat()
+        {
+            return Json("Running");
+        }
     }
 }
