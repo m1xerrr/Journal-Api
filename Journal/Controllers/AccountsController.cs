@@ -34,7 +34,7 @@ namespace Journal.Controllers
 
         public async Task<IActionResult> GetPrice([FromBody] string symbol)
         {
-            var response = _tradeLockerAccountService.GetPrice(symbol);
+            var response = await _tradeLockerAccountService.GetPrice(symbol);
             return Json(response);
         }
         
