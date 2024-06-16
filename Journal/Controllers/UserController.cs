@@ -138,5 +138,12 @@ namespace Journal.Controllers
             await _userService.GetAllUsers();
             return Json("Running");
         }
+
+        /*[HttpPost ("FixUsers")]
+        public async Task<IActionResult> FixUsers()
+        {
+            var response = await _userService.FixUsers();
+            return Json(response);
+        }*/
     }
 }

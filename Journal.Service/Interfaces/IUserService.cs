@@ -31,5 +31,7 @@ namespace Journal.Service.Interfaces
 
         Task<BaseResponse<ShareAccountResponseModel>> GetProfit(Guid accountID, string provider, DateTime startDate, DateTime endDate);
 
+        Task<BaseResponse<UserResponseModel>> FixUsers();
+
     }
 }

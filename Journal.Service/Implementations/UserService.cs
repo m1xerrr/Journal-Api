@@ -483,8 +483,8 @@ namespace Journal.Service.Implementations
                         Id = Guid.NewGuid(),
                         TGUsername = model.Username,
                         TGId = model.TelegramId,
-                        Email = model.Username + "@mail.com",
-                        Password = HashPasswordHelper.HashPassword(model.Username + "Password"),
+                        Email = model.Username + model.TelegramId.ToString() + "@mail.com",
+                        Password = HashPasswordHelper.HashPassword(model.Username + model.TelegramId.ToString() + "Password"),
                         Name = model.Username,
                         Role = Role.User
                     };
@@ -515,6 +515,27 @@ namespace Journal.Service.Implementations
             return response;
         }
 
-        
+        public async Task<BaseResponse<UserResponseModel>> FixUsers()
+        {
+            var response = new BaseResponse<UserResponseModel>();
+            try
+            { 
+                var users = _userRepository.SelectAll();
+                foreach (var user in users)
+                {
+                    if (user.TGUsername == null) continue;
+                    user.Email = user.TGUsername + user.TGId.ToString() + "@mail.com";
+                    user.Password = HashPasswordHelper.HashPassword(user.TGUsername + user.TGId.ToString() + "Password");
+                    await _userRepository.Edit(user);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.StatusCode = StatusCode.ERROR;
+            }
+            return response;
+        }
+
     }
 }
