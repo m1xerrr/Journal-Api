@@ -13,7 +13,7 @@ namespace Journal.DAL.Interfaces
 
         Task<double> GetDeposit(bool isLive, string email, string password, int brokerId, long accountNumber);
 
-        Task<List<MatchTradeDealJsonModel>> GetDeals(bool isLive, string email, string password, int brokerId, long accountNumber, string TradingApiToken, string CoAuthToken);
+        Task<List<MatchTradeDealJsonModel>> GetDeals(bool isLive, string email, string password, int brokerId, long accountNumber, string TradingApiToken, string CoAuthToken, string uuid, List<string> symbols);
 
         Task<MatchTradePositionsJsonModel> GetPositions(bool isLive, string email, string password, int brokerId, long accountNumber);
 

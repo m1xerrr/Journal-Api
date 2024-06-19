@@ -9,64 +9,28 @@ namespace Journal.Domain.JsonModels.MatchTrade
 {
     public class MatchTradeDealsJsonModel
     {
-        [JsonProperty("status")]
-        public string Status { get; set; }
-
-        [JsonProperty("operations")]
         public List<MatchTradeDealJsonModel> Operations { get; set; }
     }
 
     public class MatchTradeDealJsonModel
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
-        [JsonProperty("symbol")]
+        public DateTime OpenTime { get; set; }
+        public double OpenPrice { get; set; }
         public string Symbol { get; set; }
-
-        [JsonProperty("volume")]
-        public string Volume { get; set; }
-
-        [JsonProperty("side")]
+        public string Alias { get; set; }
+        public string Id { get; set; }
+        public double Volume { get; set; }
+        public double StopLoss { get; set; }
+        public double TakeProfit { get; set; }
+        public DateTime Time { get; set; }
+        public double ClosePrice { get; set; }
+        public double Commission { get; set; }
+        public double Swap { get; set; }
+        public double Profit { get; set; }
         public string Side { get; set; }
-
-        [JsonProperty("openTime")]
-        public string OpenTime { get; set; }
-
-        [JsonProperty("openPrice")]
-        public string OpenPrice { get; set; }
-
-        [JsonProperty("stopLoss")]
-        public string StopLoss { get; set; }
-
-        [JsonProperty("takeProfit")]
-        public string TakeProfit { get; set; }
-
-        [JsonProperty("swap")]
-        public string Swap { get; set; }
-
-        [JsonProperty("profit")]
-        public string Profit { get; set; }
-
-        [JsonProperty("netProfit")]
-        public string NetProfit { get; set; }
-
-        [JsonProperty("currentPrice")]
-        public string CurrentPrice { get; set; }
-
-        [JsonProperty("stopLossInMainWallet")]
-        public string StopLossInMainWallet { get; set; }
-
-        [JsonProperty("takeProfitInMainWallet")]
-        public string TakeProfitInMainWallet { get; set; }
-
-        [JsonProperty("commission")]
-        public string Commission { get; set; }
-
-        [JsonProperty("bidPrice")]
-        public string BidPrice { get; set; }
-
-        [JsonProperty("askPrice")]
-        public string AskPrice { get; set; }
+        public double NetProfit { get; set; }
+        public string Uid { get; set; }
+        public string ClosingOrderID { get; set; }
+        public string CloseReason { get; set; }
     }
 }

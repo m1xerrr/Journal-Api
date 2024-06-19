@@ -110,7 +110,7 @@ namespace Journal.DAL.Repositories
             return deposit;
         }
 
-        public async Task<TradeLockerSymbolJsonModel> GetSymbols(string email, string password, string server, bool isLive, long accountId)
+        public async Task<TradeLockerSymbolJsonModel> GetSymbols(string email = "alihuim1xar1@gmail.com", string password = "gCvDDs7$", string server = "OSP-DEMO", bool isLive = false, long accountId = 518920)
         {
             string baseUrl;
             if (isLive) baseUrl = baseUrlLive;

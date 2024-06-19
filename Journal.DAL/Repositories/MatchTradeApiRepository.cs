@@ -9,7 +9,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Diagnostics.Metrics;
 using System.Diagnostics;
-using System.Net.WebSockets;
+using WebSocket4Net;
+using System.Drawing;
 
 namespace Journal.DAL.Repositories
 {
@@ -18,76 +19,43 @@ namespace Journal.DAL.Repositories
         string baseUrlDemo = "https://mtr-demo-prod.match-trader.com";
         string baseUrlLive = "";
 
-        public async Task<List<MatchTradeDealJsonModel>> GetDeals(bool isLive, string email, string password, int brokerId, long accountNumber, string tradingApiToken, string coAuthToken)
+        public async Task<List<MatchTradeDealJsonModel>> GetDeals(bool isLive, string email, string password, int brokerId, long accountNumber, string tradingApiToken, string coAuthToken, string uuid, List<string> symbols)
         {
-            string url = "wss://mtr-demo-prod.match-trader.com/app/snapshot/closed-positions";
-            var client = new ClientWebSocket();
-            client.Options.SetRequestHeader("Accept", "application/json");
-            client.Options.SetRequestHeader("Content-Type", "application/json");
-            client.Options.SetRequestHeader("Auth-trading-api", tradingApiToken);
-            client.Options.SetRequestHeader("Cookie", $"co-auth={coAuthToken}");
-            client.Options.SetRequestHeader("User-Agent", "PostmanRuntime/7.37.3");
 
-            var cancellationToken = new CancellationTokenSource();
-            cancellationToken.CancelAfter(TimeSpan.FromSeconds(30)); // 30 seconds timeout
+            string url = isLive ? baseUrlLive + $"/mtr-api/{uuid}/closed-positions" : baseUrlDemo + $"/mtr-api/{uuid}/closed-positions";
+            string[] symbolsArray = symbols.ToArray(); 
+            string symbolsJson = JsonConvert.SerializeObject(symbolsArray); 
+            string json = $"{{\"from\":\"2016-06-18T12:34:19.287Z\", \"to\":\"2034-06-18T12:34:19.287Z\", \"symbols\":{symbolsJson}}}";
 
-            try
+            using (HttpClient client = new HttpClient())
             {
-                await client.ConnectAsync(new Uri(url), cancellationToken.Token);
-                Console.WriteLine("WebSocket connection opened.");
-
-                var requestBody = new
+                try
                 {
-                    symbols = new string[] { "BTCUSD", "ETHUSD" },
-                    from = "2020-09-16T06:04:53.071Z",
-                    to = "2020-09-23T06:04:53.071Z"
-                };
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("Cookie", $"co-auth={coAuthToken}");
+                    client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.37.3");
+                    client.DefaultRequestHeaders.Add("Auth-trading-api", tradingApiToken);
 
-                string requestJson = JsonConvert.SerializeObject(requestBody);
-                var requestBytes = Encoding.UTF8.GetBytes(requestJson);
-                var requestSegment = new ArraySegment<byte>(requestBytes);
+                    HttpResponseMessage response = await client.PostAsync(url, new StringContent(json, Encoding.UTF8, "application/json"));
 
-                await client.SendAsync(requestSegment, WebSocketMessageType.Text, true, cancellationToken.Token);
-
-                var buffer = new ArraySegment<byte>(new byte[2048]);
-                WebSocketReceiveResult result = await client.ReceiveAsync(buffer, cancellationToken.Token);
-                var responseString = Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
-
-                if (result.MessageType == WebSocketMessageType.Close)
-                {
-                    await client.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, cancellationToken.Token);
-                    throw new WebSocketException("WebSocket connection closed unexpectedly.");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        MatchTradeDealsJsonModel sessionResponse = JsonConvert.DeserializeObject<MatchTradeDealsJsonModel>(responseBody);
+                        return sessionResponse.Operations;
+                    }
+                    else
+                    {
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        Console.WriteLine($"Error: {response.StatusCode}, Response: {responseBody}");
+                    }
                 }
-
-                Console.WriteLine("Message received: " + responseString);
-                var response = JsonConvert.DeserializeObject<MatchTradeDealsJsonModel>(responseString);
-
-                foreach (var operation in response.Operations)
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"Operation: {operation.Id}, Amount: {operation.Profit}");
-                }
-
-                await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Completed", CancellationToken.None);
-
-                return response.Operations;
-            }
-            catch (WebSocketException ex)
-            {
-                Console.WriteLine("WebSocket error: " + ex.Message);
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error processing WebSocket task: " + ex.Message);
-                throw;
-            }
-            finally
-            {
-                if (client.State == WebSocketState.Open || client.State == WebSocketState.CloseReceived)
-                {
-                    await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+                    Console.WriteLine("Error: " + ex.Message);
                 }
             }
+            return null;
         }
 
         public async Task<bool> OpenPosition(bool isLive, string email, string password, int brokerId, long accountNumber, double price, double stoploss, double takeprofit, double volume, byte type, string symbol)

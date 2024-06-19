@@ -557,8 +557,10 @@ namespace Journal.Service.Implementations
                         accountData.ProfitPercentage = Math.Round(accountData.Profit / accountData.Deposit * 100, 2);
                         accountData.Winrate = Math.Round((double)accountData.WonDeals / (double)accountData.TotalDeals * 100, 2);
                         accountData.Lots = accountData.Deals.Select(x => x.Volume).Sum();
-                        accountData.AverageLoss = accountData.Deals.Where(x => x.Result == Result.Loss).Select(x => x.Profit).Average();
-                        accountData.AverageWin = accountData.Deals.Where(x => x.Result == Result.Win).Select(x => x.Profit).Average();
+                        if (accountData.LostDeals == 0) accountData.AverageLoss = 0;
+                        else accountData.AverageLoss = accountData.Deals.Where(x => x.Result == Result.Loss).Select(x => x.Profit).Average();
+                        if (accountData.WonDeals == 0) accountData.AverageWin = 0;
+                        else accountData.AverageWin = accountData.Deals.Where(x => x.Result == Result.Win).Select(x => x.Profit).Average();
                         accountData.DailyProfit = accountData.Deals.Where(x => x.EntryTime.Date == DateTime.Today).Sum(x => x.Profit + x.Comission);
                         accountData.Provider = "CTrader";
                         response.Data = accountData;
@@ -583,8 +585,10 @@ namespace Journal.Service.Implementations
                     accountData.ProfitPercentage = Math.Round(accountData.Profit / accountData.Deposit * 100, 2);
                     accountData.Winrate = Math.Round((double)accountData.WonDeals / (double)accountData.TotalDeals * 100, 2);
                     accountData.Lots = accountData.Deals.Select(x => x.Volume).Sum();
-                    accountData.AverageLoss = accountData.Deals.Where(x => x.Result == Result.Loss).Select(x => x.Profit).Average();
-                    accountData.AverageWin = accountData.Deals.Where(x => x.Result == Result.Win).Select(x => x.Profit).Average();
+                    if (accountData.LostDeals == 0) accountData.AverageLoss = 0;
+                    else accountData.AverageLoss = accountData.Deals.Where(x => x.Result == Result.Loss).Select(x => x.Profit).Average();
+                    if (accountData.WonDeals == 0) accountData.AverageWin = 0;
+                    else accountData.AverageWin = accountData.Deals.Where(x => x.Result == Result.Win).Select(x => x.Profit).Average();
                     accountData.DailyProfit = accountData.Deals.Where(x => x.EntryTime.Date == DateTime.Today).Sum(x => x.Profit + x.Comission);
                     accountData.Provider = "CTrader";
                     response.Data = accountData;
