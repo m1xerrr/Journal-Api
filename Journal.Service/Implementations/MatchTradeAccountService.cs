@@ -71,6 +71,7 @@ namespace Journal.Service.Implementations
                         {
                             response.StatusCode = StatusCode.OK;
                             response.Message = "Success";
+                            await LoadAccountData(account.Id);
                             response.Data = new AccountResponseModel(account);
                         }
                         else
@@ -97,6 +98,14 @@ namespace Journal.Service.Implementations
             var response = new BaseResponse<bool>();
             try
             {
+                foreach (var deal in _dealRepository.SelectAll().Where(x => x.AccountId == id))
+                {
+                    foreach (var description in _descriptionRepository.SelectAll().Where(x => x.DealId == deal.Id))
+                    {
+                        await _descriptionRepository.Delete(description);
+                    }
+                    await _dealRepository.Delete(deal);
+                }
                 var account = _matchTradeAccountRepository.SelectAll().FirstOrDefault(x => x.Id == id);
                 if(account == null)
                 {
