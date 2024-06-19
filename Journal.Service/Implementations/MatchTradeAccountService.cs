@@ -374,7 +374,13 @@ namespace Journal.Service.Implementations
                 
                 foreach (var account in accounts)
                 {
-                    response.Data.Add(new AccountResponseModel(account));
+                    var accountModel = new AccountResponseModel(account);
+                    var data = await GetAccountData(account.Id);
+                    accountModel.ProfitPercentage = data.Data.ProfitPercentage;
+                    accountModel.Profit = data.Data.Profit;
+                    accountModel.Balance = data.Data.currentBalance;
+                    accountModel.DealsCount = data.Data.TotalDeals;
+                    response.Data.Add(accountModel);
                     
                 }
                 response.StatusCode = StatusCode.OK;
